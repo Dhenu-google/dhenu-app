@@ -21,15 +21,6 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="forum"
-        options={{
-          title: "Forum",
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="chatbubbles" color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="index"
         options={{
           title: "Home",
@@ -38,13 +29,23 @@ export default function TabLayout() {
           ),
         }}
       />
-      
+
       <Tabs.Screen
         name="explore"
         options={{
           title: "Explore",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="compass" color={color} />
+          ),
+        }}
+      />
+      
+      <Tabs.Screen
+        name="forum"
+        options={{
+          title: "Forum",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="chatbubbles" color={color} />
           ),
         }}
       />
