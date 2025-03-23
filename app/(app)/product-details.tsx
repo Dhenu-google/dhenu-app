@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 18,
-    color: '#666',
+    color: '#333',
     textAlign: 'center',
     marginTop: 16,
     marginBottom: 24,

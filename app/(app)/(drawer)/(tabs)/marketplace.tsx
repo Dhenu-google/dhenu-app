@@ -58,7 +58,7 @@ export default function MarketplaceScreen() {
                 
                 {item.location && (
                   <View style={styles.locationContainer}>
-                    <Ionicons name="location" size={14} color="#666" />
+                    <Ionicons name="location" size={14} color="#333" />
                     <ThemedText style={styles.locationText}>{item.location}</ThemedText>
                   </View>
                 )}
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   },
   subtitle: { 
     fontSize: 14,
-    color: '#666',
+    color: '#333',
     marginBottom: 16,
     fontWeight: '500'
   },
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   },
   category: { 
     fontSize: 14, 
-    color: "#666",
+    color: "#333",
     marginBottom: 8, 
   },
   locationContainer: {
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   },
   locationText: {
     fontSize: 13,
-    color: '#666',
+    color: '#333',
     marginLeft: 4,
   },
   enquiryContainer: {
@@ -207,13 +207,13 @@ const styles = StyleSheet.create({
     marginTop: 16, 
     fontSize: 16,
     fontWeight: '500',
-    color: "#666" 
+    color: "#333" 
   },
   emptySubtext: {
     textAlign: "center",
     marginTop: 8,
     fontSize: 14,
-    color: "#999"
+    color: "#333"
   },
   loadingContainer: {
     flex: 1,

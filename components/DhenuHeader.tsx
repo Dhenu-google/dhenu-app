@@ -18,9 +18,13 @@ export default function DhenuHeader({ showBackButton = false, title }: DhenuHead
     router.push('/(app)/(drawer)/profile');
   };
   
+  const handleBackPress = () => {
+    router.replace('/(app)');
+  };
+  
   const handleDhenuPress = () => {
     // Navigate to the dashboard
-    router.push('/(app)/(drawer)/(tabs)/dashboard');
+    router.push('/(app)');
   };
   
   const openDrawer = () => {
@@ -82,7 +86,18 @@ const styles = StyleSheet.create({
   subtitleText: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#666',
+    color: '#333',
     marginRight: 8,
-  }
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 8,
+  },
+  welcomeText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#333',
+    marginRight: 8,
+  },
 });

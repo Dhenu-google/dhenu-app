@@ -377,7 +377,7 @@ export default function Dashboard() {
           <View style={styles.formHeader}>
             <Text style={styles.formTitle}>Add New Cow</Text>
             <TouchableOpacity onPress={() => setFormVisible(false)}>
-              <Ionicons name="close-circle" size={24} color="#666" />
+              <Ionicons name="close-circle" size={24} color="#333" />
             </TouchableOpacity>
           </View>
 
@@ -389,6 +389,7 @@ export default function Dashboard() {
                 value={newCowForm.name}
                 onChangeText={(text) => handleFormChange('name', text)}
                 placeholder="Cow name"
+                placeholderTextColor="#777"
               />
               {formErrors.name && <Text style={styles.errorText}>{formErrors.name}</Text>}
             </View>
@@ -400,6 +401,7 @@ export default function Dashboard() {
                 value={newCowForm.breed}
                 onChangeText={(text) => handleFormChange('breed', text)}
                 placeholder="Cow breed"
+                placeholderTextColor="#777"
               />
               {formErrors.breed && <Text style={styles.errorText}>{formErrors.breed}</Text>}
             </View>
@@ -411,6 +413,7 @@ export default function Dashboard() {
                 value={newCowForm.origin}
                 onChangeText={(text) => handleFormChange('origin', text)}
                 placeholder="Region/Country of origin"
+                placeholderTextColor="#777"
               />
             </View>
 
@@ -422,6 +425,7 @@ export default function Dashboard() {
                 onChangeText={(text) => handleFormChange('age', text)}
                 placeholder="Cow age"
                 keyboardType="numeric"
+                placeholderTextColor="#777"
               />
               {formErrors.age && <Text style={styles.errorText}>{formErrors.age}</Text>}
             </View>
@@ -434,6 +438,7 @@ export default function Dashboard() {
                 onChangeText={(text) => handleFormChange('weight', text)}
                 placeholder="Cow weight"
                 keyboardType="numeric"
+                placeholderTextColor="#777"
               />
               {formErrors.weight && <Text style={styles.errorText}>{formErrors.weight}</Text>}
             </View>
@@ -446,6 +451,7 @@ export default function Dashboard() {
                 onChangeText={(text) => handleFormChange('height', text)}
                 placeholder="Cow height"
                 keyboardType="numeric"
+                placeholderTextColor="#777"
               />
               {formErrors.height && <Text style={styles.errorText}>{formErrors.height}</Text>}
             </View>
@@ -458,6 +464,7 @@ export default function Dashboard() {
                 onChangeText={(text) => handleFormChange('milkYield', text)}
                 placeholder="Daily milk production"
                 keyboardType="numeric"
+                placeholderTextColor="#777"
               />
               {formErrors.milkYield && <Text style={styles.errorText}>{formErrors.milkYield}</Text>}
             </View>
@@ -819,6 +826,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 2,
     textAlign: 'center',
+    color: '#000',
   },
   breedName: {
     fontSize: 18,
@@ -900,10 +908,11 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     fontWeight: '500',
     fontSize: 11,
+    color: '#000',
   },
   timestampText: {
     fontSize: 9,
-    color: '#666',
+    color: '#333',
     marginTop: 2,
   },
   addCowCard: {
@@ -927,7 +936,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 14,
     fontWeight: '500',
-    color: '#4C6EF5',
+    color: '#0D47A1',
   },
   
   // Modal form styles
@@ -957,6 +966,7 @@ const styles = StyleSheet.create({
   formTitle: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: '#333',
   },
   formScrollView: {
     maxHeight: '90%',
@@ -968,13 +978,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 8,
     fontWeight: '500',
+    color: '#333',
   },
   textInput: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#999',
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
+    color: '#000',
   },
   inputError: {
     borderColor: 'red',
@@ -997,7 +1009,7 @@ const styles = StyleSheet.create({
   },
   subtitle: { 
     fontSize: 14,
-    color: '#666',
+    color: '#333',
     marginBottom: 16,
     fontWeight: '500'
   },
@@ -1024,7 +1036,7 @@ const styles = StyleSheet.create({
   },
   breedCount: {
     fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.9)',
+    color: '#FFFFFF',
     marginBottom: 4,
   },
   detailsContainer: {
@@ -1051,7 +1063,7 @@ const styles = StyleSheet.create({
   },
   detailsBreed: {
     fontSize: 16,
-    color: '#666',
+    color: '#333',
     marginBottom: 8,
   },
   detailsTagsContainer: {
@@ -1084,7 +1096,7 @@ const styles = StyleSheet.create({
   },
   detailsLabel: {
     fontSize: 14,
-    color: '#666',
+    color: '#333',
   },
   detailsValue: {
     fontSize: 14,

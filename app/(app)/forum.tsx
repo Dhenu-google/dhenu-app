@@ -112,7 +112,7 @@ const ComposeModal = React.memo(
                 <TextInput
                   style={styles.titleInput}
                   placeholder="Title"
-                  placeholderTextColor="#999999"
+                  placeholderTextColor="#777"
                   value={newPostTitle}
                   onChangeText={setNewPostTitle}
                   blurOnSubmit={false}
@@ -120,7 +120,7 @@ const ComposeModal = React.memo(
                 <TextInput
                   style={styles.composeInput}
                   placeholder="What's on your mind?"
-                  placeholderTextColor="#999999"
+                  placeholderTextColor="#777"
                   value={newPostContent}
                   onChangeText={setNewPostContent}
                   multiline
@@ -512,7 +512,7 @@ export default function Forum() {
             <TextInput
               style={styles.replyInput}
               placeholder="Write a reply..."
-              placeholderTextColor="#999"
+              placeholderTextColor="#777"
               value={replyContent}
               onChangeText={setReplyContent}
               multiline
@@ -568,7 +568,7 @@ export default function Forum() {
           >
             <Ionicons name={getSortIcon()} size={16} color="#4C6EF5" style={styles.sortIcon} />
             <ThemedText style={styles.sortButtonText}>{getSortLabel()}</ThemedText>
-            <Ionicons name={showSortDropdown ? "chevron-up" : "chevron-down"} size={14} color="#999" />
+            <Ionicons name={showSortDropdown ? "chevron-up" : "chevron-down"} size={14} color="#555" />
           </TouchableOpacity>
           
           {showSortDropdown && (
@@ -590,7 +590,7 @@ export default function Forum() {
                     setShowSortDropdown(false);
                   }}
                 >
-                  <Ionicons name={option.icon} size={16} color={sortType === option.key ? "#4C6EF5" : "#999"} />
+                  <Ionicons name={option.icon} size={16} color={sortType === option.key ? "#4C6EF5" : "#555"} />
                   <ThemedText 
                     style={[
                       styles.sortMenuItemText,
@@ -764,8 +764,7 @@ const styles = StyleSheet.create({
   },
   timestamp: {
     fontSize: 12,
-    color: "#888",
-    marginLeft: 6
+    color: "#333"
   },
   postTitle: {
     marginBottom: 8,
@@ -833,7 +832,7 @@ const styles = StyleSheet.create({
   },
   emptySubtext: {
     fontSize: 14,
-    color: "#666",
+    color: "#333",
     marginTop: 8,
     textAlign: "center"
   },
@@ -889,11 +888,11 @@ const styles = StyleSheet.create({
   },
   replyAuthor: {
     fontSize: 14,
-    color: "#000000"
+    color: "#333"
   },
   replyTimestamp: {
     fontSize: 12,
-    color: "#999"
+    color: "#333"
   },
   // ---------- Compose Modal Overlay ----------
   modalOverlay: {
@@ -980,6 +979,37 @@ const styles = StyleSheet.create({
   replyButtonDisabled: {
     backgroundColor: "#B0BEC5",
     opacity: 0.7
+  },
+  filterOption: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    marginRight: 8,
+    backgroundColor: "#f5f5f5"
+  },
+  filterOptionText: {
+    fontSize: 14,
+    color: "#333"
+  },
+  filterOptionActive: {
+    backgroundColor: "#E8EFFF"
+  },
+  filterOptionTextActive: {
+    color: "#000000"
+  },
+  postFooter: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  footerItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 16
+  },
+  footerText: {
+    fontSize: 12,
+    color: "#333",
+    marginLeft: 4
   }
 });
 
