@@ -536,7 +536,7 @@ export default function Dashboard() {
     if (viewMode === 'breeds') {
       return (
         <View style={styles.contentContainer}>
-          <ThemedText type="subtitle" style={styles.subtitle}>SELECT BREED</ThemedText>
+          <ThemedText type="subtitle" style={styles.subtitle}>MY ANIMALS</ThemedText>
           <View style={styles.breedGrid}>
             {uniqueBreeds.map((breed) => (
               <TouchableOpacity
@@ -554,9 +554,6 @@ export default function Dashboard() {
                     <ThemedText style={styles.breedName}>{breed}</ThemedText>
                     <ThemedText style={styles.breedCount}>
                       {getCowsByBreed(breed).length} animals
-                    </ThemedText>
-                    <ThemedText style={styles.breedOrigin}>
-                      {breedOrigins[breed] || 'Unknown origin'}
                     </ThemedText>
                   </View>
                 </LinearGradient>
@@ -842,17 +839,18 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   milkingTag: {
-    backgroundColor: '#ffebee', // light red/pink
+    backgroundColor: '#FFCDD2', // darker light red/pink
   },
   feedingTag: {
-    backgroundColor: '#fff8e1', // light yellow
+    backgroundColor: '#FFE082', // darker light yellow
   },
   healthyTag: {
-    backgroundColor: '#e8f5e9', // light green
+    backgroundColor: '#C8E6C9', // darker light green
   },
   tagText: {
     fontSize: 11,
     fontWeight: '500',
+    color: '#333', // darker text color
   },
   bottomNav: {
     position: 'absolute',
@@ -869,8 +867,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: 4,
-    backgroundColor: '#000',
+    height: 1,
+    backgroundColor: '#F0F0F0',
   },
   actionsContainer: {
     flexDirection: 'row',
@@ -1028,10 +1026,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'rgba(255, 255, 255, 0.9)',
     marginBottom: 4,
-  },
-  breedOrigin: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.7)',
   },
   detailsContainer: {
     padding: 16,
