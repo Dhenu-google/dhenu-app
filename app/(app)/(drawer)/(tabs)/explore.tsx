@@ -31,9 +31,9 @@ export default function ExploreScreen() {
   const exploreItems: ExploreItem[] = [
     {
       id: '1',
-      title: 'Home',
-      icon: 'home',
-      route: '/(app)/(drawer)/(tabs)'
+      title: 'Nearby Network',
+      icon: 'map',
+      route: '/(app)/network'
     },
     {
       id: '2',
