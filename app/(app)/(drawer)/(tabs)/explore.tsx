@@ -6,7 +6,7 @@ import {
   Animated 
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 
@@ -14,8 +14,9 @@ import { ThemedText } from "@/components/ThemedText";
 interface ExploreItem {
   id: string;
   title: string;
-  icon: string;
+  icon: React.ReactNode;
   route: any; // Using any to avoid typing issues with expo-router
+  isForum?: boolean; // Flag to indicate if this is the forum item
 }
 
 export default function ExploreScreen() {
@@ -38,7 +39,8 @@ export default function ExploreScreen() {
       id: '2',
       title: 'Forum',
       icon: 'chatbubbles',
-      route: '/(app)/(drawer)/(tabs)/forum'
+      route: '/forum-button',
+      isForum: true
     },
     {
       id: '3',
@@ -64,6 +66,18 @@ export default function ExploreScreen() {
     ]).start();
   };
 
+  // Handle navigation with special case for forum
+  const handleNavigation = (item: ExploreItem, index: number) => {
+    animateButton(index);
+    
+    if (item.isForum) {
+      // Navigate to the forum-button screen which will handle the redirect
+      setTimeout(() => {
+        router.push(item.route);
+      }, 200);
+    }
+  };
+
   return (
     <ThemedView style={styles.container}>
       <View style={styles.header}>
@@ -73,9 +87,9 @@ export default function ExploreScreen() {
       <View style={styles.listContainer}>
         {exploreItems.map((item, index) => (
           <React.Fragment key={item.id}>
-            <Link href={item.route} asChild>
+            {item.isForum ? (
               <TouchableOpacity
-                onPress={() => animateButton(index)}
+                onPress={() => handleNavigation(item, index)}
                 activeOpacity={0.7}
               >
                 <Animated.View 
@@ -89,7 +103,25 @@ export default function ExploreScreen() {
                   <Ionicons name="chevron-forward" size={18} color="#A0A0A0" />
                 </Animated.View>
               </TouchableOpacity>
-            </Link>
+            ) : (
+              <Link href={item.route} asChild>
+                <TouchableOpacity
+                  onPress={() => animateButton(index)}
+                  activeOpacity={0.7}
+                >
+                  <Animated.View 
+                    style={[
+                      styles.listItem,
+                      { transform: [{ scale: animatedScales[index] }] }
+                    ]}
+                  >
+                    <Ionicons name={item.icon as any} size={22} color="#4C6EF5" />
+                    <ThemedText style={styles.itemText}>{item.title}</ThemedText>
+                    <Ionicons name="chevron-forward" size={18} color="#A0A0A0" />
+                  </Animated.View>
+                </TouchableOpacity>
+              </Link>
+            )}
             {index < exploreItems.length - 1 && <View style={styles.separator} />}
           </React.Fragment>
         ))}
