@@ -224,7 +224,7 @@ export default function ChatbotButton() {
               value={inputValue}
               onChangeText={setInputValue}
               placeholder="Type a message..."
-              placeholderTextColor="#666"
+              placeholderTextColor="#777"
               multiline
             />
             <TouchableOpacity 
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
   buttonText: {
     flex: 1,
     fontSize: 16,
-    color: '#666',
+    color: '#333',
   },
   micContainer: {
     width: 38,

@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
   },
   infoAddress: {
     fontSize: 14,
-    color: '#666',
+    color: '#333',
     marginBottom: 8,
   },
   infoDistance: {

@@ -369,7 +369,7 @@ export default function Dashboard() {
           <View style={styles.formHeader}>
             <Text style={styles.formTitle}>Add New Cow</Text>
             <TouchableOpacity onPress={() => setFormVisible(false)}>
-              <Ionicons name="close-circle" size={24} color="#666" />
+              <Ionicons name="close-circle" size={24} color="#333" />
             </TouchableOpacity>
           </View>
 

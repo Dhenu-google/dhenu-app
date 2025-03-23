@@ -189,11 +189,11 @@ export default function CowProfile() {
           } else {
             console.error('Cow not found');
             // Navigate back to dashboard if cow not found
-            router.replace('/(app)/(drawer)/(tabs)/dashboard');
+            router.replace('/(app)');
           }
         } else {
           console.error('No cows found in storage');
-          router.replace('/(app)/(drawer)/(tabs)/dashboard');
+          router.replace('/(app)');
         }
       } catch (error) {
         console.error('Error fetching cow details:', error);
@@ -256,7 +256,7 @@ export default function CowProfile() {
         <Button 
           mode="contained" 
           style={styles.button}
-          onPress={() => router.replace('/(app)/(drawer)/(tabs)/dashboard')}
+          onPress={() => router.replace('/(app)')}
         >
           Back to Dashboard
         </Button>
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: '#666',
+    color: '#333',
   },
   scrollView: {
     flex: 1,
@@ -459,7 +459,7 @@ const styles = StyleSheet.create({
   },
   location: {
     fontSize: 16,
-    color: '#666',
+    color: '#333',
     marginBottom: 16,
   },
   metricsContainer: {
@@ -472,7 +472,7 @@ const styles = StyleSheet.create({
   },
   metricLabel: {
     fontSize: 16,
-    color: '#666',
+    color: '#333',
   },
   metricValue: {
     fontSize: 18,

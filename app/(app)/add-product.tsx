@@ -40,7 +40,7 @@ export default function AddProductScreen() {
           <TextInput
             style={styles.input}
             placeholder="Enter product name"
-            placeholderTextColor="#999"
+            placeholderTextColor="#777"
             value={productName}
             onChangeText={setProductName}
           />
@@ -51,7 +51,7 @@ export default function AddProductScreen() {
           <TextInput
             style={styles.input}
             placeholder="Enter category (e.g., Dairy, Feed)"
-            placeholderTextColor="#999"
+            placeholderTextColor="#777"
             value={category}
             onChangeText={setCategory}
           />
@@ -62,7 +62,7 @@ export default function AddProductScreen() {
           <TextInput
             style={[styles.input, styles.textArea]}
             placeholder="Enter product description"
-            placeholderTextColor="#999"
+            placeholderTextColor="#777"
             multiline
             numberOfLines={4}
             textAlignVertical="top"
@@ -76,7 +76,7 @@ export default function AddProductScreen() {
           <TextInput
             style={styles.input}
             placeholder="Where is this product available?"
-            placeholderTextColor="#999"
+            placeholderTextColor="#777"
             value={location}
             onChangeText={setLocation}
           />
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   },
   requiredText: {
     fontSize: 14,
-    color: '#999',
+    color: '#555',
     marginTop: 8,
     marginBottom: 24,
   },
