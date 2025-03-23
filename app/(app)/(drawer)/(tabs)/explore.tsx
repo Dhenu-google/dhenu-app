@@ -160,6 +160,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 16,
     flex: 1,
+    color: '#999',
+    fontWeight: '500',
   },
   separator: {
     height: 1,
