@@ -41,14 +41,15 @@ export default function TabLayout() {
       />
       
       <Tabs.Screen
-        name="forum"
+        name="marketplace"
         options={{
-          title: "Forum",
+          title: "Market",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="chatbubbles" color={color} />
+            <TabBarIcon name="basket" color={color} />
           ),
         }}
       />
+      
     </Tabs>
   );
 }
