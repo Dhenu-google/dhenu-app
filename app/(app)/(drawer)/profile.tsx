@@ -142,6 +142,7 @@ const styles = StyleSheet.create({
   },
   infoValue: {
     flex: 1,
+    color: '#000',
   },
   buttonContainer: {
     alignItems: 'center',
