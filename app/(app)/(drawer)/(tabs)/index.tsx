@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl, TouchableOpacity, Dimensions, Image, Text as RNText, Modal, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, StyleSheet, ScrollView, RefreshControl, TouchableOpacity, Dimensions, Image, Text as RNText, Modal, TextInput, KeyboardAvoidingView, Platform, BackHandler } from 'react-native';
 import { Text, Card, Checkbox, Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -8,6 +8,9 @@ import { Ionicons } from '@expo/vector-icons';
 import ChatbotButton from '@/components/ChatbotButton';
 import { format } from 'date-fns';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ThemedView } from '@/components/ThemedView';
+import { ThemedText } from '@/components/ThemedText';
+import { LinearGradient } from 'expo-linear-gradient';
 
 // Define cow data structure
 interface CowStatus {
@@ -111,6 +114,11 @@ export default function Dashboard() {
   const [formVisible, setFormVisible] = useState(false);
   const [newCowForm, setNewCowForm] = useState<NewCowForm>(initialFormState);
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof NewCowForm, string>>>({});
+  // New states for breed filtering and view mode
+  const [viewMode, setViewMode] = useState<'breeds'|'animals'|'details'>('breeds');
+  const [selectedBreed, setSelectedBreed] = useState<string | null>(null);
+  const [selectedAnimal, setSelectedAnimal] = useState<Cow | null>(null);
+  
   const { user } = useSession();
   const router = useRouter();
   const screenWidth = Dimensions.get('window').width;
@@ -469,97 +477,272 @@ export default function Dashboard() {
     </Modal>
   );
 
+  // Get unique breeds from our cows
+  const uniqueBreeds = React.useMemo(() => {
+    const breeds = mockCows.map(cow => cow.breed);
+    return [...new Set(breeds)];
+  }, [mockCows]);
+
+  // Get cows by breed
+  const getCowsByBreed = (breed: string) => {
+    return mockCows.filter(cow => cow.breed === breed);
+  };
+
+  // Handle breed selection
+  const handleBreedSelect = (breed: string) => {
+    setSelectedBreed(breed);
+    setViewMode('animals');
+  };
+
+  // Handle animal selection
+  const handleAnimalSelect = (cow: Cow) => {
+    setSelectedAnimal(cow);
+    setViewMode('details');
+  };
+
+  // Handle back button
+  const handleBackPress = () => {
+    if (viewMode === 'details') {
+      setViewMode('animals');
+      setSelectedAnimal(null);
+    } else if (viewMode === 'animals') {
+      setViewMode('breeds');
+      setSelectedBreed(null);
+    }
+  };
+
+  // Handle hardware back button
+  useEffect(() => {
+    const backAction = () => {
+      if (viewMode === 'details') {
+        setViewMode('animals');
+        setSelectedAnimal(null);
+        return true; // Prevent default behavior (app closing)
+      } else if (viewMode === 'animals') {
+        setViewMode('breeds');
+        setSelectedBreed(null);
+        return true; // Prevent default behavior (app closing)
+      }
+      return false; // Let the default behavior happen (app closes or goes back in navigation)
+    };
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+
+    return () => backHandler.remove(); // Clean up the event listener
+  }, [viewMode]); // Re-create when viewMode changes
+
+  // Render the view based on viewMode
+  const renderContent = () => {
+    if (viewMode === 'breeds') {
+      return (
+        <View style={styles.contentContainer}>
+          <ThemedText type="subtitle" style={styles.subtitle}>SELECT BREED</ThemedText>
+          <View style={styles.breedGrid}>
+            {uniqueBreeds.map((breed) => (
+              <TouchableOpacity
+                key={breed}
+                style={styles.breedCard}
+                onPress={() => handleBreedSelect(breed)}
+              >
+                <LinearGradient
+                  colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.breedGradient}
+                >
+                  <View style={styles.breedContent}>
+                    <ThemedText style={styles.breedName}>{breed}</ThemedText>
+                    <ThemedText style={styles.breedCount}>
+                      {getCowsByBreed(breed).length} animals
+                    </ThemedText>
+                    <ThemedText style={styles.breedOrigin}>
+                      {breedOrigins[breed] || 'Unknown origin'}
+                    </ThemedText>
+                  </View>
+                </LinearGradient>
+              </TouchableOpacity>
+            ))}
+            
+            {/* Add new cow button */}
+            <TouchableOpacity
+              style={styles.addCowCard}
+              onPress={() => setFormVisible(true)}
+            >
+              <LinearGradient
+                colors={['#E7F0FD', '#CBE1FB', '#A4C9F9']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.addCowGradient}
+              >
+                <View style={styles.addIconContainer}>
+                  <Ionicons name="add-circle" size={44} color="#4C6EF5" />
+                  <ThemedText style={styles.addCowText}>Add New Cow</ThemedText>
+                </View>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </View>
+      );
+    }
+    
+    if (viewMode === 'animals') {
+      return (
+        <View style={styles.contentContainer}>
+          <ThemedText type="subtitle" style={styles.subtitle}>SELECT ANIMAL</ThemedText>
+          <View style={styles.cowGrid}>
+            {selectedBreed && getCowsByBreed(selectedBreed).map((cow) => (
+              <TouchableOpacity
+                key={cow.id}
+                style={styles.cowCard}
+                onPress={() => handleAnimalSelect(cow)}
+              >
+                <View style={styles.cardContent}>
+                  <Image 
+                    source={{ uri: cow.image }} 
+                    style={styles.cowImage} 
+                    resizeMode="cover"
+                  />
+                  <View style={styles.cowDetails}>
+                    <ThemedText style={styles.cowName}>{cow.name}</ThemedText>
+                    <View style={styles.tagsContainer}>
+                      {cow.status.map((status, index) => (
+                        <View 
+                          key={index} 
+                          style={[styles.statusTag, getTagColor(status.type)]}
+                        >
+                          <ThemedText style={styles.tagText}>{status.label}</ThemedText>
+                        </View>
+                      ))}
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      );
+    }
+    
+    if (viewMode === 'details' && selectedAnimal) {
+      return (
+        <View style={styles.detailsContainer}>
+          <View style={styles.cowProfile}>
+            <Image 
+              source={{ uri: selectedAnimal.image }} 
+              style={styles.detailsImage} 
+              resizeMode="cover"
+            />
+            <View style={styles.nameStatusContainer}>
+              <ThemedText type="subtitle" style={styles.detailsName}>{selectedAnimal.name}</ThemedText>
+              <ThemedText style={styles.detailsBreed}>{selectedAnimal.breed}</ThemedText>
+              
+              <View style={styles.detailsTagsContainer}>
+                {selectedAnimal.status.map((status, index) => (
+                  <View 
+                    key={index} 
+                    style={[styles.statusTag, getTagColor(status.type)]}
+                  >
+                    <ThemedText style={styles.tagText}>{status.label}</ThemedText>
+                  </View>
+                ))}
+              </View>
+            </View>
+          </View>
+          
+          <View style={styles.detailsCard}>
+            <ThemedText type="defaultSemiBold" style={styles.detailsSectionTitle}>Status Information</ThemedText>
+            <View style={styles.detailsRow}>
+              <ThemedText style={styles.detailsLabel}>Last Milked:</ThemedText>
+              <ThemedText style={styles.detailsValue}>{formatTimestamp(selectedAnimal.lastMilked)}</ThemedText>
+            </View>
+            <View style={styles.detailsRow}>
+              <ThemedText style={styles.detailsLabel}>Last Fed:</ThemedText>
+              <ThemedText style={styles.detailsValue}>{formatTimestamp(selectedAnimal.lastFed)}</ThemedText>
+            </View>
+          </View>
+          
+          {/* Actions */}
+          <View style={styles.detailsActions}>
+            <TouchableOpacity 
+              style={styles.detailsActionButton}
+              onPress={(e) => handleMarkMilked(selectedAnimal.id, e)}
+            >
+              <LinearGradient
+                colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.actionGradient}
+              >
+                <Ionicons name="water" size={20} color="#fff" />
+                <ThemedText style={styles.actionButtonText}>Mark as Milked</ThemedText>
+              </LinearGradient>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.detailsActionButton}
+              onPress={(e) => handleMarkFed(selectedAnimal.id, e)}
+            >
+              <LinearGradient
+                colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.actionGradient}
+              >
+                <Ionicons name="restaurant" size={20} color="#fff" />
+                <ThemedText style={styles.actionButtonText}>Mark as Fed</ThemedText>
+              </LinearGradient>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.detailsActionButton}
+              onPress={() => {
+                router.push({
+                  pathname: '/cow-profile/[id]',
+                  params: { id: selectedAnimal.id }
+                });
+              }}
+            >
+              <LinearGradient
+                colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.actionGradient}
+              >
+                <Ionicons name="information-circle" size={20} color="#fff" />
+                <ThemedText style={styles.actionButtonText}>Full Profile</ThemedText>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </View>
+      );
+    }
+    
+    return null;
+  };
+
   return (
-    <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
+    <ThemedView style={styles.container} lightColor="#ffffff" darkColor="#ffffff">
+      {/* Dashboard Header */}
+      <View style={styles.header}>
+        {viewMode !== 'breeds' && (
+          <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={24} color="#8B5CF6" />
+          </TouchableOpacity>
+        )}
+        <ThemedText type="title" style={styles.title}>
+          {viewMode === 'breeds' ? 'Dashboard' : 
+           viewMode === 'animals' ? selectedBreed : 
+           selectedAnimal?.name}
+        </ThemedText>
+      </View>
+
       <ScrollView
         style={styles.scrollView}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        {/* Cow list */}
-        <View style={styles.cowGrid}>
-          {mockCows.map((cow) => (
-            <TouchableOpacity
-              key={cow.id}
-              style={styles.cowCard}
-              onPress={() => {
-                // @ts-ignore - workaround for navigation issues
-                router.push({
-                  pathname: '/cow-profile/[id]',
-                  params: { id: cow.id }
-                });
-              }}
-            >
-              <View style={styles.cardContent}>
-                <Image 
-                  source={{ uri: cow.image }} 
-                  style={styles.cowImage} 
-                  resizeMode="cover"
-                />
-                <View style={styles.cowDetails}>
-                  <Text style={styles.cowName}>{cow.name}</Text>
-                  <Text style={styles.breedName}>{cow.breed}</Text>
-                  <View style={styles.tagsContainer}>
-                    {cow.status.map((status, index) => (
-                      <View 
-                        key={index} 
-                        style={[styles.statusTag, getTagColor(status.type)]}
-                      >
-                        <Text style={styles.tagText}>{status.label}</Text>
-                      </View>
-                    ))}
-                  </View>
-                </View>
-              </View>
-              
-              {/* Milking and Feeding Controls */}
-              <View style={styles.actionsContainer}>
-                {/* Milking section */}
-                <View style={styles.actionSection}>
-                  <TouchableOpacity 
-                    style={styles.actionButton}
-                    onPress={(e) => handleMarkMilked(cow.id, e)}
-                  >
-                    <Ionicons name="checkmark-circle" size={18} color="#000" />
-                    <RNText style={styles.actionText}>Mark as Milked</RNText>
-                  </TouchableOpacity>
-                  <RNText style={styles.timestampText}>
-                    Last: {formatTimestamp(cow.lastMilked)}
-                  </RNText>
-                </View>
-                
-                {/* Divider */}
-                <View style={styles.actionDivider} />
-                
-                {/* Feeding section */}
-                <View style={styles.actionSection}>
-                  <TouchableOpacity 
-                    style={styles.actionButton}
-                    onPress={(e) => handleMarkFed(cow.id, e)}
-                  >
-                    <Ionicons name="checkmark-circle" size={18} color="#000" />
-                    <RNText style={styles.actionText}>Mark as Fed</RNText>
-                  </TouchableOpacity>
-                  <RNText style={styles.timestampText}>
-                    Last: {formatTimestamp(cow.lastFed)}
-                  </RNText>
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))}
-
-          {/* Add new cow button */}
-          <TouchableOpacity
-            style={styles.addCowCard}
-            onPress={() => setFormVisible(true)}
-          >
-            <View style={styles.addIconContainer}>
-              <Ionicons name="add-circle" size={44} color="#007AFF" />
-              <Text style={styles.addCowText}>Add New Cow</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+        {renderContent()}
       </ScrollView>
 
       <View style={styles.bottomNav}>
@@ -571,7 +754,7 @@ export default function Dashboard() {
 
       {/* Render add cow form modal */}
       {renderAddCowForm()}
-    </SafeAreaView>
+    </ThemedView>
   );
 }
 
@@ -580,10 +763,26 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 16,
+    paddingBottom: 10,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  backButton: {
+    marginRight: 16,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: '#8B5CF6', // Lavender color
+  },
   scrollView: {
     flex: 1,
-    paddingBottom: 80, // Reduced padding since news is removed
-    paddingHorizontal: 8,
+    paddingBottom: 80,
   },
   cowGrid: {
     flexDirection: 'row',
@@ -625,10 +824,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   breedName: {
-    fontSize: 13,
-    color: '#666',
-    marginBottom: 6,
-    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+    marginBottom: 8,
   },
   tagsContainer: {
     flexDirection: 'row',
@@ -710,19 +909,15 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   addCowCard: {
-    backgroundColor: 'white',
+    width: '48%',
+    height: 150,
+    marginBottom: 16,
     borderRadius: 12,
-    marginVertical: 6,
-    marginHorizontal: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: '#eee',
-    width: '47%', // Match the width of cow cards
-    height: 160, // Match approximate height of cow cards
+    overflow: 'hidden',
+  },
+  addCowGradient: {
+    width: '100%',
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -734,7 +929,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 14,
     fontWeight: '500',
-    color: '#007AFF',
+    color: '#4C6EF5',
   },
   
   // Modal form styles
@@ -798,5 +993,127 @@ const styles = StyleSheet.create({
   submitButton: {
     backgroundColor: '#007AFF',
     paddingVertical: 8,
+  },
+  contentContainer: {
+    padding: 16,
+  },
+  subtitle: { 
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 16,
+    fontWeight: '500'
+  },
+  breedGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  breedCard: {
+    width: '48%',
+    height: 150,
+    marginBottom: 16,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  breedGradient: {
+    width: '100%',
+    height: '100%',
+  },
+  breedContent: {
+    padding: 16,
+    flex: 1,
+    justifyContent: 'center',
+  },
+  breedCount: {
+    fontSize: 14,
+    color: 'rgba(255, 255, 255, 0.9)',
+    marginBottom: 4,
+  },
+  breedOrigin: {
+    fontSize: 12,
+    color: 'rgba(255, 255, 255, 0.7)',
+  },
+  detailsContainer: {
+    padding: 16,
+  },
+  cowProfile: {
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
+  detailsImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginRight: 16,
+  },
+  nameStatusContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  detailsName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  detailsBreed: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 8,
+  },
+  detailsTagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  detailsCard: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  detailsSectionTitle: {
+    fontSize: 18,
+    color: '#8B5CF6',
+    marginBottom: 12,
+  },
+  detailsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  detailsLabel: {
+    fontSize: 14,
+    color: '#666',
+  },
+  detailsValue: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  detailsActions: {
+    marginTop: 8,
+  },
+  detailsActionButton: {
+    marginBottom: 12,
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  actionGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 14,
+  },
+  actionButtonText: {
+    color: 'white',
+    fontWeight: '600',
+    fontSize: 16,
+    marginLeft: 8,
   },
 }); 
