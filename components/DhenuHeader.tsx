@@ -23,8 +23,8 @@ export default function DhenuHeader({ showBackButton = false, title }: DhenuHead
   };
   
   const handleDhenuPress = () => {
-    // Navigate to the dashboard
-    router.push('/(app)');
+    // Navigate to the dashboard/home tab
+    router.push('/(app)/(drawer)/(tabs)');
   };
   
   const openDrawer = () => {
