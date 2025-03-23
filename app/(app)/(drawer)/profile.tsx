@@ -1,7 +1,11 @@
 import { useSession } from "@/context";
 import React from "react";
-import { View, Text, Pressable } from "react-native";
+import { View, StyleSheet, Pressable, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 
 const ProfileScreen = () => {
   // ============================================================================
@@ -37,31 +41,134 @@ const ProfileScreen = () => {
   // ============================================================================
   
   return (
-    <View className="flex-1 mt-4 p-4">
-      {/* Welcome Section */}
-      <View className="mb-8">
-        <Text className="text-xl font-bold text-blue-900">
-          Name: {displayName}
-        </Text>
-        <Text className="text-xl font-semibold text-blue-900 mt-2">
-          Email: {user?.email}
-        </Text>
-        <Text className="text-normL font-semibold text-blue-900 mt-2">
-          Last Seen: {user?.metadata?.lastSignInTime}
-        </Text>
-        <Text className="text-normal font-semibold text-blue-900 mt-2">
-          Created: {user?.metadata?.creationTime}
-        </Text>
+    <ThemedView style={styles.container} lightColor="#ffffff" darkColor="#ffffff">
+      {/* Profile Header */}
+      <View style={styles.profileHeader}>
+        <View style={styles.profileIcon}>
+          <Ionicons name="person" size={40} color="#8B5CF6" />
+        </View>
+        <ThemedText type="title" style={styles.headerTitle}>My Profile</ThemedText>
       </View>
+
+      {/* User Info Section */}
+      <View style={styles.infoCard}>
+        <View style={styles.infoRow}>
+          <ThemedText type="defaultSemiBold" style={styles.infoLabel}>Name:</ThemedText>
+          <ThemedText style={styles.infoValue}>{displayName}</ThemedText>
+        </View>
+        
+        <View style={styles.infoRow}>
+          <ThemedText type="defaultSemiBold" style={styles.infoLabel}>Email:</ThemedText>
+          <ThemedText style={styles.infoValue}>{user?.email}</ThemedText>
+        </View>
+        
+        <View style={styles.infoRow}>
+          <ThemedText type="defaultSemiBold" style={styles.infoLabel}>Last Seen:</ThemedText>
+          <ThemedText style={styles.infoValue}>{user?.metadata?.lastSignInTime}</ThemedText>
+        </View>
+        
+        <View style={styles.infoRow}>
+          <ThemedText type="defaultSemiBold" style={styles.infoLabel}>Created:</ThemedText>
+          <ThemedText style={styles.infoValue}>{user?.metadata?.creationTime}</ThemedText>
+        </View>
+      </View>
+
       {/* Logout Button */}
-      <Pressable
-        onPress={handleLogout}
-        className="bg-red-500 px-6 py-3 rounded-lg active:bg-red-600"
-      >
-        <Text className="text-white font-semibold text-base">Logout</Text>
-      </Pressable>
-    </View>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity 
+          style={styles.logoutButton} 
+          onPress={handleLogout}
+          activeOpacity={0.8}
+        >
+          <LinearGradient
+            colors={['#E53E3E', '#C53030', '#9B2C2C']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.gradientButton}
+          >
+            <Ionicons name="log-out-outline" size={20} color="#fff" style={styles.buttonIcon} />
+            <ThemedText style={styles.buttonText}>Logout</ThemedText>
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
+    </ThemedView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: '#ffffff',
+  },
+  profileHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 24,
+    paddingTop: 12,
+  },
+  profileIcon: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: '#f0ebff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+  },
+  headerTitle: {
+    fontSize: 28,
+    color: '#8B5CF6',
+  },
+  infoCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    marginBottom: 12,
+    alignItems: 'center',
+  },
+  infoLabel: {
+    width: 100,
+    color: '#8B5CF6',
+  },
+  infoValue: {
+    flex: 1,
+  },
+  buttonContainer: {
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  logoutButton: {
+    width: '80%',
+    height: 50,
+    borderRadius: 25,
+    overflow: 'hidden',
+  },
+  gradientButton: {
+    flexDirection: 'row',
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 25,
+  },
+  buttonIcon: {
+    marginRight: 8,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: '600',
+    fontSize: 16,
+  }
+});
 
 export default ProfileScreen;
