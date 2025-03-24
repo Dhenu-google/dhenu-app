@@ -60,7 +60,7 @@ export default function Index() {
   } else {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Invalid role or user not found.</Text>
+        <Text>Loading ...</Text>
       </View>
     );
   }
