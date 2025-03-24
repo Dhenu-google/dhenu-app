@@ -313,56 +313,53 @@ export default function Dashboard() {
   };
 
   // Handle adding a new cow
-  const handleAddCow = () => {
+  const handleAddCow = async () => {
     if (!validateForm()) {
       return;
     }
-    
-    // Get a new unique ID (simple approach for mock data)
-    const newId = Math.max(...mockCows.map(cow => cow.id), 0) + 1;
-    
-    // Determine origin from breed or use provided origin
-    const origin = newCowForm.origin || breedOrigins[newCowForm.breed] || 'Unknown';
-    
-    // Generate a random cow image if needed
-    const randomCowImages = [
-      'https://cdn.pixabay.com/photo/2018/08/24/10/16/cow-3627798_1280.jpg',
-      'https://cdn.pixabay.com/photo/2015/08/24/13/30/cow-905822_1280.jpg',
-      'https://cdn.pixabay.com/photo/2019/07/21/08/23/cow-4352876_1280.jpg',
-      'https://cdn.pixabay.com/photo/2017/07/12/09/41/white-park-cattle-2496577_1280.jpg',
-    ];
-    const randomImageUrl = randomCowImages[Math.floor(Math.random() * randomCowImages.length)];
-    
-    // Create a new cow object with complete profile data
-    const newCow: Cow = {
-      id: newId,
+  
+    // Prepare the data to send to the backend
+    const cowData = {
       name: newCowForm.name,
       breed: newCowForm.breed,
-      age: newCowForm.age ? parseFloat(newCowForm.age) : undefined,
-      weight: newCowForm.weight ? parseFloat(newCowForm.weight) : undefined,
-      height: newCowForm.height ? parseFloat(newCowForm.height) : 145, // Default height if not provided
-      milkYield: newCowForm.milkYield ? parseFloat(newCowForm.milkYield) : undefined,
-      origin: origin,
-      status: [{ label: 'Healthy', type: 'healthy' }],
-      image: randomImageUrl,
-      lastMilked: null,
-      lastFed: null
+      birthDate: newCowForm.age
+        ? new Date().getFullYear() - parseFloat(newCowForm.age) + "-01-01" // Calculate birth year from age
+        : null,
+      tagNumber: null, // Optional field, can be added to the form later
+      notes: null, // Optional field, can be added to the form later
+      owner_id: user?.uid, // Firebase Auth user ID (logged-in user's UID)
+      milk_production: newCowForm.milkYield, // Daily milk production
     };
-    
-    // Add the new cow to the state
-    setMockCows(prevCows => [...prevCows, newCow]);
-    
-    // Reset the form and close modal
-    setNewCowForm(initialFormState);
-    setFormVisible(false);
-    
-    // Show the newly created cow profile
-    setTimeout(() => {
-      router.push({
-        pathname: '/cow-profile/[id]',
-        params: { id: newId }
+  
+    try {
+      const response = await fetch(`${DB_API_URL}/add_cow`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cowData),
       });
-    }, 500);
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error adding cow:', errorData.error);
+        alert(`Failed to add cow: ${errorData.error}`);
+        return;
+      }
+  
+      const responseData = await response.json();
+      console.log('Cow added successfully:', responseData);
+  
+      // Reset the form and close the modal
+      setNewCowForm(initialFormState);
+      setFormVisible(false);
+  
+      // Optionally, refresh the cow list or update the UI
+      alert('Cow added successfully!');
+    } catch (error) {
+      console.error('Error adding cow:', error);
+      alert('An error occurred while adding the cow. Please try again.');
+    }
   };
 
   // Render the form modal
