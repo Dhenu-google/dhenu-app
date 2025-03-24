@@ -29,7 +29,7 @@ interface Cow {
   height?: number;
   milkYield?: number;
   origin?: string;
-  status: CowStatus[];
+  status: string;
   image: string;
   lastMilked: Date | null;
   lastFed: Date | null;
@@ -71,48 +71,8 @@ const breedOrigins: Record<string, string> = {
   'Brahman': 'India'
 };
 
-// Mock data for cows with status tags
-const initialMockCows: Cow[] = [
-  { 
-    id: 1, 
-    name: 'Bella', 
-    breed: 'Gir',
-    status: [
-      { label: 'Needs Milking', type: 'milking' },
-      { label: 'Needs Feeding', type: 'feeding' }
-    ],
-    image: 'https://cdn.pixabay.com/photo/2019/03/02/21/25/holstein-4030283_1280.jpg',
-    lastMilked: null,
-    lastFed: null
-  },
-  { 
-    id: 2, 
-    name: 'Daisy', 
-    breed: 'Sahiwal',
-    status: [
-      { label: 'Needs Milking', type: 'milking' },
-      { label: 'Needs Feeding', type: 'feeding' }
-    ],
-    image: 'https://cdn.pixabay.com/photo/2018/07/15/20/43/cow-3541348_1280.jpg',
-    lastMilked: null,
-    lastFed: null
-  },
-  { 
-    id: 3, 
-    name: 'Buttercup', 
-    breed: 'Guernsey',
-    status: [
-      { label: 'Healthy', type: 'healthy' },
-    ],
-    image: 'https://cdn.pixabay.com/photo/2019/07/16/19/08/cow-4342764_1280.jpg',
-    lastMilked: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1 hour ago
-    lastFed: new Date(Date.now() - 2 * 60 * 60 * 1000) // 2 hours ago
-  },
-];
-
 export default function Dashboard() {
   const [refreshing, setRefreshing] = useState(false);
-  const [mockCows, setMockCows] = useState<Cow[]>(initialMockCows);
   const [formVisible, setFormVisible] = useState(false);
   const [newCowForm, setNewCowForm] = useState<NewCowForm>(initialFormState);
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof NewCowForm, string>>>({});
@@ -132,109 +92,42 @@ export default function Dashboard() {
   const router = useRouter();
   const screenWidth = Dimensions.get('window').width;
 
+  // Add new state for cow details and loading/error states
+  const [cowDetails, setCowDetails] = useState<Cow | null>(null);
+  const [loadingDetails, setLoadingDetails] = useState(false);
+  const [detailsError, setDetailsError] = useState<string | null>(null);
+
   // Load cows from storage on initial load
-  useEffect(() => {
-    const loadCows = async () => {
-      try {
-        const savedCows = await AsyncStorage.getItem('cows');
-        if (savedCows) {
-          const parsed = JSON.parse(savedCows);
-          // Convert string dates back to Date objects
-          const cowsWithDates = parsed.map((cow: any) => ({
-            ...cow,
-            lastMilked: cow.lastMilked ? new Date(cow.lastMilked) : null,
-            lastFed: cow.lastFed ? new Date(cow.lastFed) : null
-          }));
-          setMockCows(cowsWithDates);
-        }
-      } catch (error) {
-        console.error('Failed to load cows from storage', error);
-      }
-    };
-    
-    loadCows();
-  }, []);
 
   // Save cows to storage whenever they change
-  useEffect(() => {
-    const saveCows = async () => {
-      try {
-        await AsyncStorage.setItem('cows', JSON.stringify(mockCows));
-      } catch (error) {
-        console.error('Failed to save cows to storage', error);
-      }
-    };
-    
-    saveCows();
-  }, [mockCows]);
 
   // Function to check if a cow needs milking or feeding (more than 3 hours)
-  const checkCowNeeds = () => {
-    const threeHoursAgo = new Date(Date.now() - 3 * 60 * 60 * 1000);
-    
-    setMockCows(prevCows => 
-      prevCows.map(cow => {
-        const needsMilking = !cow.lastMilked || cow.lastMilked < threeHoursAgo;
-        const needsFeeding = !cow.lastFed || cow.lastFed < threeHoursAgo;
-        
-        // Create a new status array based on current needs
-        let newStatus: CowStatus[] = [];
-        
-        if (needsMilking) {
-          newStatus.push({ label: 'Needs Milking', type: 'milking' });
-        }
-        
-        if (needsFeeding) {
-          newStatus.push({ label: 'Needs Feeding', type: 'feeding' });
-        }
-        
-        if (newStatus.length === 0) {
-          newStatus.push({ label: 'Healthy', type: 'healthy' });
-        }
-        
-        return { ...cow, status: newStatus };
-      })
-    );
-  };
+
 
   // Check cow needs on initial load and every minute
-  useEffect(() => {
-    checkCowNeeds();
-    const interval = setInterval(checkCowNeeds, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    checkCowNeeds();
-    // Simulate a refetch
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
-  }, []);
 
   // Handle marking a cow as milked
-  const handleMarkMilked = (cowId: number, e: any) => {
-    e.stopPropagation();
-    const now = new Date();
-    setMockCows(prevCows => 
-      prevCows.map(cow => 
-        cow.id === cowId ? { ...cow, lastMilked: now } : cow
-      )
-    );
-    checkCowNeeds();
+  const handleMarkMilked = (cowId: number, event: any) => {
+    console.log(`Marking cow with ID ${cowId} as milked.`);
+    // Add any additional logic or UI feedback here if needed
   };
 
   // Handle marking a cow as fed
-  const handleMarkFed = (cowId: number, e: any) => {
-    e.stopPropagation();
-    const now = new Date();
-    setMockCows(prevCows => 
-      prevCows.map(cow => 
-        cow.id === cowId ? { ...cow, lastFed: now } : cow
-      )
-    );
-    checkCowNeeds();
+  const handleMarkFed = (cowId: number, event: any) => {
+    console.log(`Marking cow with ID ${cowId} as fed.`);
+    // Add any additional logic or UI feedback here if needed
+  };
+
+  // Handle pull-to-refresh action
+  const onRefresh = () => {
+    console.log('Refreshing data...');
+    setRefreshing(true);
+
+    // Simulate a delay for refreshing
+    setTimeout(() => {
+      console.log('Data refreshed.');
+      setRefreshing(false);
+    }, 1000); // Simulate a 1-second refresh delay
   };
 
   // Format timestamp for display
@@ -499,16 +392,6 @@ export default function Dashboard() {
     </Modal>
   );
 
-  // Get unique breeds from our cows
-  const uniqueBreeds = React.useMemo(() => {
-    const breeds = mockCows.map(cow => cow.breed);
-    return [...new Set(breeds)];
-  }, [mockCows]);
-
-  // Get cows by breed
-  const getCowsByBreed = (breed: string) => {
-    return mockCows.filter(cow => cow.breed === breed);
-  };
 
   // Function to fetch cows by breed
   const fetchCowsByBreed = async (breed: string) => {
@@ -532,6 +415,33 @@ export default function Dashboard() {
     }
   };
 
+  // Function to fetch cow details by name
+  const fetchCowDetails = async (cowName: string) => {
+    if (!user?.uid) {
+      console.error('User UID is not available');
+      return;
+    }
+  
+    setLoadingDetails(true);
+    setDetailsError(null);
+  
+    try {
+      const response = await fetch(`${DB_API_URL}/get_cow_by_name/${user.uid}/${cowName}`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch cow details');
+      }
+  
+      const data = await response.json();
+      setCowDetails(data); // Update state with fetched cow details
+    } catch (error: any) {
+      console.error('Error fetching cow details:', error);
+      setDetailsError(error.message || 'An error occurred while fetching cow details.');
+    } finally {
+      setLoadingDetails(false);
+    }
+  };
+
   // Handle breed selection
   const handleBreedSelect = async (breed: string) => {
     setSelectedBreed(breed);
@@ -540,9 +450,10 @@ export default function Dashboard() {
   };
 
   // Handle animal selection
-  const handleAnimalSelect = (cow: Cow) => {
-    setSelectedAnimal(cow);
-    setViewMode('details');
+  const handleAnimalSelect = async (cow: Cow) => {
+    setSelectedAnimal(cow); // Keep the selected cow for reference
+    setViewMode('details'); // Switch to 'details' view mode
+    await fetchCowDetails(cow.name); // Fetch detailed information about the cow
   };
 
   // Handle back button
@@ -703,8 +614,8 @@ export default function Dashboard() {
                       <ThemedText style={styles.cowName}>{cow.name}</ThemedText>
                       <View style={styles.tagsContainer}>
                         {/* Render health status or other tags */}
-                        <View style={[styles.statusTag, getTagColor(cow.health_status || 'healthy')]}>
-                          <ThemedText style={styles.tagText}>{cow.health_status || 'Healthy'}</ThemedText>
+                        <View style={[styles.statusTag, getTagColor(cow.status || 'healthy')]}>
+                          <ThemedText style={styles.tagText}>{cow.status || 'Healthy'}</ThemedText>
                         </View>
                       </View>
                     </View>
@@ -717,98 +628,141 @@ export default function Dashboard() {
       );
     }
     
-    if (viewMode === 'details' && selectedAnimal) {
-      return (
-        <View style={styles.detailsContainer}>
-          <View style={styles.cowProfile}>
-            <Image 
-              source={{ uri: selectedAnimal.image }} 
-              style={styles.detailsImage} 
-              resizeMode="cover"
-            />
-            <View style={styles.nameStatusContainer}>
-              <ThemedText type="subtitle" style={styles.detailsName}>{selectedAnimal.name}</ThemedText>
-              <ThemedText style={styles.detailsBreed}>{selectedAnimal.breed}</ThemedText>
-              
-              <View style={styles.detailsTagsContainer}>
-                {selectedAnimal.status.map((status, index) => (
-                  <View 
-                    key={index} 
-                    style={[styles.statusTag, getTagColor(status.type)]}
-                  >
-                    <ThemedText style={styles.tagText}>{status.label}</ThemedText>
-                  </View>
-                ))}
+    if (viewMode === 'details') {
+      if (loadingDetails) {
+        return (
+          <View style={styles.detailsContainer}>
+            <ActivityIndicator size="large" color="#4C6EF5" />
+            <ThemedText style={styles.loadingText}>Loading cow details...</ThemedText>
+          </View>
+        );
+      }
+    
+      if (detailsError) {
+        return (
+          <View style={styles.detailsContainer}>
+            <ThemedText style={styles.errorText}>{detailsError}</ThemedText>
+            <Button mode="contained" onPress={() => fetchCowDetails(selectedAnimal?.name || '')}>
+              Retry
+            </Button>
+          </View>
+        );
+      }
+    
+      if (cowDetails) {
+        return (
+          <View style={styles.detailsContainer}>
+            <View style={styles.cowProfile}>
+              <Image 
+                source={{ uri: cowDetails.image || 'https://via.placeholder.com/150' }} 
+                style={styles.detailsImage} 
+                resizeMode="cover"
+              />
+              <View style={styles.nameStatusContainer}>
+                <ThemedText type="subtitle" style={styles.detailsName}>{cowDetails.name}</ThemedText>
+                <ThemedText style={styles.detailsBreed}>{cowDetails.breed}</ThemedText>
+                
+                <View style={styles.detailsTagsContainer}>
+                  {cowDetails.status ? (
+                    <View style={[styles.statusTag, getTagColor(cowDetails.status)]}>
+                      <ThemedText style={styles.tagText}>{cowDetails.status}</ThemedText>
+                    </View>
+                  ) : (
+                    <ThemedText style={styles.noStatusText}>No status available</ThemedText>
+                  )}
+                </View>
               </View>
             </View>
-          </View>
-          
-          <View style={styles.detailsCard}>
-            <ThemedText type="defaultSemiBold" style={styles.detailsSectionTitle}>Status Information</ThemedText>
-            <View style={styles.detailsRow}>
-              <ThemedText style={styles.detailsLabel}>Last Milked:</ThemedText>
-              <ThemedText style={styles.detailsValue}>{formatTimestamp(selectedAnimal.lastMilked)}</ThemedText>
-            </View>
-            <View style={styles.detailsRow}>
-              <ThemedText style={styles.detailsLabel}>Last Fed:</ThemedText>
-              <ThemedText style={styles.detailsValue}>{formatTimestamp(selectedAnimal.lastFed)}</ThemedText>
-            </View>
-          </View>
-          
-          {/* Actions */}
-          <View style={styles.detailsActions}>
-            <TouchableOpacity 
-              style={styles.detailsActionButton}
-              onPress={(e) => handleMarkMilked(selectedAnimal.id, e)}
-            >
-              <LinearGradient
-                colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.actionGradient}
-              >
-                <Ionicons name="water" size={20} color="#fff" />
-                <ThemedText style={styles.actionButtonText}>Mark as Milked</ThemedText>
-              </LinearGradient>
-            </TouchableOpacity>
             
-            <TouchableOpacity 
-              style={styles.detailsActionButton}
-              onPress={(e) => handleMarkFed(selectedAnimal.id, e)}
-            >
-              <LinearGradient
-                colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.actionGradient}
-              >
-                <Ionicons name="restaurant" size={20} color="#fff" />
-                <ThemedText style={styles.actionButtonText}>Mark as Fed</ThemedText>
-              </LinearGradient>
-            </TouchableOpacity>
+            <View style={styles.detailsCard}>
+              <ThemedText type="defaultSemiBold" style={styles.detailsSectionTitle}>Status Information</ThemedText>
+              <View style={styles.detailsRow}>
+                <ThemedText style={styles.detailsLabel}>Last Milked:</ThemedText>
+                <ThemedText style={styles.detailsValue}>{formatTimestamp(cowDetails.lastMilked)}</ThemedText>
+              </View>
+              <View style={styles.detailsRow}>
+                <ThemedText style={styles.detailsLabel}>Last Fed:</ThemedText>
+                <ThemedText style={styles.detailsValue}>{formatTimestamp(cowDetails.lastFed)}</ThemedText>
+              </View>
+              <View style={styles.detailsRow}>
+                <ThemedText style={styles.detailsLabel}>Age:</ThemedText>
+                <ThemedText style={styles.detailsValue}>{cowDetails.age || 'Unknown'}</ThemedText>
+              </View>
+              <View style={styles.detailsRow}>
+                <ThemedText style={styles.detailsLabel}>Weight:</ThemedText>
+                <ThemedText style={styles.detailsValue}>{cowDetails.weight || 'Unknown'} lbs</ThemedText>
+              </View>
+              <View style={styles.detailsRow}>
+                <ThemedText style={styles.detailsLabel}>Height:</ThemedText>
+                <ThemedText style={styles.detailsValue}>{cowDetails.height || 'Unknown'} cm</ThemedText>
+              </View>
+              <View style={styles.detailsRow}>
+                <ThemedText style={styles.detailsLabel}>Milk Yield:</ThemedText>
+                <ThemedText style={styles.detailsValue}>{cowDetails.milkYield || 'Unknown'} gal/day</ThemedText>
+              </View>
+              <View style={styles.detailsRow}>
+                <ThemedText style={styles.detailsLabel}>Origin:</ThemedText>
+                <ThemedText style={styles.detailsValue}>{cowDetails.origin || 'Unknown'}</ThemedText>
+              </View>
+            </View>
             
-            <TouchableOpacity 
-              style={styles.detailsActionButton}
-              onPress={() => {
-                router.push({
-                  pathname: '/cow-profile/[id]',
-                  params: { id: selectedAnimal.id }
-                });
-              }}
-            >
-              <LinearGradient
-                colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.actionGradient}
+            {/* Actions */}
+            <View style={styles.detailsActions}>
+              <TouchableOpacity 
+                style={styles.detailsActionButton}
+                onPress={(e) => handleMarkMilked(cowDetails.id, e)}
               >
-                <Ionicons name="information-circle" size={20} color="#fff" />
-                <ThemedText style={styles.actionButtonText}>Full Profile</ThemedText>
-              </LinearGradient>
-            </TouchableOpacity>
+                <LinearGradient
+                  colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.actionGradient}
+                >
+                  <Ionicons name="water" size={20} color="#fff" />
+                  <ThemedText style={styles.actionButtonText}>Mark as Milked</ThemedText>
+                </LinearGradient>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.detailsActionButton}
+                onPress={(e) => handleMarkFed(cowDetails.id, e)}
+              >
+                <LinearGradient
+                  colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.actionGradient}
+                >
+                  <Ionicons name="restaurant" size={20} color="#fff" />
+                  <ThemedText style={styles.actionButtonText}>Mark as Fed</ThemedText>
+                </LinearGradient>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.detailsActionButton}
+                onPress={() => {
+                  router.push({
+                    pathname: '/cow-profile/[id]',
+                    params: { id: cowDetails.id }
+                  });
+                }}
+              >
+                <LinearGradient
+                  colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.actionGradient}
+                >
+                  <Ionicons name="information-circle" size={20} color="#fff" />
+                  <ThemedText style={styles.actionButtonText}>Full Profile</ThemedText>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      );
+        );
+      }
+    
+      return null; // If no cow details are available
     }
     
     return null;
@@ -944,6 +898,15 @@ const styles = StyleSheet.create({
   },
   healthyTag: {
     backgroundColor: '#C8E6C9', // darker light green
+  },
+  criticalTag: {
+    backgroundColor: '#FFCDD2', // Light red for critical status
+  },
+  needsAttentionTag: {
+    backgroundColor: '#FFE082', // Light yellow for needs attention
+  },
+  defaultTag: {
+    backgroundColor: '#E0E0E0', // Light gray for unknown statuses
   },
   tagText: {
     fontSize: 11,
@@ -1220,5 +1183,15 @@ const styles = StyleSheet.create({
     padding: 12,
     fontSize: 16,
     color: '#000',
+  },
+  noStatusText: {
+    fontSize: 14,
+    color: '#999',
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#333',
+    textAlign: 'center',
+    marginTop: 8,
   },
 });
