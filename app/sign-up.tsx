@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSession } from "@/context";
 import * as Location from "expo-location";
 import { DB_API_URL } from "@/config";
+import { Picker } from "@react-native-picker/picker"; // Import Picker for dropdown
 /**
  * SignUp component handles new user registration
  * @returns {JSX.Element} Sign-up form component
@@ -16,6 +17,7 @@ export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [role, setRole] = useState("Farmer"); // Add state for role selection
   const { signUp } = useSession();
 
   // ============================================================================
@@ -33,13 +35,12 @@ export default function SignUp() {
         const uid = user.uid;
         const name = user.displayName;
         const email = user.email;
-        const role = null;
 
         const location = await fetchUserLocation();
         if(location)
         {
           const {latitude, longitude} = location;
-          await sendLocationToDB(uid,name,email, role, longitude,latitude);
+          await sendLocationToDB(uid,name,email, role, longitude,latitude); // Pass role to DB
         }
         router.replace("/(app)/(drawer)/(tabs)/dashboard");
       }
@@ -180,6 +181,29 @@ export default function SignUp() {
             textContentType="newPassword"
             className="w-full p-3 border border-gray-300 rounded-lg text-base bg-white"
           />
+        </View>
+
+        {/* Role Selection */}
+        <View>
+          <Text className="text-sm font-medium text-gray-700 mb-1 ml-1">
+            Select Role
+          </Text>
+          <Picker
+            selectedValue={role}
+            onValueChange={(itemValue) => setRole(itemValue)}
+            style={{
+              height: 50,
+              width: "100%",
+              borderWidth: 1,
+              borderColor: "#ccc",
+              borderRadius: 8,
+              backgroundColor: "white",
+            }}
+          >
+            <Picker.Item label="Farmer" value="Farmer" />
+            <Picker.Item label="Gaushala Owner" value="Gaushala Owner" />
+            <Picker.Item label="Public" value="Public" />
+          </Picker>
         </View>
       </View>
 
