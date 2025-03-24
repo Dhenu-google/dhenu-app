@@ -11,6 +11,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Picker } from '@react-native-picker/picker';
+import { DB_API_URL } from '@/config';
 
 // Define cow data structure
 interface CowStatus {
@@ -118,6 +120,8 @@ export default function Dashboard() {
   const [viewMode, setViewMode] = useState<'breeds'|'animals'|'details'>('breeds');
   const [selectedBreed, setSelectedBreed] = useState<string | null>(null);
   const [selectedAnimal, setSelectedAnimal] = useState<Cow | null>(null);
+  const [loadingBreeds, setLoadingBreeds] = useState(false); // State to track loading
+  const [breeds, setBreeds] = useState<string[]>([]); // State to store breed options
   
   const { user } = useSession();
   const router = useRouter();
@@ -396,13 +400,22 @@ export default function Dashboard() {
 
             <View style={styles.formField}>
               <Text style={styles.fieldLabel}>Breed *</Text>
-              <TextInput
-                style={[styles.textInput, formErrors.breed ? styles.inputError : null]}
-                value={newCowForm.breed}
-                onChangeText={(text) => handleFormChange('breed', text)}
-                placeholder="Cow breed"
-                placeholderTextColor="#777"
-              />
+              {loadingBreeds ? (
+                <Text>Loading breeds...</Text>
+              ) : (
+                <Picker
+                  selectedValue={newCowForm.breed}
+                  onValueChange={(itemValue) => {
+                    handleFormChange('breed', itemValue);
+                  }}
+                  style={styles.picker}
+                >
+                  <Picker.Item label="Select a breed" value="" />
+                  {breeds.map((breed, index) => (
+                    <Picker.Item key={index} label={breed} value={breed} />
+                  ))}
+                </Picker>
+              )}
               {formErrors.breed && <Text style={styles.errorText}>{formErrors.breed}</Text>}
             </View>
 
@@ -537,6 +550,29 @@ export default function Dashboard() {
 
     return () => backHandler.remove(); // Clean up the event listener
   }, [viewMode]); // Re-create when viewMode changes
+
+  // Fetch breeds when the modal is opened
+  useEffect(() => {
+    const fetchBreeds = async () => {
+      setLoadingBreeds(true);
+      try {
+        const response = await fetch(`${DB_API_URL}/get_breeds`); // Replace with your API URL
+        if (!response.ok) {
+          throw new Error('Failed to fetch breeds');
+        }
+        const data = await response.json();
+        setBreeds(data); // Set the fetched breeds
+      } catch (error) {
+        console.error('Error fetching breeds:', error);
+      } finally {
+        setLoadingBreeds(false);
+      }
+    };
+
+    if (formVisible) {
+      fetchBreeds();
+    }
+  }, [formVisible]);
 
   // Render the view based on viewMode
   const renderContent = () => {
@@ -1122,4 +1158,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 8,
   },
-}); 
+  picker: {
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#999',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    color: '#000',
+  },
+});
