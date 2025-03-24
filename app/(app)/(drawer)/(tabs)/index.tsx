@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl, TouchableOpacity, Dimensions, Image, Text as RNText, Modal, TextInput, KeyboardAvoidingView, Platform, BackHandler } from 'react-native';
-import { Text, Card, Checkbox, Button } from 'react-native-paper';
+import { Text, Card, Checkbox, Button, ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useSession } from '@/context';
@@ -124,6 +124,9 @@ export default function Dashboard() {
   const [breeds, setBreeds] = useState<string[]>([]); // State to store breed options
   const [breedsOwned, setBreedsOwned] = useState<{ breed: string; count: number }[]>([]);
   const [loadingBreedsOwned, setLoadingBreedsOwned] = useState(false); // Track loading state
+  // State to store cows of the selected breed
+  const [cowsByBreed, setCowsByBreed] = useState<Cow[]>([]);
+  const [loadingCows, setLoadingCows] = useState(false); // Track loading state for cows
   
   const { user } = useSession();
   const router = useRouter();
@@ -507,10 +510,33 @@ export default function Dashboard() {
     return mockCows.filter(cow => cow.breed === breed);
   };
 
+  // Function to fetch cows by breed
+  const fetchCowsByBreed = async (breed: string) => {
+    if (!user?.uid) {
+      console.error('User UID is not available');
+      return;
+    }
+  
+    setLoadingCows(true);
+    try {
+      const response = await fetch(`${DB_API_URL}/get_cows_by_breed/${user.uid}/${breed}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch cows by breed');
+      }
+      const data = await response.json();
+      setCowsByBreed(data); // Update state with fetched cows
+    } catch (error) {
+      console.error('Error fetching cows by breed:', error);
+    } finally {
+      setLoadingCows(false);
+    }
+  };
+
   // Handle breed selection
-  const handleBreedSelect = (breed: string) => {
+  const handleBreedSelect = async (breed: string) => {
     setSelectedBreed(breed);
     setViewMode('animals');
+    await fetchCowsByBreed(breed); // Fetch cows when a breed is selected
   };
 
   // Handle animal selection
@@ -657,36 +683,36 @@ export default function Dashboard() {
       return (
         <View style={styles.contentContainer}>
           <ThemedText type="subtitle" style={styles.subtitle}>SELECT ANIMAL</ThemedText>
-          <View style={styles.cowGrid}>
-            {selectedBreed && getCowsByBreed(selectedBreed).map((cow) => (
-              <TouchableOpacity
-                key={cow.id}
-                style={styles.cowCard}
-                onPress={() => handleAnimalSelect(cow)}
-              >
-                <View style={styles.cardContent}>
-                  <Image 
-                    source={{ uri: cow.image }} 
-                    style={styles.cowImage} 
-                    resizeMode="cover"
-                  />
-                  <View style={styles.cowDetails}>
-                    <ThemedText style={styles.cowName}>{cow.name}</ThemedText>
-                    <View style={styles.tagsContainer}>
-                      {cow.status.map((status, index) => (
-                        <View 
-                          key={index} 
-                          style={[styles.statusTag, getTagColor(status.type)]}
-                        >
-                          <ThemedText style={styles.tagText}>{status.label}</ThemedText>
+          {loadingCows ? (
+            <ActivityIndicator size="large" color="#4C6EF5" />
+          ) : (
+            <View style={styles.cowGrid}>
+              {cowsByBreed.map((cow) => (
+                <TouchableOpacity
+                  key={cow.id}
+                  style={styles.cowCard}
+                  onPress={() => handleAnimalSelect(cow)}
+                >
+                  <View style={styles.cardContent}>
+                    <Image 
+                      source={{ uri: cow.image || 'https://via.placeholder.com/150' }} 
+                      style={styles.cowImage} 
+                      resizeMode="cover"
+                    />
+                    <View style={styles.cowDetails}>
+                      <ThemedText style={styles.cowName}>{cow.name}</ThemedText>
+                      <View style={styles.tagsContainer}>
+                        {/* Render health status or other tags */}
+                        <View style={[styles.statusTag, getTagColor(cow.health_status || 'healthy')]}>
+                          <ThemedText style={styles.tagText}>{cow.health_status || 'Healthy'}</ThemedText>
                         </View>
-                      ))}
+                      </View>
                     </View>
                   </View>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
         </View>
       );
     }
