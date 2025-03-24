@@ -33,6 +33,7 @@ import app from "@/lib/firebase-config";
 import { getCurrentUser, FirebaseUserResponse } from "@/lib/firebase-service";
 import { useFocusEffect } from "@react-navigation/native";
 import { User } from "firebase/auth";
+import { useSession } from "@/context"; // Import the custom hook for authentication
 
 // Initialize Firestore
 const db = getFirestore(app);
@@ -153,6 +154,7 @@ const ComposeModal = React.memo(
 );
 
 export default function Forum() {
+  const { user, signOut } = useSession(); // Access the user and logout function from the context
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -555,55 +557,26 @@ export default function Forum() {
     );
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut(); // Call the logout function
+      console.log("User logged out successfully");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      {/* Header with Sort Dropdown */}
+      {/* Header with Logout Button */}
       <View style={styles.header}>
-        <ThemedText type="title" style={{color: "#9370DB", alignSelf: "center"}}>FORUM</ThemedText>
-
-        <View style={[styles.sortDropdownContainer, {alignSelf: "center"}]}>
-          <TouchableOpacity 
-            style={styles.sortDropdownButton}
-            onPress={() => setShowSortDropdown(!showSortDropdown)}
-          >
-            <Ionicons name={getSortIcon()} size={16} color="#4C6EF5" style={styles.sortIcon} />
-            <ThemedText style={styles.sortButtonText}>{getSortLabel()}</ThemedText>
-            <Ionicons name={showSortDropdown ? "chevron-up" : "chevron-down"} size={14} color="#555" />
-          </TouchableOpacity>
-          
-          {showSortDropdown && (
-            <View style={styles.sortDropdownMenu}>
-              {[
-                { key: "mostRecent", label: "Recent", icon: "timer" as any },
-                { key: "mostOld", label: "Oldest", icon: "timer-outline" as any },
-                { key: "mostLiked", label: "Most Liked", icon: "heart" as any },
-                { key: "mostReplied", label: "Most Replies", icon: "chatbubble-outline" as any },
-              ].map((option) => (
-                <TouchableOpacity
-                  key={option.key}
-                  style={[
-                    styles.sortMenuItem,
-                    sortType === option.key && styles.sortMenuItemActive
-                  ]}
-                  onPress={() => {
-                    setSortType(option.key as any);
-                    setShowSortDropdown(false);
-                  }}
-                >
-                  <Ionicons name={option.icon} size={16} color={sortType === option.key ? "#4C6EF5" : "#555"} />
-                  <ThemedText 
-                    style={[
-                      styles.sortMenuItemText,
-                      sortType === option.key && styles.sortMenuItemTextActive
-                    ]}
-                  >
-                    {option.label}
-                  </ThemedText>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
-        </View>
+        <ThemedText type="title" style={{ color: "#9370DB", alignSelf: "center" }}>
+          FORUM
+        </ThemedText>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Ionicons name="log-out-outline" size={20} color="#4C6EF5" />
+          <ThemedText style={styles.logoutText}>Logout</ThemedText>
+        </TouchableOpacity>
       </View>
 
       {loading ? (
@@ -1010,7 +983,23 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#333",
     marginLeft: 4
-  }
+  },
+  logoutButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#E8EFFF",
+    backgroundColor: "#F6F8FF",
+  },
+  logoutText: {
+    marginLeft: 6,
+    fontSize: 14,
+    color: "#4C6EF5",
+    fontWeight: "500",
+  },
 });
 
 export { ComposeModal };
