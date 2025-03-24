@@ -31,22 +31,27 @@ export default function SignUp() {
   const handleRegister = async () => {
     try {
       const user = await signUp(email, password, name);
-      if(user){
+      if (user) {
         const uid = user.uid;
         const name = user.displayName;
         const email = user.email;
 
         const location = await fetchUserLocation();
-        if(location)
-        {
-          const {latitude, longitude} = location;
-          await sendLocationToDB(uid,name,email, role, longitude,latitude); // Pass role to DB
+        if (location) {
+          const { latitude, longitude } = location;
+          await sendLocationToDB(uid, name, email, role, longitude, latitude); // Pass role to DB
         }
-        router.replace("/(app)/(drawer)/(tabs)/dashboard");
+
+        // Redirect based on role
+        if (role === "Farmer" || role === "Gaushala Owner") {
+          router.replace("/(app)/(drawer)/(tabs)/dashboard");
+        } else if (role === "Public") {
+          router.replace("/(app)/forum");
+        }
       }
     } catch (err) {
       console.log("[handleRegister] ==>", err);
-      Alert.alert("Error", "Failed to sign up. Please try again.")
+      Alert.alert("Error", "Failed to sign up. Please try again.");
       return null;
     }
   };
@@ -117,9 +122,6 @@ export default function SignUp() {
    */
   const handleSignUpPress = async () => {
     const resp = await handleRegister();
-    if (resp) {
-      router.replace("/(app)/(drawer)/(tabs)/");
-    }
   };
 
   // ============================================================================
