@@ -1158,6 +1158,7 @@ const styles = StyleSheet.create({
   detailsValue: {
     fontSize: 14,
     fontWeight: '500',
+    color: '#000', // Black text color for darker appearance
   },
   detailsActions: {
     marginTop: 8,
