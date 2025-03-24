@@ -122,6 +122,8 @@ export default function Dashboard() {
   const [selectedAnimal, setSelectedAnimal] = useState<Cow | null>(null);
   const [loadingBreeds, setLoadingBreeds] = useState(false); // State to track loading
   const [breeds, setBreeds] = useState<string[]>([]); // State to store breed options
+  const [breedsOwned, setBreedsOwned] = useState<{ breed: string; count: number }[]>([]);
+  const [loadingBreedsOwned, setLoadingBreedsOwned] = useState(false); // Track loading state
   
   const { user } = useSession();
   const router = useRouter();
@@ -571,6 +573,31 @@ export default function Dashboard() {
     }
   }, [formVisible]);
 
+  useEffect(() => {
+    const fetchBreedsOwned = async () => {
+      if (!user?.uid) {
+        console.error('User UID is not available');
+        return;
+      }
+  
+      setLoadingBreedsOwned(true);
+      try {
+        const response = await fetch(`${DB_API_URL}/get_cow_breeds_owned/${user.uid}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch breeds owned by the user');
+        }
+        const data = await response.json();
+        setBreedsOwned(data); // Set the fetched breeds and counts
+      } catch (error) {
+        console.error('Error fetching breeds owned:', error);
+      } finally {
+        setLoadingBreedsOwned(false);
+      }
+    };
+  
+    fetchBreedsOwned();
+  }, [user?.uid]); // Fetch breeds when the user UID is available
+
   // Render the view based on viewMode
   const renderContent = () => {
     if (viewMode === 'breeds') {
@@ -578,28 +605,32 @@ export default function Dashboard() {
         <View style={styles.contentContainer}>
           <ThemedText type="subtitle" style={styles.subtitle}>MY ANIMALS</ThemedText>
           <View style={styles.breedGrid}>
-            {uniqueBreeds.map((breed) => (
-              <TouchableOpacity
-                key={breed}
-                style={styles.breedCard}
-                onPress={() => handleBreedSelect(breed)}
-              >
-                <LinearGradient
-                  colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={styles.breedGradient}
+            {loadingBreedsOwned ? (
+              <Text>Loading breeds...</Text>
+            ) : (
+              breedsOwned.map(({ breed, count }) => (
+                <TouchableOpacity
+                  key={breed}
+                  style={styles.breedCard}
+                  onPress={() => handleBreedSelect(breed)}
                 >
-                  <View style={styles.breedContent}>
-                    <ThemedText style={styles.breedName}>{breed}</ThemedText>
-                    <ThemedText style={styles.breedCount}>
-                      {getCowsByBreed(breed).length} animals
-                    </ThemedText>
-                  </View>
-                </LinearGradient>
-              </TouchableOpacity>
-            ))}
-            
+                  <LinearGradient
+                    colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.breedGradient}
+                  >
+                    <View style={styles.breedContent}>
+                      <ThemedText style={styles.breedName}>{breed}</ThemedText>
+                      <ThemedText style={styles.breedCount}>
+                        {count} animals
+                      </ThemedText>
+                    </View>
+                  </LinearGradient>
+                </TouchableOpacity>
+              ))
+            )}
+
             {/* Add new cow button */}
             <TouchableOpacity
               style={styles.addCowCard}
