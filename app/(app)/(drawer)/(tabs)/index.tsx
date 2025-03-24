@@ -652,112 +652,116 @@ export default function Dashboard() {
       if (cowDetails) {
         return (
           <View style={styles.detailsContainer}>
-            <View style={styles.cowProfile}>
-              <Image 
-                source={{ uri: cowDetails.image || 'https://via.placeholder.com/150' }} 
-                style={styles.detailsImage} 
-                resizeMode="cover"
-              />
-              <View style={styles.nameStatusContainer}>
-                <ThemedText type="subtitle" style={styles.detailsName}>{cowDetails.name}</ThemedText>
-                <ThemedText style={styles.detailsBreed}>{cowDetails.breed}</ThemedText>
-                
-                <View style={styles.detailsTagsContainer}>
-                  {cowDetails.status ? (
-                    <View style={[styles.statusTag, getTagColor(cowDetails.status)]}>
-                      <ThemedText style={styles.tagText}>{cowDetails.status}</ThemedText>
-                    </View>
-                  ) : (
-                    <ThemedText style={styles.noStatusText}>No status available</ThemedText>
-                  )}
+            <ScrollView contentContainerStyle={styles.scrollViewContent}>
+              {/* Cow Profile */}
+              <View style={styles.cowProfile}>
+                <Image 
+                  source={{ uri: cowDetails.image || 'https://via.placeholder.com/150' }} 
+                  style={styles.detailsImage} 
+                  resizeMode="cover"
+                />
+                <View style={styles.nameStatusContainer}>
+                  <ThemedText type="subtitle" style={styles.detailsName}>{cowDetails.name}</ThemedText>
+                  <ThemedText style={styles.detailsBreed}>{cowDetails.breed}</ThemedText>
+                  
+                  <View style={styles.detailsTagsContainer}>
+                    {cowDetails.status ? (
+                      <View style={[styles.statusTag, getTagColor(cowDetails.status)]}>
+                        <ThemedText style={styles.tagText}>{cowDetails.status}</ThemedText>
+                      </View>
+                    ) : (
+                      <ThemedText style={styles.noStatusText}>No status available</ThemedText>
+                    )}
+                  </View>
                 </View>
               </View>
-            </View>
-            
-            <View style={styles.detailsCard}>
-              <ThemedText type="defaultSemiBold" style={styles.detailsSectionTitle}>Status Information</ThemedText>
-              <View style={styles.detailsRow}>
-                <ThemedText style={styles.detailsLabel}>Last Milked:</ThemedText>
-                <ThemedText style={styles.detailsValue}>{formatTimestamp(cowDetails.lastMilked)}</ThemedText>
-              </View>
-              <View style={styles.detailsRow}>
-                <ThemedText style={styles.detailsLabel}>Last Fed:</ThemedText>
-                <ThemedText style={styles.detailsValue}>{formatTimestamp(cowDetails.lastFed)}</ThemedText>
-              </View>
-              <View style={styles.detailsRow}>
-                <ThemedText style={styles.detailsLabel}>Age:</ThemedText>
-                <ThemedText style={styles.detailsValue}>{cowDetails.age || 'Unknown'}</ThemedText>
-              </View>
-              <View style={styles.detailsRow}>
-                <ThemedText style={styles.detailsLabel}>Weight:</ThemedText>
-                <ThemedText style={styles.detailsValue}>{cowDetails.weight || 'Unknown'} lbs</ThemedText>
-              </View>
-              <View style={styles.detailsRow}>
-                <ThemedText style={styles.detailsLabel}>Height:</ThemedText>
-                <ThemedText style={styles.detailsValue}>{cowDetails.height || 'Unknown'} cm</ThemedText>
-              </View>
-              <View style={styles.detailsRow}>
-                <ThemedText style={styles.detailsLabel}>Milk Yield:</ThemedText>
-                <ThemedText style={styles.detailsValue}>{cowDetails.milkYield || 'Unknown'} gal/day</ThemedText>
-              </View>
-              <View style={styles.detailsRow}>
-                <ThemedText style={styles.detailsLabel}>Origin:</ThemedText>
-                <ThemedText style={styles.detailsValue}>{cowDetails.origin || 'Unknown'}</ThemedText>
-              </View>
-            </View>
-            
-            {/* Actions */}
-            <View style={styles.detailsActions}>
-              <TouchableOpacity 
-                style={styles.detailsActionButton}
-                onPress={(e) => handleMarkMilked(cowDetails.id, e)}
-              >
-                <LinearGradient
-                  colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={styles.actionGradient}
-                >
-                  <Ionicons name="water" size={20} color="#fff" />
-                  <ThemedText style={styles.actionButtonText}>Mark as Milked</ThemedText>
-                </LinearGradient>
-              </TouchableOpacity>
               
-              <TouchableOpacity 
-                style={styles.detailsActionButton}
-                onPress={(e) => handleMarkFed(cowDetails.id, e)}
-              >
-                <LinearGradient
-                  colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={styles.actionGradient}
-                >
-                  <Ionicons name="restaurant" size={20} color="#fff" />
-                  <ThemedText style={styles.actionButtonText}>Mark as Fed</ThemedText>
-                </LinearGradient>
-              </TouchableOpacity>
+              {/* Cow Details */}
+              <View style={styles.detailsCard}>
+                <ThemedText type="defaultSemiBold" style={styles.detailsSectionTitle}>Status Information</ThemedText>
+                <View style={styles.detailsRow}>
+                  <ThemedText style={styles.detailsLabel}>Last Milked:</ThemedText>
+                  <ThemedText style={styles.detailsValue}>{formatTimestamp(cowDetails.lastMilked)}</ThemedText>
+                </View>
+                <View style={styles.detailsRow}>
+                  <ThemedText style={styles.detailsLabel}>Last Fed:</ThemedText>
+                  <ThemedText style={styles.detailsValue}>{formatTimestamp(cowDetails.lastFed)}</ThemedText>
+                </View>
+                <View style={styles.detailsRow}>
+                  <ThemedText style={styles.detailsLabel}>Age:</ThemedText>
+                  <ThemedText style={styles.detailsValue}>{cowDetails.age || 'Unknown'}</ThemedText>
+                </View>
+                <View style={styles.detailsRow}>
+                  <ThemedText style={styles.detailsLabel}>Weight:</ThemedText>
+                  <ThemedText style={styles.detailsValue}>{cowDetails.weight || 'Unknown'} lbs</ThemedText>
+                </View>
+                <View style={styles.detailsRow}>
+                  <ThemedText style={styles.detailsLabel}>Height:</ThemedText>
+                  <ThemedText style={styles.detailsValue}>{cowDetails.height || 'Unknown'} cm</ThemedText>
+                </View>
+                <View style={styles.detailsRow}>
+                  <ThemedText style={styles.detailsLabel}>Milk Yield:</ThemedText>
+                  <ThemedText style={styles.detailsValue}>{cowDetails.milkYield || 'Unknown'} gal/day</ThemedText>
+                </View>
+                <View style={styles.detailsRow}>
+                  <ThemedText style={styles.detailsLabel}>Origin:</ThemedText>
+                  <ThemedText style={styles.detailsValue}>{cowDetails.origin || 'Unknown'}</ThemedText>
+                </View>
+              </View>
               
-              <TouchableOpacity 
-                style={styles.detailsActionButton}
-                onPress={() => {
-                  router.push({
-                    pathname: '/cow-profile/[id]',
-                    params: { id: cowDetails.id }
-                  });
-                }}
-              >
-                <LinearGradient
-                  colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={styles.actionGradient}
+              {/* Actions */}
+              <View style={styles.detailsActions}>
+                <TouchableOpacity 
+                  style={styles.detailsActionButton}
+                  onPress={(e) => handleMarkMilked(cowDetails.id, e)}
                 >
-                  <Ionicons name="information-circle" size={20} color="#fff" />
-                  <ThemedText style={styles.actionButtonText}>Full Profile</ThemedText>
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
+                  <LinearGradient
+                    colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.actionGradient}
+                  >
+                    <Ionicons name="water" size={20} color="#fff" />
+                    <ThemedText style={styles.actionButtonText}>Mark as Milked</ThemedText>
+                  </LinearGradient>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={styles.detailsActionButton}
+                  onPress={(e) => handleMarkFed(cowDetails.id, e)}
+                >
+                  <LinearGradient
+                    colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.actionGradient}
+                  >
+                    <Ionicons name="restaurant" size={20} color="#fff" />
+                    <ThemedText style={styles.actionButtonText}>Mark as Fed</ThemedText>
+                  </LinearGradient>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={styles.detailsActionButton}
+                  onPress={() => {
+                    router.push({
+                      pathname: '/cow-profile/[id]',
+                      params: { id: cowDetails.id }
+                    });
+                  }}
+                >
+                  <LinearGradient
+                    colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.actionGradient}
+                  >
+                    <Ionicons name="information-circle" size={20} color="#fff" />
+                    <ThemedText style={styles.actionButtonText}>Full Profile</ThemedText>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
           </View>
         );
       }
@@ -1193,5 +1197,8 @@ const styles = StyleSheet.create({
     color: '#333',
     textAlign: 'center',
     marginTop: 8,
+  },
+  scrollViewContent: {
+    paddingBottom: 80,
   },
 });
