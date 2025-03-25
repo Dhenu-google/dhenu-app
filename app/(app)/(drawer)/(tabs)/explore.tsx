@@ -24,6 +24,7 @@ export default function ExploreScreen() {
   const animatedScales = React.useRef([
     new Animated.Value(1),
     new Animated.Value(1), 
+    new Animated.Value(1),
     new Animated.Value(1)
   ]).current;
 
@@ -44,10 +45,10 @@ export default function ExploreScreen() {
     },
     {
       id: '3',
-      title: 'Profile',
-      icon: 'person',
-      route: '/(app)/(drawer)/profile'
-    }
+      title: 'Cross-Breeding',
+      icon: 'leaf',
+      route: '/(app)/cross-breeding'
+    },
   ];
 
   // Animation for button press
