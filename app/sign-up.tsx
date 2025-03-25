@@ -46,7 +46,7 @@ export default function SignUp() {
         if (role === "Farmer" || role === "Gaushala Owner") {
           router.replace("/(app)/(drawer)/(tabs)/dashboard");
         } else if (role === "Public") {
-          router.replace("/(app)/forum");
+          router.replace("/(app)/(drawer)/(tab)");
         }
       }
     } catch (err) {
