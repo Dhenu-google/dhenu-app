@@ -56,7 +56,7 @@ export default function Index() {
   if (role === "Farmer" || role === "Gaushala Owner") {
     return <Redirect href="/(app)/(drawer)/(tabs)" />;
   } else if (role === "Public") {
-    return <Redirect href="/(app)/forum" />;
+    return <Redirect href="/(app)/(drawer)/(tab)" />;
   } else {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
