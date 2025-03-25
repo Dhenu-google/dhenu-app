@@ -16,21 +16,6 @@ export default function HomeScreen() {
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   
-  // Handle hardware back button to prevent navigation to (tabs)
-  useEffect(() => {
-    const backAction = () => {
-      // Exit the app instead of navigating back to prevent going to (tabs)
-      BackHandler.exitApp();
-      return true; // Prevents default back behavior
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction
-    );
-
-    return () => backHandler.remove();
-  }, []);
   
   // Handle pull-to-refresh action
   const onRefresh = () => {
