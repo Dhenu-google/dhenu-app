@@ -15,6 +15,7 @@ import { getAuth, User } from "firebase/auth"; // Import Firebase Auth
 import app from "@/lib/firebase-config";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native"; // Import navigation hook
+import { DB_API_URL } from "@/config";
 
 // Initialize Firestore and Auth
 const db = getFirestore(app);
@@ -35,7 +36,12 @@ export default function MarketPlace() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [seller, setSeller] = useState<User | null>(null); // Use Firebase Auth User
+  interface Seller {
+    displayName: string;
+    email: string;
+  }
+  
+  const [seller, setSeller] = useState<Seller | null>(null); // Use custom Seller type
   const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation(); // Use navigation hook for back navigation
 
@@ -63,18 +69,25 @@ export default function MarketPlace() {
     }
   };
 
-  // Fetch seller information from Firebase Auth
+  // Fetch seller information from API
   const fetchSeller = async (userId: string) => {
     try {
-      const currentUser = auth.currentUser; // Get the currently logged-in user
-      if (currentUser && currentUser.uid === userId) {
-        setSeller(currentUser); // Set the seller as the current user
+      // Make a GET request to the API with the seller's UID
+      const response = await fetch(`${DB_API_URL}/get_user/${userId}`);
+
+      if (response.ok) {
+        const sellerData = await response.json();
+        setSeller({
+          displayName: sellerData.name,
+          email: sellerData.email,
+        }); // Set the seller details
       } else {
-        console.error("Seller not found in Firebase Auth for userId:", userId);
+        const errorData = await response.json();
+        console.error("Error fetching seller:", errorData.error || "Unknown error");
         setSeller(null);
       }
     } catch (error) {
-      console.error("Error fetching seller from Firebase Auth:", error);
+      console.error("Error fetching seller from API:", error);
       setSeller(null);
     }
   };
@@ -94,7 +107,7 @@ export default function MarketPlace() {
     }
 
     setSelectedProduct(product);
-    await fetchSeller(product.userId); // Fetch seller information using userId
+    await fetchSeller(product.userId); // Fetch seller information using the API
     setModalVisible(true); // Open modal
   };
 
@@ -184,7 +197,7 @@ export default function MarketPlace() {
               <>
                 <Text style={styles.modalSellerTitle}>Seller Information</Text>
                 <Text style={styles.modalSellerInfo}>Name: {seller.displayName || "N/A"}</Text>
-                <Text style={styles.modalSellerInfo}>Email: {seller.email}</Text>
+                <Text style={styles.modalSellerInfo}>Email: {seller.email || "N/A"}</Text>
               </>
             ) : (
               <Text style={styles.modalSellerInfo}>Loading seller information...</Text>
