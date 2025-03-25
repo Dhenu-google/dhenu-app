@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator, Linking } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator, Linking, Alert } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,6 +7,8 @@ import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { sampleGaushaalas } from '@/lib/sample-gaushaalas';
 import * as GCloudSQLService from '@/lib/gcloud-sql-service';
+import * as Location from "expo-location";
+import { DB_API_URL } from '@/config';
 
 // Define types for location data
 interface LocationData {
@@ -35,106 +37,63 @@ export default function NetworkScreen() {
   });
   const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(null);
 
-  // Fetch location data 
+  // Fetch user's current location
   useEffect(() => {
-    // For initial testing, use the sample data
-    if (__DEV__) {
-      // Use sample data for development
-      const timer = setTimeout(() => {
-        setLocations(sampleGaushaalas);
-        setFilteredLocations(sampleGaushaalas);
-        
-        // If we have locations, center the map on the first one
-        if (sampleGaushaalas.length > 0) {
-          setRegion({
-            latitude: sampleGaushaalas[0].latitude,
-            longitude: sampleGaushaalas[0].longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          });
+    const fetchUserLocation = async () => {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          Alert.alert("Permission Denied", "Location permission is required to use this feature.");
+          setIsLoading(false);
+          return;
         }
-        
-        setIsLoading(false);
-      }, 1000);
-      
-      return () => clearTimeout(timer);
-    } else {
-      // In production, fetch from Google Cloud SQL
-      fetchGaushaalasFromSQL();
-    }
-  }, []);
-  
-  // Function to fetch data from Google Cloud SQL
-  const fetchGaushaalasFromSQL = async () => {
-    try {
-      setIsLoading(true);
-      
-      let data: LocationData[] = [];
-      
-      // Apply filtering based on current criteria
-      if (searchDistance !== null) {
-        data = await GCloudSQLService.fetchGaushaalasByDistance(searchDistance);
-      } else if (searchCowBreed !== null && searchCowBreed !== '') {
-        data = await GCloudSQLService.fetchGaushaalasByBreed(searchCowBreed);
-      } else {
-        data = await GCloudSQLService.fetchGaushaalas();
-      }
-      
-      setLocations(data);
-      setFilteredLocations(data);
-      
-      // If we have locations, center the map on the first one
-      if (data.length > 0) {
+
+        const location = await Location.getCurrentPositionAsync({});
+        const { latitude, longitude } = location.coords;
+
+        // Set the map's initial region to the user's current location
         setRegion({
-          latitude: data[0].latitude,
-          longitude: data[0].longitude,
+          latitude,
+          longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         });
+
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching user location:", error);
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error('Error fetching locations from SQL:', error);
-      // Fallback to sample data if there's an error
-      setLocations(sampleGaushaalas);
-      setFilteredLocations(sampleGaushaalas);
-    } finally {
-      setIsLoading(false);
-    }
+    };
+
+    fetchUserLocation();
+  }, []);
+
+
+  // Function to fetch data from Google Cloud SQL
+  
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+    const toRadians = (degrees: number) => (degrees * Math.PI) / 180;
+  
+    const R = 6371; // Radius of the Earth in kilometers
+    const dLat = toRadians(lat2 - lat1);
+    const dLon = toRadians(lon2 - lon1);
+  
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in kilometers
   };
 
-  // Update the location data when filter criteria change
-  useEffect(() => {
-    if (!isLoading && !__DEV__) {
-      fetchGaushaalasFromSQL();
-    }
-  }, [searchDistance, searchCowBreed]);
-
-  // Filter locations based on search criteria (only needed for dev mode with sample data)
-  useEffect(() => {
-    if (__DEV__ && locations.length > 0) {
-      let filtered = [...locations];
-
-      // Filter by distance if specified
-      if (searchDistance !== null) {
-        filtered = filtered.filter(location => 
-          location.distanceKm !== undefined && location.distanceKm <= searchDistance
-        );
-      }
-
-      // Filter by cow breed if specified
-      if (searchCowBreed !== null && searchCowBreed !== '') {
-        filtered = filtered.filter(location => 
-          location.cowBreed !== undefined && 
-          location.cowBreed.toLowerCase().includes(searchCowBreed.toLowerCase())
-        );
-      }
-
-      setFilteredLocations(filtered);
-    }
-  }, [locations, searchDistance, searchCowBreed, __DEV__]);
-
   const handleMarkerPress = (location: LocationData) => {
-    setSelectedLocation(location);
+    console.log("Selected Location:", location); // Debug log
+    setSelectedLocation({
+      ...location,
+      distanceKm: location.distanceKm, // Ensure distanceKm is included
+    });
   };
 
   const closeInfoWindow = () => {
@@ -152,6 +111,7 @@ export default function NetworkScreen() {
   };
 
   const applyFilters = (distance: number | null, cowBreed: string | null) => {
+    console.log("Applying filters:", { distance, cowBreed });
     setSearchDistance(distance);
     setSearchCowBreed(cowBreed);
   };
@@ -184,6 +144,110 @@ export default function NetworkScreen() {
     </View>
   );
 
+  const fetchLocationsWithRoles = async () => {
+    try {
+      setIsLoading(true);
+  
+      // Fetch data from the Flask API
+      const response = await fetch(`${DB_API_URL}/get_locations_with_roles`);
+      const data = await response.json();
+  
+      // Parse the response to extract latitude and longitude
+      const parsedLocations = await Promise.all(
+        data
+          .filter((item: { location: string | null }) => item.location) // Exclude null locations
+          .map(async (item: { location: string; role: string }, index: number) => {
+            try {
+              // Extract the `q` parameter from the URL
+              const url = new URL(item.location);
+              const query = url.searchParams.get("q");
+    
+              if (!query) {
+                throw new Error("Invalid location format");
+              }
+    
+              const [latitude, longitude] = query.split(",").map(Number);
+    
+              // Use reverse geocoding to get a human-readable address
+              const address = await getReadableAddress(latitude, longitude);
+    
+              return {
+                id: `${latitude},${longitude}-${index}`, // Append index to ensure uniqueness
+                name: item.role || "Unknown Role", // Use role as the name
+                address, // Use the human-readable address
+                latitude,
+                longitude,
+                type: "role", // Add a type for filtering if needed
+              };
+            } catch (error) {
+              console.error("Error parsing location:", item.location, error);
+              return null; // Exclude invalid locations
+            }
+          })
+      );
+  
+      // Remove null entries
+      const validLocations = parsedLocations.filter((location) => location !== null);
+  
+      // Update state with the parsed locations
+      setLocations(validLocations);
+      setFilteredLocations(validLocations); // Initially, all locations are shown
+  
+      // Center the map on the first location if available
+      if (validLocations.length > 0) {
+        setRegion({
+          latitude: validLocations[0].latitude,
+          longitude: validLocations[0].longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching locations with roles:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Call this function when the component mounts
+  useEffect(() => {
+    fetchLocationsWithRoles();
+  }, []);
+
+  useEffect(() => {
+    if (locations.length > 0) {
+      console.log("Filtering locations...");
+      console.log("Search Distance:", searchDistance);
+      console.log("Region:", region);
+
+      let filtered = [...locations];
+
+      // Filter by distance if specified
+      if (searchDistance !== null && region.latitude && region.longitude) {
+        filtered = filtered.map((location) => {
+          const distance = calculateDistance(
+            region.latitude,
+            region.longitude,
+            location.latitude,
+            location.longitude
+          );
+          console.log(`Distance to ${location.name}:`, distance); // Debug log
+          return { ...location, distanceKm: distance }; // Assign the calculated distance
+        }).filter((location) => location.distanceKm <= searchDistance);
+      }
+
+      // Filter by cow breed if specified
+      if (searchCowBreed !== null && searchCowBreed !== "") {
+        filtered = filtered.filter((location) =>
+          location.name.toLowerCase().includes(searchCowBreed.toLowerCase())
+        );
+      }
+
+      console.log("Filtered Locations:", filtered); // Debug log
+      setFilteredLocations(filtered);
+    }
+  }, [locations, searchDistance, searchCowBreed, region]);
+
   if (isLoading) {
     return (
       <ThemedView style={styles.loadingContainer}>
@@ -205,13 +269,13 @@ export default function NetworkScreen() {
         <MapView
           provider={PROVIDER_GOOGLE}
           style={styles.map}
-          initialRegion={region}
+          region={region}
           showsUserLocation
           showsMyLocationButton
         >
           {filteredLocations.map((location) => (
             <Marker
-              key={location.id}
+              key={location.id} // Use the unique `id` field
               coordinate={{
                 latitude: location.latitude,
                 longitude: location.longitude,
@@ -234,7 +298,9 @@ export default function NetworkScreen() {
             <ThemedText style={styles.infoAddress}>{selectedLocation.address}</ThemedText>
             
             {selectedLocation.distanceKm && (
-              <ThemedText style={styles.infoDistance}>{selectedLocation.distanceKm} km away</ThemedText>
+              <ThemedText style={styles.infoDistance}>
+                {selectedLocation.distanceKm.toFixed(2)} km away
+              </ThemedText>
             )}
             
             {selectedLocation.cowBreed && (
@@ -266,6 +332,26 @@ export default function NetworkScreen() {
     </ThemedView>
   );
 }
+
+const getReadableAddress = async (latitude: number, longitude: number): Promise<string> => {
+  try {
+    const apiKey = process.env.EXPO_PUBLIC_GMAPS_API_KEY; // Replace with your Google Maps API key
+    const response = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
+    );
+    const data = await response.json();
+
+    if (data.status === "OK" && data.results.length > 0) {
+      return data.results[0].formatted_address; // Return the first formatted address
+    } else {
+      console.error("Error with reverse geocoding:", data.status);
+      return "Address not available";
+    }
+  } catch (error) {
+    console.error("Error fetching readable address:", error);
+    return "Address not available";
+  }
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -331,14 +417,16 @@ const styles = StyleSheet.create({
     bottom: 20,
     left: 20,
     right: 20,
-    backgroundColor: 'white',
+    backgroundColor: 'white', // Ensure a visible background color
     borderRadius: 12,
     padding: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 5,
+    elevation: 5, // Add elevation for Android
+    borderWidth: 1, // Optional: Add a border for better visibility
+    borderColor: '#E5E7EB', // Optional: Border color
   },
   closeButton: {
     position: 'absolute',
@@ -347,23 +435,24 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   infoTitle: {
-    fontSize: 18,
+    fontSize: 18, // Ensure a readable font size
     fontWeight: '600',
+    color: '#333', // Ensure good contrast
     marginBottom: 4,
   },
   infoAddress: {
     fontSize: 14,
-    color: '#333',
+    color: '#555', // Slightly lighter color for secondary text
     marginBottom: 8,
   },
   infoDistance: {
     fontSize: 13,
-    color: '#8B5CF6',
+    color: '#8B5CF6', // Highlight distance in a noticeable color
     marginBottom: 4,
   },
   infoBreed: {
     fontSize: 13,
-    color: '#4B5563',
+    color: '#4B5563', // Ensure good contrast
     marginBottom: 12,
   },
   buttonContainer: {
@@ -386,4 +475,4 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginLeft: 4,
   },
-}); 
+});
