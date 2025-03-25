@@ -57,7 +57,7 @@ export default function HomeScreen() {
       router.push('/(app)/forum');
     } else if (section === 'report') {
       // This route may need to be created
-      router.push('/(app)');
+      router.push('/(app)/stray-cows');
     } else if (section === 'marketplace') {
       // Navigate to product listing page
       router.push('/(app)/add-product');

@@ -95,7 +95,7 @@ export default function SignUp() {
   /** Fetch User's Current Location 
   /* @returns {Promise<latitude:number; longitude:number>}
   */
- const fetchUserLocation = async():Promise<{latitude:number; longitude:number} | null> =>{
+const fetchUserLocation = async():Promise<{latitude:number; longitude:number} | null> =>{
   try{
     const {status } = await Location.requestForegroundPermissionsAsync();
     if(status!=="granted")
