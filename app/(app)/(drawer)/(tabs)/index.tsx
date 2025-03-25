@@ -741,25 +741,7 @@ export default function Dashboard() {
                   </LinearGradient>
                 </TouchableOpacity>
                 
-                <TouchableOpacity 
-                  style={styles.detailsActionButton}
-                  onPress={() => {
-                    router.push({
-                      pathname: '/cow-profile/[id]',
-                      params: { id: cowDetails.id }
-                    });
-                  }}
-                >
-                  <LinearGradient
-                    colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.actionGradient}
-                  >
-                    <Ionicons name="information-circle" size={20} color="#fff" />
-                    <ThemedText style={styles.actionButtonText}>Full Profile</ThemedText>
-                  </LinearGradient>
-                </TouchableOpacity>
+                
               </View>
             </ScrollView>
           </View>
