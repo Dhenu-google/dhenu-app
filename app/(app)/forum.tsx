@@ -34,6 +34,7 @@ import { getCurrentUser, FirebaseUserResponse } from "@/lib/firebase-service";
 import { useFocusEffect } from "@react-navigation/native";
 import { User } from "firebase/auth";
 import { useSession } from "@/context"; // Import the custom hook for authentication
+import { router } from "expo-router";
 
 // Initialize Firestore
 const db = getFirestore(app);
@@ -567,16 +568,14 @@ export default function Forum() {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Header with Logout Button */}
+    <ThemedView style={styles.container}>
+      {/* Add a header with back button */}
       <View style={styles.header}>
-        <ThemedText type="title" style={{ color: "#9370DB", alignSelf: "center" }}>
-          FORUM
-        </ThemedText>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Ionicons name="log-out-outline" size={20} color="#4C6EF5" />
-          <ThemedText style={styles.logoutText}>Logout</ThemedText>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color="#8B5CF6" />
         </TouchableOpacity>
+        <ThemedText type="title" style={styles.headerTitle}>Forum</ThemedText>
+        <View style={{width: 24}} />
       </View>
 
       {loading ? (
@@ -620,7 +619,7 @@ export default function Forum() {
           )}
         </>
       )}
-    </View>
+    </ThemedView>
   );
 }
 
@@ -632,15 +631,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF"
   },
   header: {
-    padding: 12,
-    paddingTop: 24,
-    paddingBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 16,
+    paddingBottom: 10,
+    paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#FFFFFF"
+    borderBottomColor: '#F0F0F0',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#8B5CF6',
+  },
+  backButton: {
+    padding: 4,
   },
   loader: {
     flex: 1
