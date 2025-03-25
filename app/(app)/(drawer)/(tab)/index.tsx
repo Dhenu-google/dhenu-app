@@ -69,18 +69,6 @@ export default function HomeScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      {/* DHENU Header */}
-      <View style={styles.header}>
-        <View style={styles.profileIcon}>
-          <Ionicons name="person" size={24} color="black" />
-        </View>
-        <Text style={styles.headerTitle}>DHENU</Text>
-        <TouchableOpacity onPress={navigateToProfile} style={styles.profileButton}>
-          <Ionicons name="person-circle-outline" size={28} color="#4C6EF5" />
-        </TouchableOpacity>
-      </View>
-      <Divider />
-
       <ScrollView
         style={styles.scrollView}
         refreshControl={
@@ -166,32 +154,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'space-between',
-  },
-  profileIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#f0f0f0',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    flex: 1,
-    textAlign: 'center',
-  },
-  profileButton: {
-    padding: 4,
   },
   scrollView: {
     flex: 1,
