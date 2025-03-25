@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl, TouchableOpacity, Dimensions, Image, Text as RNText, Modal, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, StyleSheet, ScrollView, RefreshControl, TouchableOpacity, Dimensions, Image, Text as RNText, Modal, TextInput, KeyboardAvoidingView, Platform, BackHandler } from 'react-native';
 import { Text, Appbar, Divider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -16,6 +16,22 @@ export default function HomeScreen() {
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   
+  // Handle hardware back button to prevent navigation to (tabs)
+  useEffect(() => {
+    const backAction = () => {
+      // Exit the app instead of navigating back to prevent going to (tabs)
+      BackHandler.exitApp();
+      return true; // Prevents default back behavior
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
+  
   // Handle pull-to-refresh action
   const onRefresh = () => {
     setRefreshing(true);
@@ -24,6 +40,14 @@ export default function HomeScreen() {
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
+  };
+
+  // Handle navigation to profile
+  const navigateToProfile = () => {
+    router.push({
+      pathname: '/(app)/(drawer)/profile',
+      params: { source: 'tab' }
+    });
   };
 
   // Function to navigate to different sections
@@ -51,6 +75,9 @@ export default function HomeScreen() {
           <Ionicons name="person" size={24} color="black" />
         </View>
         <Text style={styles.headerTitle}>DHENU</Text>
+        <TouchableOpacity onPress={navigateToProfile} style={styles.profileButton}>
+          <Ionicons name="person-circle-outline" size={28} color="#4C6EF5" />
+        </TouchableOpacity>
       </View>
       <Divider />
 
@@ -146,6 +173,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     backgroundColor: '#FFFFFF',
+    justifyContent: 'space-between',
   },
   profileIcon: {
     width: 36,
@@ -154,12 +182,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
+    flex: 1,
+    textAlign: 'center',
+  },
+  profileButton: {
+    padding: 4,
   },
   scrollView: {
     flex: 1,

@@ -1,7 +1,7 @@
 import { useSession } from "@/context";
-import React from "react";
-import { View, StyleSheet, Pressable, TouchableOpacity } from "react-native";
-import { router } from "expo-router";
+import React, { useEffect } from "react";
+import { View, StyleSheet, Pressable, TouchableOpacity, BackHandler } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { LinearGradient } from "expo-linear-gradient";
@@ -12,6 +12,29 @@ const ProfileScreen = () => {
   // Hooks
   // ============================================================================
   const { signOut, user } = useSession();
+  const params = useLocalSearchParams();
+  const source = params.source as string || ''; // Get the source route parameter
+
+  // Handle hardware back button to navigate to the correct screen
+  useEffect(() => {
+    const backAction = () => {
+      if (source === 'tab') {
+        // Navigate back to (tab) index
+        router.replace('/(app)/(drawer)/(tab)');
+        return true; // Prevents default back behavior
+      }
+      
+      // Default back behavior for other sources
+      return false;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [source]);
 
   // ============================================================================
   // Handlers
@@ -23,6 +46,17 @@ const ProfileScreen = () => {
   const handleLogout = async () => {
     await signOut();
     router.replace("/sign-in");
+  };
+
+  /**
+   * Handles the back button press
+   */
+  const handleBack = () => {
+    if (source === 'tab') {
+      router.replace('/(app)/(drawer)/(tab)');
+    } else {
+      router.back();
+    }
   };
 
   // ============================================================================
@@ -42,8 +76,11 @@ const ProfileScreen = () => {
   
   return (
     <ThemedView style={styles.container} lightColor="#ffffff" darkColor="#ffffff">
-      {/* Profile Header */}
+      {/* Profile Header with Back Button */}
       <View style={styles.profileHeader}>
+        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color="#8B5CF6" />
+        </TouchableOpacity>
         <View style={styles.profileIcon}>
           <Ionicons name="person" size={40} color="#8B5CF6" />
         </View>
@@ -169,7 +206,13 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: '600',
     fontSize: 16,
-  }
+  },
+  backButton: {
+    position: 'absolute',
+    left: 0,
+    top: 24,
+    padding: 8,
+  },
 });
 
 export default ProfileScreen;
