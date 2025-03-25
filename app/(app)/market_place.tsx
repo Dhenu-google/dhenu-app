@@ -9,17 +9,29 @@ import {
   Text,
   Button,
   Alert,
+  TextInput,
+  ScrollView,
 } from "react-native";
-import { collection, getDocs, getFirestore, query, orderBy } from "firebase/firestore";
+import { collection, getDocs, getFirestore, query, orderBy, doc, updateDoc, arrayUnion, increment } from "firebase/firestore";
 import { getAuth, User } from "firebase/auth"; // Import Firebase Auth
 import app from "@/lib/firebase-config";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native"; // Import navigation hook
 import { DB_API_URL } from "@/config";
+import { LinearGradient } from 'expo-linear-gradient';
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
 
 // Initialize Firestore and Auth
 const db = getFirestore(app);
 const auth = getAuth(app);
+
+interface Enquiry {
+  name: string;
+  contact: string;
+  message: string;
+  createdAt: string;
+}
 
 interface Product {
   id: string;
@@ -29,7 +41,8 @@ interface Product {
   location?: string;
   enquiries: number;
   createdAt: any;
-  userId: string; // Add userId field
+  userId: string;
+  enquiryList?: Enquiry[]; // Add this field
 }
 
 export default function MarketPlace() {
@@ -43,6 +56,12 @@ export default function MarketPlace() {
   
   const [seller, setSeller] = useState<Seller | null>(null); // Use custom Seller type
   const [modalVisible, setModalVisible] = useState(false);
+  const [enquiryForm, setEnquiryForm] = useState({
+    name: '',
+    contact: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigation = useNavigation(); // Use navigation hook for back navigation
 
   // Fetch all products from Firestore
@@ -118,13 +137,53 @@ export default function MarketPlace() {
     setSeller(null);
   };
 
+  const handleEnquirySubmit = async () => {
+    if (!selectedProduct || !seller) return;
+
+    if (!enquiryForm.name.trim() || !enquiryForm.contact.trim() || !enquiryForm.message.trim()) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const productRef = doc(db, "products", selectedProduct.id);
+      const newEnquiry = {
+        name: enquiryForm.name,
+        contact: enquiryForm.contact,
+        message: enquiryForm.message,
+        createdAt: new Date().toISOString(),
+      };
+
+      // Update the product document with the new enquiry and increment the enquiries count
+      await updateDoc(productRef, {
+        enquiryList: arrayUnion(newEnquiry),
+        enquiries: increment(1)
+      });
+
+      Alert.alert('Success', 'Your enquiry has been sent to the seller');
+      setEnquiryForm({ name: '', contact: '', message: '' });
+      
+      // Refresh the products list to show updated enquiry count
+      fetchProducts();
+    } catch (error) {
+      console.error('Error sending enquiry:', error);
+      Alert.alert(
+        'Error', 
+        'Failed to send enquiry. Please check your connection and try again.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   // Render loading state
   if (loading) {
     return (
-      <View style={styles.container}>
+      <ThemedView style={styles.container}>
         <ActivityIndicator size="large" color="#8B5CF6" />
-        <Text style={styles.loadingText}>Loading products...</Text>
-      </View>
+        <ThemedText style={styles.loadingText}>Loading products...</ThemedText>
+      </ThemedView>
     );
   }
 
@@ -132,12 +191,14 @@ export default function MarketPlace() {
   const renderProduct = ({ item }: { item: Product }) => (
     <TouchableOpacity style={styles.productCard} onPress={() => handleProductPress(item)}>
       <View style={styles.productInfo}>
-        <Text style={styles.productName}>{item.name}</Text>
-        <Text style={styles.category}>{item.category}</Text>
+        <ThemedText style={styles.productName}>{item.name}</ThemedText>
+        <View style={styles.categoryChip}>
+          <ThemedText style={styles.categoryText}>{item.category}</ThemedText>
+        </View>
         {item.location && (
           <View style={styles.locationContainer}>
             <Ionicons name="location" size={16} color="#4C6EF5" />
-            <Text style={styles.locationText}>{item.location}</Text>
+            <ThemedText style={styles.locationText}>{item.location}</ThemedText>
           </View>
         )}
       </View>
@@ -145,14 +206,16 @@ export default function MarketPlace() {
   );
 
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color="#4C6EF5" />
-        <Text style={styles.backButtonText}>Back</Text>
+        <Ionicons name="arrow-back" size={24} color="#8B5CF6" />
+        <ThemedText style={styles.backButtonText}>Back</ThemedText>
       </TouchableOpacity>
 
-      <Text style={styles.title}>Marketplace</Text>
+      <ThemedText style={styles.title}>Marketplace</ThemedText>
+      <View style={styles.separator} />
+      <ThemedText style={styles.subheading}>Products</ThemedText>
       <FlatList
         data={products}
         keyExtractor={(item) => item.id}
@@ -171,41 +234,91 @@ export default function MarketPlace() {
           <View style={styles.modalContent}>
             {/* Back Button in Modal */}
             <TouchableOpacity style={styles.backButton} onPress={closeModal}>
-              <Ionicons name="arrow-back" size={24} color="#4C6EF5" />
-              <Text style={styles.backButtonText}>Back</Text>
+              <Ionicons name="arrow-back" size={24} color="#8B5CF6" />
+              <ThemedText style={styles.backButtonText}>Back</ThemedText>
             </TouchableOpacity>
 
             {selectedProduct && (
               <>
-                <Text style={styles.modalTitle}>{selectedProduct.name}</Text>
-                <Text style={styles.modalCategory}>Category: {selectedProduct.category}</Text>
+                <ThemedText style={styles.modalTitle}>{selectedProduct.name}</ThemedText>
+                <View style={styles.categoryChip}>
+                  <ThemedText style={styles.categoryText}>{selectedProduct.category}</ThemedText>
+                </View>
                 {selectedProduct.description && (
-                  <Text style={styles.modalDescription}>
-                    Description: {selectedProduct.description}
-                  </Text>
+                  <ThemedText style={styles.modalDescription}>
+                    {selectedProduct.description}
+                  </ThemedText>
                 )}
                 {selectedProduct.location && (
-                  <Text style={styles.modalLocation}>Location: {selectedProduct.location}</Text>
+                  <View style={styles.locationContainer}>
+                    <Ionicons name="location" size={16} color="#4C6EF5" />
+                    <ThemedText style={styles.locationText}>{selectedProduct.location}</ThemedText>
+                  </View>
                 )}
-                <Text style={styles.modalEnquiries}>
-                  Enquiries: {selectedProduct.enquiries}
-                </Text>
+                <View style={styles.enquiryContainer}>
+                  <ThemedText style={styles.enquiryCount}>{selectedProduct.enquiries}</ThemedText>
+                  <ThemedText style={styles.enquiryText}>people have shown interest</ThemedText>
+                </View>
               </>
             )}
 
             {seller ? (
               <>
-                <Text style={styles.modalSellerTitle}>Seller Information</Text>
-                <Text style={styles.modalSellerInfo}>Name: {seller.displayName || "N/A"}</Text>
-                <Text style={styles.modalSellerInfo}>Email: {seller.email || "N/A"}</Text>
+                <ThemedText style={styles.modalSellerTitle}>Seller Information</ThemedText>
+                <ThemedText style={styles.modalSellerInfo}>Name: {seller.displayName || "N/A"}</ThemedText>
+                <ThemedText style={styles.modalSellerInfo}>Email: {seller.email || "N/A"}</ThemedText>
+                
+                <View style={styles.enquiryForm}>
+                  <ThemedText style={styles.enquiryTitle}>Send Enquiry</ThemedText>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Your Name"
+                    placeholderTextColor="#666"
+                    value={enquiryForm.name}
+                    onChangeText={(text) => setEnquiryForm(prev => ({ ...prev, name: text }))}
+                  />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Contact Number"
+                    placeholderTextColor="#666"
+                    value={enquiryForm.contact}
+                    onChangeText={(text) => setEnquiryForm(prev => ({ ...prev, contact: text }))}
+                    keyboardType="phone-pad"
+                  />
+                  <TextInput
+                    style={[styles.input, styles.messageInput]}
+                    placeholder="Your Message"
+                    placeholderTextColor="#666"
+                    value={enquiryForm.message}
+                    onChangeText={(text) => setEnquiryForm(prev => ({ ...prev, message: text }))}
+                    multiline
+                    numberOfLines={4}
+                  />
+                  <TouchableOpacity 
+                    style={[styles.sendButton, isSubmitting && styles.sendButtonDisabled]}
+                    onPress={handleEnquirySubmit}
+                    disabled={isSubmitting}
+                  >
+                    <LinearGradient
+                      colors={['#FF4B4B', '#FF0000']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      style={styles.gradientButton}
+                    >
+                      <ThemedText style={styles.sendButtonText}>
+                        {isSubmitting ? 'Sending...' : 'Send Enquiry'}
+                      </ThemedText>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                </View>
               </>
             ) : (
-              <Text style={styles.modalSellerInfo}>Loading seller information...</Text>
+              <ThemedText style={styles.modalSellerInfo}>Loading seller information...</ThemedText>
             )}
           </View>
         </View>
       </Modal>
-    </View>
+    </ThemedView>
   );
 }
 
@@ -222,15 +335,26 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: 16,
-    color: "#4C6EF5",
+    color: "#8B5CF6",
     marginLeft: 8,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
+    marginBottom: 8,
+    textAlign: "left",
+    color: "#8B5CF6",
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#E5E7EB',
     marginBottom: 16,
-    textAlign: "center",
-    color: "#222",
+  },
+  subheading: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#4B5563",
+    marginBottom: 12,
   },
   loadingText: {
     marginTop: 16,
@@ -243,7 +367,7 @@ const styles = StyleSheet.create({
   },
   productCard: {
     backgroundColor: "#F9F9F9",
-    borderRadius: 8,
+    borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     shadowColor: "#000",
@@ -258,20 +382,28 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 18,
     fontWeight: "600",
-    marginBottom: 4,
+    marginBottom: 8,
     color: "#111",
   },
-  category: {
-    fontSize: 14,
-    color: "#444",
+  categoryChip: {
+    backgroundColor: 'rgba(76, 110, 245, 0.1)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    alignSelf: 'flex-start',
     marginBottom: 8,
+  },
+  categoryText: {
+    color: '#4C6EF5',
+    fontSize: 14,
+    fontWeight: '500',
   },
   locationContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
   locationText: {
-    fontSize: 13,
+    fontSize: 14,
     color: "#333",
     marginLeft: 4,
   },
@@ -284,43 +416,86 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: "white",
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 12,
     width: "90%",
-    alignItems: "center",
+    maxHeight: "90%",
   },
   modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  modalCategory: {
-    fontSize: 16,
-    marginBottom: 10,
+    fontSize: 24,
+    fontWeight: "700",
+    marginBottom: 8,
+    color: "#222",
   },
   modalDescription: {
-    fontSize: 14,
-    marginBottom: 10,
-    color: "#555",
-  },
-  modalLocation: {
-    fontSize: 14,
-    marginBottom: 10,
-    color: "#555",
-  },
-  modalEnquiries: {
-    fontSize: 14,
-    marginBottom: 10,
-    color: "#555",
+    fontSize: 16,
+    lineHeight: 24,
+    color: "#333",
+    marginBottom: 16,
   },
   modalSellerTitle: {
     fontSize: 18,
     fontWeight: "bold",
     marginTop: 20,
     marginBottom: 10,
+    color: "#222",
   },
   modalSellerInfo: {
     fontSize: 14,
     marginBottom: 5,
     color: "#555",
+  },
+  enquiryForm: {
+    width: '100%',
+    marginTop: 20,
+  },
+  enquiryTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    color: '#222',
+  },
+  input: {
+    backgroundColor: '#F8F9FA',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    fontSize: 16,
+    color: '#333',
+  },
+  messageInput: {
+    height: 100,
+    textAlignVertical: 'top',
+  },
+  sendButton: {
+    borderRadius: 8,
+    overflow: 'hidden',
+    marginTop: 10,
+  },
+  gradientButton: {
+    padding: 15,
+    alignItems: 'center',
+  },
+  sendButtonDisabled: {
+    opacity: 0.7,
+  },
+  sendButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  enquiryContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  enquiryCount: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#4C6EF5',
+    marginRight: 8,
+  },
+  enquiryText: {
+    fontSize: 16,
+    color: '#333',
   },
 });
