@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -11,6 +11,7 @@ export default function StrayCows() {
   const [image, setImage] = useState<string | null>(null);
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [address, setAddress] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false); // Loading state
 
   // Fetch user location and convert it to a human-readable address
   const fetchLocation = async () => {
@@ -112,6 +113,8 @@ export default function StrayCows() {
       return;
     }
 
+    setLoading(true); // Start loading
+
     try {
       // Upload the image to Firebase Storage
       const response = await fetch(image);
@@ -146,6 +149,8 @@ export default function StrayCows() {
     } catch (error) {
       console.error("Error submitting data:", error);
       Alert.alert("Error", "Failed to submit data. Please try again.");
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -181,9 +186,13 @@ export default function StrayCows() {
       {address && <Text style={styles.addressText}>Address: {address}</Text>}
 
       {/* Submit Button */}
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitButtonText}>Submit</Text>
-      </TouchableOpacity>
+      {loading ? (
+        <ActivityIndicator size="large" color="#4CAF50" /> // Show loading spinner
+      ) : (
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <Text style={styles.submitButtonText}>Submit</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
