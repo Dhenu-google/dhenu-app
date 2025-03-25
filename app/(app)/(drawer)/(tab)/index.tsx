@@ -60,10 +60,10 @@ export default function HomeScreen() {
       router.push('/(app)/stray-cows');
     } else if (section === 'marketplace') {
       // Navigate to product listing page
-      router.push('/(app)/add-product');
+      router.push('/(app)/market_place');
     } else if (section === 'dhenuai') {
       // Show chatbot or navigate to AI section
-      router.push('/(app)');
+      router.push('/network');
     }
   };
 
