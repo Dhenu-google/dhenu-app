@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "@/lib/firebase-config"; // Adjust the path as needed
+import { getAuth } from "firebase/auth";
+import { getFirestore, collection, addDoc, Timestamp } from "firebase/firestore";
 
 export default function StrayCows() {
   const [image, setImage] = useState<string | null>(null);
@@ -94,16 +98,55 @@ export default function StrayCows() {
     }
   };
 
-  const handleSubmit = () => {
-    if (!image || !location) {
-      Alert.alert('Error', 'Please upload or take a picture and ensure location is available.');
+  const handleSubmit = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      Alert.alert("Error", "You must be logged in to upload an image.");
       return;
     }
 
-    Alert.alert('Success', 'Form submitted successfully!');
-    console.log('Image:', image);
-    console.log('Location:', location);
-    console.log('Address:', address);
+    if (!image || !location) {
+      Alert.alert("Error", "Please upload or take a picture and ensure location is available.");
+      return;
+    }
+
+    try {
+      // Upload the image to Firebase Storage
+      const response = await fetch(image);
+      const blob = await response.blob();
+      const filename = `stray-cows/${user.uid}/${Date.now()}.jpg`; // Unique filename per user
+      const storageRef = ref(storage, filename);
+
+      await uploadBytes(storageRef, blob);
+      const imageUrl = await getDownloadURL(storageRef);
+
+      // Save metadata to Firestore
+      const db = getFirestore();
+      const metadata = {
+        imageUrl,
+        location, // { latitude, longitude }
+        address,
+        timestamp: Timestamp.now(),
+        userId: user.uid, // Associate the image with the logged-in user
+      };
+
+      await addDoc(collection(db, "strayCows"), metadata);
+
+      Alert.alert("Success", "Image and location saved successfully!");
+      console.log("Image URL:", imageUrl);
+      console.log("Location:", location);
+      console.log("Address:", address);
+
+      // Reset the form
+      setImage(null);
+      setLocation(null);
+      setAddress(null);
+    } catch (error) {
+      console.error("Error submitting data:", error);
+      Alert.alert("Error", "Failed to submit data. Please try again.");
+    }
   };
 
   return (
