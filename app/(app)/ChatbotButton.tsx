@@ -66,19 +66,6 @@ const LANGUAGE_MAP: { [key: string]: string } = {
   "bho": "Bhojpuri",
 };
 
-/**
- * Detects the language of a given text using a language detection library.
- *
- * @param text - The input text whose language needs to be detected.
- * @returns The detected language as a string. If the language cannot be detected,
- * defaults to "English".
- */
-const detectLanguage = (text:string ):string => {
-  const langCode :string = franc(text);
-  const detectedLanguage = LANGUAGE_MAP[langCode];
-  return detectedLanguage || "English";
-}
-
 const normalizeTopics = (topics: string[]): string[] => {
   const mapping: { [key: string]: string } = {
     "general": "general",
@@ -246,6 +233,27 @@ const updateStateFromQuery = (query: string, conversationState: { currentBreed: 
   }
 };
 
+const detectLanguageByUTF = (text: string): string => {
+  // Define UTF-8 character ranges for each language
+  const languageRanges: { [key: string]: RegExp } = {
+    Hindi: /[\u0900-\u097F]/, // Devanagari script
+    Marathi: /[\u0900-\u097F]/, // Devanagari script (same as Hindi)
+    Kannada: /[\u0C80-\u0CFF]/, // Kannada script
+    Bengali: /[\u0980-\u09FF]/, // Bengali script
+    English: /[a-zA-Z]/, // Latin script
+  };
+
+  // Check the text against each language's character range
+  for (const [language, regex] of Object.entries(languageRanges)) {
+    if (regex.test(text)) {
+      return language;
+    }
+  }
+
+  // Default to "Unknown" if no match is found
+  return "Unknown";
+};
+
 
 const constructPrompt = (
   cowBreed: string,
@@ -392,6 +400,13 @@ Provide comprehensive information on common diseases, symptoms, treatments, and 
     }
   }
 
+  const detectedLanguage = detectLanguageByUTF(userQuery);
+  if (detectedLanguage !== "Unknown") {
+    selectedPrompts.push(`
+### Language Preference:
+The user prefers responses in ${detectedLanguage}. Please provide the answer in ${detectedLanguage}.
+`);
+  }
 
   return selectedPrompts.join("\n");
 };

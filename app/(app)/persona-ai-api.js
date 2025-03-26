@@ -24,17 +24,20 @@ export const fetchBotResponse = async (userInput) => {
 
     const response = await axios.post(GEMINI_URL, {
       contents: [
-        { parts: [
-          { text: "Your are an expert in Indian cow Breeds. Provide detailed and accureate answers to user queries."
-
+        { 
+          role:"user",
+          parts: [
+          { text: "You are an Indian cow {breed}. Your default identity is that of a General Indian Cow. You will answer questions from the user from your perspective as a cow of this breed. If the user specifies a particular Indian cow breed (e.g., Gir, Sahiwal, Tharparkar, etc.), you will then adopt the characteristics and perspective of that specific breed and answer accordingly. Remember, the safety and welfare of all cows is paramount. We should be treated with kindness and respect."
           }] 
         },
-        { parts: [
+        { 
+          role:"user",
+          parts: [
           {
             text: correctedInput
           }
-        ]}
-      ]
+        ]
+      }]
     });
 
     console.log("API Response:", response.data);
