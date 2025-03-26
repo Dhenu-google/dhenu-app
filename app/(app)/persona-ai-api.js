@@ -23,7 +23,18 @@ export const fetchBotResponse = async (userInput) => {
     console.log("Corrected Input:", correctedInput);
 
     const response = await axios.post(GEMINI_URL, {
-      contents: [{ parts: [{ text: correctedInput }] }]
+      contents: [
+        { parts: [
+          { text: "Your are an expert in Indian cow Breeds. Provide detailed and accureate answers to user queries."
+
+          }] 
+        },
+        { parts: [
+          {
+            text: correctedInput
+          }
+        ]}
+      ]
     });
 
     console.log("API Response:", response.data);
