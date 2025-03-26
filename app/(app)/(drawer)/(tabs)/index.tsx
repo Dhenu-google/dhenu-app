@@ -251,6 +251,15 @@ export default function Dashboard() {
       // Reset the form and close the modal
       setNewCowForm(initialFormState);
       setFormVisible(false);
+
+      // Refresh the breeds list
+      if (user?.uid) {
+        const breedsResponse = await fetch(`${DB_API_URL}/get_cow_breeds_owned/${user.uid}`);
+        if (breedsResponse.ok) {
+          const breedsData = await breedsResponse.json();
+          setBreedsOwned(breedsData);
+        }
+      }
   
       // Optionally, refresh the cow list or update the UI
       alert('Cow added successfully!');
