@@ -4,6 +4,7 @@ import { SessionProvider, useSession } from "@/context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 // Import your global CSS file
 import "../global.css";
+import '@/lib/i18n'; // Import i18n configuration
 
 /**
  * Root Layout is the highest-level layout in the app, wrapping all other layouts and screens.

@@ -6,8 +6,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { LinearGradient } from "expo-linear-gradient";
+import { useTranslation } from "react-i18next";
 
 export default function MarketplaceScreen() {
+  const { t } = useTranslation();
   const { products, loading } = useContext(ProductsContext);
 
   const handleProductPress = (product: Product) => {
@@ -23,11 +25,11 @@ export default function MarketplaceScreen() {
     return (
       <ThemedView style={styles.container}>
         <View style={styles.header}>
-          <ThemedText type="title" style={styles.title}>Marketplace</ThemedText>
+          <ThemedText type="title" style={styles.title}>{t('marketplace.title', 'Marketplace')}</ThemedText>
         </View>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#8B5CF6" />
-          <ThemedText style={styles.loadingText}>Loading products...</ThemedText>
+          <ThemedText style={styles.loadingText}>{t('common.loading', 'Loading products...')}</ThemedText>
         </View>
       </ThemedView>
     );
@@ -36,11 +38,11 @@ export default function MarketplaceScreen() {
   return (
     <ThemedView style={styles.container}>
       <View style={styles.header}>
-        <ThemedText type="title" style={styles.title}>Marketplace</ThemedText>
+        <ThemedText type="title" style={styles.title}>{t('marketplace.title', 'Marketplace')}</ThemedText>
       </View>
       
       <View style={styles.contentContainer}>
-        <ThemedText type="subtitle" style={styles.subtitle}>MY LISTED PRODUCTS</ThemedText>
+        <ThemedText type="subtitle" style={styles.subtitle}>{t('marketplace.myListings', 'MY LISTED PRODUCTS')}</ThemedText>
 
         <FlatList
           data={products}
@@ -66,15 +68,15 @@ export default function MarketplaceScreen() {
               
               <View style={styles.enquiryContainer}>
                 <ThemedText style={styles.enquiryCount}>{item.enquiries}</ThemedText>
-                <ThemedText style={styles.enquiryLabel}>Enquiries</ThemedText>
+                <ThemedText style={styles.enquiryLabel}>{t('marketplace.listings', 'Enquiries')}</ThemedText>
               </View>
             </TouchableOpacity>
           )}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Ionicons name="basket-outline" size={60} color="#ccc" />
-              <ThemedText style={styles.emptyText}>No products listed yet.</ThemedText>
-              <ThemedText style={styles.emptySubtext}>Add your first product to the marketplace</ThemedText>
+              <ThemedText style={styles.emptyText}>{t('marketplace.noListings', 'No products listed yet.')}</ThemedText>
+              <ThemedText style={styles.emptySubtext}>{t('marketplace.postListing', 'Add your first product to the marketplace')}</ThemedText>
             </View>
           }
         />
@@ -90,7 +92,7 @@ export default function MarketplaceScreen() {
             style={styles.gradientButton}
           >
             <Ionicons name="add" size={20} color="#fff" />
-            <ThemedText style={styles.addButtonText}>ADD NEW PRODUCT</ThemedText>
+            <ThemedText style={styles.addButtonText}>{t('marketplace.postListing', 'ADD NEW PRODUCT')}</ThemedText>
           </LinearGradient>
         </TouchableOpacity>
       </View>

@@ -14,6 +14,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Picker } from '@react-native-picker/picker';
 import { DB_API_URL } from '@/config';
 import NotificationsModal from '@/app/(app)/notifications'; // Import the NotificationsModal component
+import { useTranslation } from 'react-i18next'; // Import for translations
+import { translateText } from '@/lib/i18n/translateAPI'; // Import dynamic translation function
 
 // Define cow data structure
 interface CowStatus {
@@ -73,6 +75,7 @@ const breedOrigins: Record<string, string> = {
 };
 
 export default function Dashboard() {
+  const { t } = useTranslation();
   const [refreshing, setRefreshing] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
   const [newCowForm, setNewCowForm] = useState<NewCowForm>(initialFormState);
@@ -140,9 +143,9 @@ export default function Dashboard() {
     }
 };
 
-  // Format timestamp for display
+  // Modified to use translations for timestamps
   const formatTimestamp = (timestamp: Date | null) => {
-    if (!timestamp) return 'Never';
+    if (!timestamp) return t('common.never', 'Never');
     return format(timestamp, 'h:mm a');
   };
 
@@ -286,7 +289,7 @@ export default function Dashboard() {
       >
         <View style={styles.formContainer}>
           <View style={styles.formHeader}>
-            <Text style={styles.formTitle}>Add New Cow</Text>
+            <Text style={styles.formTitle}>{t('cow.addNew', 'Add New Cow')}</Text>
             <TouchableOpacity onPress={() => setFormVisible(false)}>
               <Ionicons name="close-circle" size={24} color="#333" />
             </TouchableOpacity>
@@ -294,21 +297,21 @@ export default function Dashboard() {
 
           <ScrollView style={styles.formScrollView}>
             <View style={styles.formField}>
-              <Text style={styles.fieldLabel}>Name *</Text>
+              <Text style={styles.fieldLabel}>{t('cow.name', 'Name')} *</Text>
               <TextInput
                 style={[styles.textInput, formErrors.name ? styles.inputError : null]}
                 value={newCowForm.name}
                 onChangeText={(text) => handleFormChange('name', text)}
-                placeholder="Cow name"
+                placeholder={t('cow.enterName', 'Cow name')}
                 placeholderTextColor="#777"
               />
               {formErrors.name && <Text style={styles.errorText}>{formErrors.name}</Text>}
             </View>
-
+            
             <View style={styles.formField}>
-              <Text style={styles.fieldLabel}>Breed *</Text>
+              <Text style={styles.fieldLabel}>{t('cow.breed', 'Breed')} *</Text>
               {loadingBreeds ? (
-                <Text>Loading breeds...</Text>
+                <Text>{t('common.loading', 'Loading breeds...')}</Text>
               ) : (
                 <Picker
                   selectedValue={newCowForm.breed}
@@ -317,7 +320,7 @@ export default function Dashboard() {
                   }}
                   style={styles.picker}
                 >
-                  <Picker.Item label="Select a breed" value="" />
+                  <Picker.Item label={t('cow.selectBreed', 'Select a breed')} value="" />
                   {breeds.map((breed, index) => (
                     <Picker.Item key={index} label={breed} value={breed} />
                   ))}
@@ -325,51 +328,51 @@ export default function Dashboard() {
               )}
               {formErrors.breed && <Text style={styles.errorText}>{formErrors.breed}</Text>}
             </View>
-
+            
             <View style={styles.formField}>
-              <Text style={styles.fieldLabel}>Origin</Text>
+              <Text style={styles.fieldLabel}>{t('cow.origin', 'Origin')}</Text>
               <TextInput
                 style={styles.textInput}
                 value={newCowForm.origin}
                 onChangeText={(text) => handleFormChange('origin', text)}
-                placeholder="Region/Country of origin"
+                placeholder={t('cow.enterOrigin', 'Region/Country of origin')}
                 placeholderTextColor="#777"
               />
             </View>
 
             <View style={styles.formField}>
-              <Text style={styles.fieldLabel}>Age (years)</Text>
+              <Text style={styles.fieldLabel}>{t('cow.age', 'Age')} ({t('cow.years', 'years')})</Text>
               <TextInput
                 style={[styles.textInput, formErrors.age ? styles.inputError : null]}
                 value={newCowForm.age}
                 onChangeText={(text) => handleFormChange('age', text)}
-                placeholder="Cow age"
+                placeholder={t('cow.enterAge', 'Cow age')}
                 keyboardType="numeric"
                 placeholderTextColor="#777"
               />
               {formErrors.age && <Text style={styles.errorText}>{formErrors.age}</Text>}
             </View>
-
+            
             <View style={styles.formField}>
-              <Text style={styles.fieldLabel}>Weight (lbs)</Text>
+              <Text style={styles.fieldLabel}>{t('cow.weight', 'Weight')} (kg)</Text>
               <TextInput
                 style={[styles.textInput, formErrors.weight ? styles.inputError : null]}
                 value={newCowForm.weight}
                 onChangeText={(text) => handleFormChange('weight', text)}
-                placeholder="Cow weight"
+                placeholder={t('cow.enterWeight', 'Cow weight')}
                 keyboardType="numeric"
                 placeholderTextColor="#777"
               />
               {formErrors.weight && <Text style={styles.errorText}>{formErrors.weight}</Text>}
             </View>
-
+            
             <View style={styles.formField}>
-              <Text style={styles.fieldLabel}>Height (cm)</Text>
+              <Text style={styles.fieldLabel}>{t('cow.height', 'Height')} (cm)</Text>
               <TextInput
                 style={[styles.textInput, formErrors.height ? styles.inputError : null]}
                 value={newCowForm.height}
                 onChangeText={(text) => handleFormChange('height', text)}
-                placeholder="Cow height"
+                placeholder={t('cow.enterHeight', 'Cow height')}
                 keyboardType="numeric"
                 placeholderTextColor="#777"
               />
@@ -377,12 +380,12 @@ export default function Dashboard() {
             </View>
 
             <View style={styles.formField}>
-              <Text style={styles.fieldLabel}>Daily Milk Yield (gal/day)</Text>
+              <Text style={styles.fieldLabel}>{t('cow.milkYield', 'Daily Milk Yield')} (L/day)</Text>
               <TextInput
                 style={[styles.textInput, formErrors.milkYield ? styles.inputError : null]}
                 value={newCowForm.milkYield}
                 onChangeText={(text) => handleFormChange('milkYield', text)}
-                placeholder="Daily milk production"
+                placeholder={t('cow.enterMilkYield', 'Daily milk production')}
                 keyboardType="numeric"
                 placeholderTextColor="#777"
               />
@@ -395,7 +398,7 @@ export default function Dashboard() {
                 onPress={handleAddCow}
                 style={styles.submitButton}
               >
-                Add Cow
+                {t('cow.add', 'Add Cow')}
               </Button>
             </View>
           </ScrollView>
@@ -767,54 +770,56 @@ useEffect(() => {
     return null;
   };
 
+  // Helper function for dynamic translation
+  const translateDynamicContent = async (text: string) => {
+    if (!text) return '';
+    try {
+      // Translate dynamic content like API responses
+      return await translateText(text);
+    } catch (error) {
+      console.error('Translation error:', error);
+      return text; // Fall back to original text
+    }
+  };
+
   return (
     <ThemedView style={styles.container} lightColor="#ffffff" darkColor="#ffffff">
-      {/* Dashboard Header */}
-      <View style={styles.header}>
-        {viewMode !== 'breeds' && (
-          <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="#8B5CF6" />
+      <SafeAreaView style={{ flex: 1 }}>
+        {/* Header with notifications */}
+        <View style={styles.headerContainer}>
+          <RNText style={styles.welcomeText}>
+            {t('common.welcome', 'Welcome')}, {user?.displayName || t('common.user', 'User')}
+          </RNText>
+          <TouchableOpacity 
+            style={styles.notificationButton}
+            onPress={() => setNotificationsVisible(true)}
+          >
+            <Ionicons name="notifications" size={24} color="#333" />
           </TouchableOpacity>
-        )}
-        <ThemedText type="title" style={styles.title}>
-          {viewMode === 'breeds' ? 'Dashboard' : 
-           viewMode === 'animals' ? selectedBreed : 
-           selectedAnimal?.name}
-        </ThemedText>
+        </View>
 
-        {/* Notifications Button */}
-        <TouchableOpacity
-          onPress={() => setNotificationsVisible(true)}
-          style={styles.notificationsButton}
+        {/* Dashboard content */}
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         >
-          <Ionicons name="notifications-outline" size={24} color="#8B5CF6" />
-        </TouchableOpacity>
-      </View>
+          {renderContent()}
+        </ScrollView>
 
-      <ScrollView
-        style={styles.scrollView}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        {renderContent()}
-      </ScrollView>
+        {/* Chatbot Button */}
+        <ChatbotButton />
 
-      <View style={styles.bottomNav}></View>
-      <View style={styles.bottomDivider}></View>
-
-      <ChatbotButton />
-
-      {/* Render add cow form modal */}
-      {renderAddCowForm()}
-
-      {/* Notifications Modal */}
-      {notificationsVisible && (
+        {/* Notifications Modal */}
         <NotificationsModal 
           modalVisible={notificationsVisible} 
-          setModalVisible={setNotificationsVisible} 
+          setModalVisible={setNotificationsVisible}
         />
-      )}
+
+        {/* Add cow form modal */}
+        {formVisible && renderAddCowForm()}
+      </SafeAreaView>
     </ThemedView>
   );
 }
@@ -823,6 +828,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 16,
+    paddingBottom: 10,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  welcomeText: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: '#8B5CF6', // Lavender color
+  },
+  notificationButton: {
+    position: 'absolute',
+    right: 20, // Align to the right
+    top: 16, // Align vertically with the header
+  },
+  scrollContent: {
+    flex: 1,
+    paddingBottom: 80,
   },
   header: {
     flexDirection: 'row',
@@ -1215,5 +1243,53 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 20, // Align to the right
     top: 16, // Align vertically with the header
+  },
+  formModalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  formLabel: {
+    fontSize: 16,
+    marginBottom: 8,
+    fontWeight: '500',
+    color: '#333',
+  },
+  formInput: {
+    borderWidth: 1,
+    borderColor: '#999',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    color: '#000',
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#999',
+    borderRadius: 8,
+    padding: 12,
+  },
+  formButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  formButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#000',
+  },
+  cancelButton: {
+    backgroundColor: '#f5f5f5',
+  },
+  submitButton: {
+    backgroundColor: '#007AFF',
   },
 });
