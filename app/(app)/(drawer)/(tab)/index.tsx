@@ -10,11 +10,14 @@ import { format } from 'date-fns';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
+import MooAIChat from '@/app/(app)/persona-ai';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function HomeScreen() {
   const { user } = useSession();
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
+  const [isChatVisible, setIsChatVisible] = useState(false);
   
   
   // Handle pull-to-refresh action
@@ -132,8 +135,47 @@ export default function HomeScreen() {
         </View>
       </ScrollView>
       
-      {/* Tab Chatbot Button */}
-      <TabChatbotButton />
+      {/* Chatbot Button */}
+      <View style={styles.chatButtonContainer}>
+        <LinearGradient
+          colors={['rgba(218, 163, 255, 0.8)', 'rgba(151, 159, 250, 0.8)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.gradientBorder}
+        >
+          <TouchableOpacity
+            style={styles.chatButton}
+            onPress={() => setIsChatVisible(true)}
+            activeOpacity={0.8}
+          >
+            <View style={styles.buttonContent}>
+              <Text style={styles.buttonText}>Ask Moo AI</Text>
+              <TouchableOpacity
+                style={styles.micContainer}
+                onPress={(e) => e.stopPropagation()} // Prevent triggering the parent button
+              >
+                <Ionicons name="mic" size={22} color="white" />
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </LinearGradient>
+      </View>
+
+      {/* MooAIChat Modal */}
+      <Modal
+        visible={isChatVisible}
+        animationType="slide"
+        onRequestClose={() => setIsChatVisible(false)}
+        presentationStyle="pageSheet"
+      >
+        <SafeAreaView style={{ flex: 1 }}>
+          <Appbar.Header>
+            <Appbar.BackAction onPress={() => setIsChatVisible(false)} />
+            <Appbar.Content title="Moo AI Chat" />
+          </Appbar.Header>
+          <MooAIChat />
+        </SafeAreaView>
+      </Modal>
     </ThemedView>
   );
 }
@@ -216,6 +258,53 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
     color: '#FFFFFF',
+  },
+  chatButtonContainer: {
+    position: 'absolute',
+    bottom: 20,
+    left: 16,
+    right: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 56,
+  },
+  gradientBorder: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 28,
+    padding: 3.25, // Border thickness
+    shadowColor: 'rgba(218, 163, 255, 0.8)',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 12,
+    elevation: 10,
+  },
+  chatButton: {
+    flex: 1,
+    borderRadius: 27,
+    backgroundColor: 'white',
+    overflow: 'hidden',
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    height: '100%',
+  },
+  buttonText: {
+    flex: 1,
+    fontSize: 16,
+    color: '#666',
+  },
+  micContainer: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: '#8e79ee',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
   },
 });
 
