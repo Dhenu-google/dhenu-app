@@ -7,6 +7,7 @@ import { db } from '@/lib/firebase-config';
 import { getAuth } from 'firebase/auth';
 import Fuse from 'fuse.js';
 import {franc } from 'franc';
+import { DB_API_URL } from '@/config';
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const GOOGLE_GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
@@ -391,20 +392,8 @@ Provide comprehensive information on common diseases, symptoms, treatments, and 
     }
   }
 
-  if (selectedPrompts.length === 0) {
-    return "Sorry, I can only answer questions related to Indian cow breeds.";
-  }
 
-  const baseInstruction = `You are an expert in Indian cow breeds. Answer ONLY the following query in detail using the provided context.\nUser Question: ${userQuery}\n`;
-  const restrictionWarning = "I cannot provide information about cooking, eating, butchering, or any immoral intent against cows.";
-
-  return `${
-    topics.some((word) =>
-      ["cooking", "butchering", "beef", "eating", "juicy"].includes(word)
-    )
-      ? restrictionWarning
-      : ""
-  }\n${baseInstruction}\n` + selectedPrompts.join("\n");
+  return selectedPrompts.join("\n");
 };
 
 const isQueryEthicallyProblematic = (query: string): boolean => {
@@ -446,19 +435,28 @@ const generateResponse = async (
   const currentBreed = conversationState.currentBreed || cowBreed;
   const currentTopics = conversationState.currentTopics.length > 0 ? conversationState.currentTopics : topics;
 
-  // Detect the language of the user input
-  const language:string = detectLanguage(userInput);
-
-  // Construct the system prompt
-  const systemPrompt = constructPrompt(currentBreed, currentTopics, userInput);
+  // Construct the user prompt
+  const userPrompt = constructPrompt(currentBreed, currentTopics, userInput);
 
   try {
-    // Use the generative AI model to generate a response
-    const result = await model.generateContent(systemPrompt);
-    console.log("THE generated reponse : ", result.response.text());
-    return result.response.text(); // Return the generated response text
+    // Call the API to generate a response
+    const response = await fetch(`${DB_API_URL}/chat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ user_input: userPrompt }),
+    });
+
+    if (!response.ok) {
+      console.error('Error from API:', response.statusText);
+      return "Sorry, I couldn't process your request. Please try again.";
+    }
+
+    const data = await response.json();
+    return data.response || "Sorry, I couldn't process your request. Please try again.";
   } catch (error) {
-    console.error("Error generating response:", error);
+    console.error('Error generating response:', error);
     return "Sorry, I couldn't process your request. Please try again.";
   }
 };
@@ -899,4 +897,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-}); 
+});
