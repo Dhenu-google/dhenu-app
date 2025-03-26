@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useSession } from '@/context';
 import { Ionicons } from '@expo/vector-icons';
-import ChatbotButton from '@/components/ChatbotButton';
+import TabChatbotButton from '@/components/TabChatbotButton';
 import { format } from 'date-fns';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedView } from '@/components/ThemedView';
@@ -46,8 +46,8 @@ export default function HomeScreen() {
     } else if (section === 'marketplace') {
       // Navigate to product listing page
       router.push('/(app)/market_place');
-    } else if (section === 'dhenuai') {
-      // Show chatbot or navigate to AI section
+    } else if (section === 'network') {
+      // navigate to network page
       router.push('/network');
     }
   };
@@ -123,14 +123,17 @@ export default function HomeScreen() {
           >
             <View style={styles.cardContent}>
               <View style={styles.iconCircle}>
-                <Ionicons name="bulb-outline" size={30} color="#FFF" />
+                <Ionicons name="map-outline" size={30} color="#FFF" />
               </View>
-              <Text style={styles.cardTitle}>DhenuAI</Text>
-              <Text style={styles.cardDescription}>Learn more about cows</Text>
+              <Text style={styles.cardTitle}>Network</Text>
+              <Text style={styles.cardDescription}>Find Cows near you</Text>
             </View>
           </TouchableOpacity>
         </View>
       </ScrollView>
+      
+      {/* Tab Chatbot Button */}
+      <TabChatbotButton />
     </ThemedView>
   );
 }
