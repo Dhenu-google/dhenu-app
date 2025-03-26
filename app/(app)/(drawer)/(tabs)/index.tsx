@@ -121,16 +121,24 @@ export default function Dashboard() {
   };
 
   // Handle pull-to-refresh action
-  const onRefresh = () => {
+  const onRefresh = async () => {
     console.log('Refreshing data...');
     setRefreshing(true);
 
-    // Simulate a delay for refreshing
-    setTimeout(() => {
-      console.log('Data refreshed.');
-      setRefreshing(false);
-    }, 1000); // Simulate a 1-second refresh delay
-  };
+    try {
+        // Fetch the updated list of breeds owned
+        await fetchBreedsOwned();
+        console.log('Breeds owned refreshed.');
+    } catch (error) {
+        console.error('Error refreshing breeds owned:', error);
+    } finally {
+        // Simulate a delay for refreshing
+        setTimeout(() => {
+            console.log('Data refreshed.');
+            setRefreshing(false);
+        }, 1000); // Simulate a 1-second refresh delay
+    }
+};
 
   // Format timestamp for display
   const formatTimestamp = (timestamp: Date | null) => {
@@ -253,6 +261,8 @@ export default function Dashboard() {
       // Reset the form and close the modal
       setNewCowForm(initialFormState);
       setFormVisible(false);
+
+      await fetchBreedsOwned();
   
       // Optionally, refresh the cow list or update the UI
       alert('Cow added successfully!');
@@ -512,30 +522,31 @@ export default function Dashboard() {
     }
   }, [formVisible]);
 
-  useEffect(() => {
-    const fetchBreedsOwned = async () => {
-      if (!user?.uid) {
+  const fetchBreedsOwned = async () => {
+    if (!user?.uid) {
         console.error('User UID is not available');
         return;
-      }
-  
-      setLoadingBreedsOwned(true);
-      try {
+    }
+
+    setLoadingBreedsOwned(true);
+    try {
         const response = await fetch(`${DB_API_URL}/get_cow_breeds_owned/${user.uid}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch breeds owned by the user');
+            throw new Error('Failed to fetch breeds owned by the user');
         }
         const data = await response.json();
         setBreedsOwned(data); // Set the fetched breeds and counts
-      } catch (error) {
+    } catch (error) {
         console.error('Error fetching breeds owned:', error);
-      } finally {
+    } finally {
         setLoadingBreedsOwned(false);
-      }
-    };
-  
+    }
+};
+
+// Use fetchBreedsOwned in the useEffect
+useEffect(() => {
     fetchBreedsOwned();
-  }, [user?.uid]); // Fetch breeds when the user UID is available
+}, [user?.uid]);
 
   // Render the view based on viewMode
   const renderContent = () => {
