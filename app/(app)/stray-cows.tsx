@@ -154,6 +154,7 @@ export default function StrayCows() {
             latitude: location.latitude,
             longitude: location.longitude,
             radius: 10,
+            image_url:imageUrl, 
           }),
         });
 
