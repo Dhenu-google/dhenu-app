@@ -13,6 +13,10 @@ const addCowSchema = z.object({
   birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Use YYYY-MM-DD format'),
   tagNumber: z.string().optional(),
   notes: z.string().optional(),
+  milkProduction: z
+    .string()
+    .optional()
+    .refine((val) => !val || !isNaN(Number(val)), 'Milk production must be a number'),
 });
 
 type AddCowFormData = z.infer<typeof addCowSchema>;
@@ -28,20 +32,24 @@ export default function AddCow() {
       birthDate: '',
       tagNumber: '',
       notes: '',
+      milkProduction: '0', // Default to 0
     },
   });
 
   const onSubmit = async (data: AddCowFormData) => {
     setLoading(true);
-    
+
     try {
-      // Simulate API call to add a cow
-      console.log('Adding cow:', data);
-      
-      // Wait for 1 second to simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Success message and navigate back to dashboard
+      const payload = {
+        ...data,
+        milkProduction: data.milkProduction ? parseFloat(data.milkProduction) : 0, // Default to 0
+      };
+
+      console.log('Adding cow:', payload);
+
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       alert('Cow added successfully!');
       router.back();
     } catch (error) {
@@ -215,4 +223,4 @@ const styles = StyleSheet.create({
   cancelButton: {
     marginTop: 8,
   },
-}); 
+});
