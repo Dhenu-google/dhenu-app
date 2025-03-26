@@ -15,6 +15,7 @@ import * as Speech from 'expo-speech';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { DB_API_URL } from '@/config';
+import { getAuth } from 'firebase/auth'; // Import Firebase Auth
 
 // List of Indian cow breeds
 const INDIAN_COW_BREEDS = [
@@ -111,24 +112,74 @@ const getGenericRecommendation = (breed: string): Array<{feature: string, select
   ];
 };
 
-// Mock function to get cow count by breed - replace with actual data fetch
-const getCowCountByBreed = (breed: string) => {
-  // This would typically come from a database or API
-  return Math.floor(Math.random() * 5); // Mock data - replace with real implementation
+const getCowCountByBreed = async (breed: string): Promise<number> => {
+  try {
+    const auth = getAuth(); // Get the Firebase Auth instance
+    const user = auth.currentUser; // Get the currently logged-in user
+
+    if (!user) {
+      console.error('No user is logged in.');
+      return 0; // Return 0 if no user is logged in
+    }
+
+    const userId = user.uid; // Get the user's UID
+    const response = await fetch(`${DB_API_URL}/get_cow_count_by_breed/${userId}/${breed}`, {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      console.error('Error fetching cow count:', response.statusText);
+      return 0; // Return 0 if there's an error
+    }
+
+    const data = await response.json();
+    return data.cow_count || 0; // Return the cow count or 0 if not found
+  } catch (error) {
+    console.error('Error fetching cow count:', error);
+    return 0; // Return 0 in case of an error
+  }
 };
 
 export default function CrossBreedingScreen() {
   const [selectedBreed, setSelectedBreed] = useState<string>('');
   const [cowCount, setCowCount] = useState<number>(0);
-  const [recommendationData, setRecommendationData] = useState<Array<{feature: string, selected: string, recommended: string, reason: string}> | null>(null);
+  const [recommendationData, setRecommendationData] = useState<Array<{ feature: string; selected: string; recommended: string; reason: string }> | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
+  const [breeds, setBreeds] = useState<string[]>([]); // State for storing breeds
+
+  // Fetch the list of breeds when the component mounts
+  useEffect(() => {
+    const fetchBreeds = async () => {
+      try {
+        const response = await fetch(`${DB_API_URL}/get_breeds`, {
+          method: 'GET',
+        });
+
+        if (!response.ok) {
+          console.error('Error fetching breeds:', response.statusText);
+          return;
+        }
+
+        const data = await response.json();
+        setBreeds(data); // Update the breeds state with the fetched data
+      } catch (error) {
+        console.error('Error fetching breeds:', error);
+      }
+    };
+
+    fetchBreeds();
+  }, []);
 
   // Update cow count when breed changes
   useEffect(() => {
-    if (selectedBreed) {
-      setCowCount(getCowCountByBreed(selectedBreed));
-    }
+    const fetchCowCount = async () => {
+      if (selectedBreed) {
+        const count = await getCowCountByBreed(selectedBreed);
+        setCowCount(count);
+      }
+    };
+    fetchCowCount();
   }, [selectedBreed]);
 
   // Stop speech when component unmounts
@@ -302,7 +353,7 @@ export default function CrossBreedingScreen() {
                   mode="dropdown"
                 >
                   <Picker.Item label="Select a breed" value="" />
-                  {INDIAN_COW_BREEDS.map((breed) => (
+                  {breeds.map((breed) => (
                     <Picker.Item key={breed} label={breed} value={breed} />
                   ))}
                 </Picker>
