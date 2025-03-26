@@ -1,22 +1,21 @@
 import { useSession } from "@/context";
-import React, { useEffect } from "react";
-import { View, StyleSheet, Pressable, TouchableOpacity, BackHandler } from "react-native";
+import React from "react";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 const ProfileScreen = () => {
   // ============================================================================
   // Hooks
   // ============================================================================
+  const { t } = useTranslation();
   const { signOut, user } = useSession();
   const params = useLocalSearchParams();
-  const source = params.source as string || ''; // Get the source route parameter
-
-  // Handle hardware back button to navigate to the correct screen
- 
+  const source = params.source as string || '';
 
   // ============================================================================
   // Handlers
@@ -30,9 +29,6 @@ const ProfileScreen = () => {
     router.replace("/sign-in");
   };
 
-  /**
-   * Handles the back button press
-   */
   // ============================================================================
   // Computed Values
   // ============================================================================
@@ -42,7 +38,7 @@ const ProfileScreen = () => {
    * Prioritizes user's name, falls back to email, then default greeting
    */
   const displayName =
-    user?.displayName || user?.email?.split("@")[0] || "Guest";
+    user?.displayName || user?.email?.split("@")[0] || t('common.user', 'Guest');
 
   // ============================================================================
   // Render
@@ -58,28 +54,28 @@ const ProfileScreen = () => {
         <View style={styles.profileIcon}>
           <Ionicons name="person" size={40} color="#8B5CF6" />
         </View>
-        <ThemedText type="title" style={styles.headerTitle}>My Profile</ThemedText>
+        <ThemedText type="title" style={styles.headerTitle}>{t('profile.title', 'My Profile')}</ThemedText>
       </View>
 
       {/* User Info Section */}
       <View style={styles.infoCard}>
         <View style={styles.infoRow}>
-          <ThemedText type="defaultSemiBold" style={styles.infoLabel}>Name:</ThemedText>
+          <ThemedText type="defaultSemiBold" style={styles.infoLabel}>{t('profile.name', 'Name')}:</ThemedText>
           <ThemedText style={styles.infoValue}>{displayName}</ThemedText>
         </View>
         
         <View style={styles.infoRow}>
-          <ThemedText type="defaultSemiBold" style={styles.infoLabel}>Email:</ThemedText>
+          <ThemedText type="defaultSemiBold" style={styles.infoLabel}>{t('profile.emailAddress', 'Email')}:</ThemedText>
           <ThemedText style={styles.infoValue}>{user?.email}</ThemedText>
         </View>
         
         <View style={styles.infoRow}>
-          <ThemedText type="defaultSemiBold" style={styles.infoLabel}>Last Seen:</ThemedText>
+          <ThemedText type="defaultSemiBold" style={styles.infoLabel}>{t('profile.lastSeen', 'Last Seen')}:</ThemedText>
           <ThemedText style={styles.infoValue}>{user?.metadata?.lastSignInTime}</ThemedText>
         </View>
         
         <View style={styles.infoRow}>
-          <ThemedText type="defaultSemiBold" style={styles.infoLabel}>Created:</ThemedText>
+          <ThemedText type="defaultSemiBold" style={styles.infoLabel}>{t('profile.created', 'Created')}:</ThemedText>
           <ThemedText style={styles.infoValue}>{user?.metadata?.creationTime}</ThemedText>
         </View>
       </View>
@@ -98,7 +94,7 @@ const ProfileScreen = () => {
             style={styles.gradientButton}
           >
             <Ionicons name="log-out-outline" size={20} color="#fff" style={styles.buttonIcon} />
-            <ThemedText style={styles.buttonText}>Logout</ThemedText>
+            <ThemedText style={styles.buttonText}>{t('common.logout', 'Logout')}</ThemedText>
           </LinearGradient>
         </TouchableOpacity>
       </View>

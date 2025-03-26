@@ -3,23 +3,27 @@ import {
   StyleSheet, 
   View, 
   TouchableOpacity,
-  Animated 
+  Animated,
+  Text
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, router } from "expo-router";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
+import { useTranslation } from "react-i18next";
 
 // Define the screen item type
 interface ExploreItem {
   id: string;
-  title: string;
+  titleKey: string; // Key for translation
   icon: React.ReactNode;
   route: any; // Using any to avoid typing issues with expo-router
   isForum?: boolean; // Flag to indicate if this is the forum item
 }
 
 export default function ExploreScreen() {
+  const { t } = useTranslation(); // Initialize translation hook
+  
   // Animation values for button press
   const animatedScales = React.useRef([
     new Animated.Value(1),
@@ -32,20 +36,20 @@ export default function ExploreScreen() {
   const exploreItems: ExploreItem[] = [
     {
       id: '1',
-      title: 'Nearby Network',
+      titleKey: 'explore.networkAndNavigation',
       icon: 'map',
       route: '/(app)/network'
     },
     {
       id: '2',
-      title: 'Forum',
+      titleKey: 'explore.forum',
       icon: 'chatbubbles',
       route: '/forum-button',
       isForum: true
     },
     {
       id: '3',
-      title: 'Cross-Breeding',
+      titleKey: 'explore.moomateAI',
       icon: 'leaf',
       route: '/(app)/cross-breeding'
     },
@@ -82,7 +86,9 @@ export default function ExploreScreen() {
   return (
     <ThemedView style={styles.container}>
       <View style={styles.header}>
-        <ThemedText type="title" style={styles.title}>Explore</ThemedText>
+        <ThemedText type="title" style={styles.title}>
+          {t('explore.title', 'Explore')}
+        </ThemedText>
       </View>
 
       <View style={styles.listContainer}>
@@ -100,7 +106,7 @@ export default function ExploreScreen() {
                   ]}
                 >
                   <Ionicons name={item.icon as any} size={22} color="#4C6EF5" />
-                  <ThemedText style={styles.itemText}>{item.title}</ThemedText>
+                  <ThemedText style={styles.itemText}>{t(item.titleKey, item.titleKey.split('.')[1])}</ThemedText>
                   <Ionicons name="chevron-forward" size={18} color="#A0A0A0" />
                 </Animated.View>
               </TouchableOpacity>
@@ -117,7 +123,7 @@ export default function ExploreScreen() {
                     ]}
                   >
                     <Ionicons name={item.icon as any} size={22} color="#4C6EF5" />
-                    <ThemedText style={styles.itemText}>{item.title}</ThemedText>
+                    <ThemedText style={styles.itemText}>{t(item.titleKey, item.titleKey.split('.')[1])}</ThemedText>
                     <Ionicons name="chevron-forward" size={18} color="#A0A0A0" />
                   </Animated.View>
                 </TouchableOpacity>

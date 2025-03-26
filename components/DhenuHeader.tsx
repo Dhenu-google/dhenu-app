@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, Platform, Image } from 'react
 import { router, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { DrawerActions, useNavigation } from '@react-navigation/native';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 
 interface DhenuHeaderProps {
   showBackButton?: boolean;
@@ -12,6 +14,7 @@ interface DhenuHeaderProps {
 export default function DhenuHeader({ showBackButton = false, title }: DhenuHeaderProps) {
   const navigation = useNavigation();
   const pathname = usePathname();
+  const { t } = useTranslation();
   
   // Check if we're in the drawer navigation
   const gotoprofile = () => {
@@ -29,7 +32,7 @@ export default function DhenuHeader({ showBackButton = false, title }: DhenuHead
 
   return (
     <View style={styles.container}>
-      {/* Left side back button */}
+      {/* Left side - profile button */}
       <TouchableOpacity onPress={gotoprofile} style={styles.iconButton}>
         <Ionicons name="person" size={24} color="#333" />
       </TouchableOpacity>
@@ -43,12 +46,16 @@ export default function DhenuHeader({ showBackButton = false, title }: DhenuHead
         />
       </View>
       
-      {/* Right side - screen title */}
-      {title ? (
-        <Text style={styles.subtitleText}>{title}</Text>
-      ) : (
-        <View style={styles.iconButton} /> // Empty view for spacing
-      )}
+      {/* Right side - Language switcher or screen title */}
+      <View style={styles.rightContainer}>
+        {/* Language Switcher Button */}
+        <LanguageSwitcher buttonStyle={styles.languageButton} />
+        
+        {/* Title (if provided) */}
+        {title && (
+          <Text style={styles.subtitleText}>{title}</Text>
+        )}
+      </View>
     </View>
   );
 }
@@ -79,6 +86,15 @@ const styles = StyleSheet.create({
   logo: {
     width: 120,
     height: 40,
+  },
+  rightContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  languageButton: {
+    height: 36,
+    backgroundColor: '#f0f0f0',
+    marginRight: 8,
   },
   subtitleText: {
     fontSize: 16,
