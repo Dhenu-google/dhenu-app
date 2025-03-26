@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useSession } from '@/context';
 import { Ionicons } from '@expo/vector-icons';
-import ChatbotButton from '@/components/ChatbotButton';
+import ChatbotButton from '../../ChatbotButton';
 import { format } from 'date-fns';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemedView } from '@/components/ThemedView';
