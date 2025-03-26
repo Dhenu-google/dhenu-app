@@ -228,7 +228,7 @@ export default function Dashboard() {
       tagNumber: null, // Optional field, can be added to the form later
       notes: null, // Optional field, can be added to the form later
       owner_id: user?.uid, // Firebase Auth user ID (logged-in user's UID)
-      milk_production: newCowForm.milkYield, // Daily milk production
+      milk_production: newCowForm.milkYield ? parseFloat(newCowForm.milkYield) : 0, // Default to 0 if not provided
     };
   
     try {
