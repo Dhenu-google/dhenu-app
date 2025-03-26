@@ -22,11 +22,6 @@ export default function DhenuHeader({ showBackButton = false, title }: DhenuHead
     router.replace('/(app)');
   };
   
-  const handleDhenuPress = () => {
-    // Navigate to the dashboard/home tab
-    router.push('/(app)/(drawer)/(tabs)');
-  };
-  
   const openDrawer = () => {
     // @ts-ignore - The type definitions are incomplete
     navigation.dispatch(DrawerActions.openDrawer());
@@ -39,10 +34,14 @@ export default function DhenuHeader({ showBackButton = false, title }: DhenuHead
         <Ionicons name="person" size={24} color="#333" />
       </TouchableOpacity>
       
-      {/* Center - DHENU title */}
-      <TouchableOpacity onPress={handleDhenuPress} style={styles.titleContainer}>
-        <Text style={styles.titleText}>DHENU</Text>
-      </TouchableOpacity>
+      {/* Center - Logo */}
+      <View style={styles.titleContainer}>
+        <Image 
+          source={require('../assets/images/logo.png')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+      </View>
       
       {/* Right side - screen title */}
       {title ? (
@@ -77,11 +76,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flex: 1,
   },
-  titleText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333',
-    letterSpacing: 1,
+  logo: {
+    width: 120,
+    height: 40,
   },
   subtitleText: {
     fontSize: 16,
