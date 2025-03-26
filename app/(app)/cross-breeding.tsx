@@ -14,6 +14,7 @@ import { Stack, router } from 'expo-router';
 import * as Speech from 'expo-speech';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
+import { DB_API_URL } from '@/config';
 
 // List of Indian cow breeds
 const INDIAN_COW_BREEDS = [
@@ -137,38 +138,29 @@ export default function CrossBreedingScreen() {
     };
   }, []);
 
-  const parseApiResponse = (responseText: string): Array<{feature: string, selected: string, recommended: string, reason: string}> => {
+  const parseApiResponse = (responseText: string): Array<{ feature: string; selected: string; recommended: string; reason: string }> => {
     try {
-      // Try to parse the markdown table from the response
-      const lines = responseText.trim().split('\n').filter(line => line.trim().length > 0);
-      const tableLines = lines.filter(line => line.includes('|'));
-      
-      if (tableLines.length >= 5) { // Header, separator, and at least 3 data rows
-        // Skip header and separator
-        const dataRows = tableLines.slice(2);
-        const result = [];
-        
-        for (const row of dataRows) {
-          const columns = row.split('|').map(col => col.trim()).filter(col => col.length > 0);
-          if (columns.length >= 4) {
-            result.push({
-              feature: columns[0],
-              selected: columns[1],
-              recommended: columns[2],
-              reason: columns[3]
-            });
-          }
-        }
-        
-        if (result.length > 0) {
-          return result;
-        }
-      }
-      
-      // If parsing fails, use fallback
-      return BREED_RECOMMENDATIONS[selectedBreed] || getGenericRecommendation(selectedBreed);
+      // Extract the JSON string from the response
+      const jsonStartIndex = responseText.indexOf('{');
+      const jsonEndIndex = responseText.lastIndexOf('}');
+      const jsonString = responseText.substring(jsonStartIndex, jsonEndIndex + 1);
+
+      // Parse the JSON
+      const parsedJson = JSON.parse(jsonString);
+
+      // Extract table rows
+      const rows = parsedJson.table?.rows || [];
+
+      // Map rows to the expected format
+      return rows.map((row: any) => ({
+        feature: row.Feature,
+        selected: row['Selected Breed'],
+        recommended: row['Recommended Crossbreed'],
+        reason: row['Reason for Crossbreeding'],
+      }));
     } catch (error) {
       console.error('Error parsing API response:', error);
+      // Use fallback in case of error
       return BREED_RECOMMENDATIONS[selectedBreed] || getGenericRecommendation(selectedBreed);
     }
   };
@@ -182,7 +174,7 @@ export default function CrossBreedingScreen() {
     
     try {
       // Try to get recommendation from API first
-      const apiResponse = await fetch(`/api/cross-breeding-recommendation`, {
+      const apiResponse = await fetch(`${DB_API_URL}/breeding_recommendation`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -544,4 +536,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-}); 
+});
