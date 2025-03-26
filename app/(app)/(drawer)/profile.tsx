@@ -16,25 +16,7 @@ const ProfileScreen = () => {
   const source = params.source as string || ''; // Get the source route parameter
 
   // Handle hardware back button to navigate to the correct screen
-  useEffect(() => {
-    const backAction = () => {
-      if (source === 'tab') {
-        // Navigate back to (tab) index
-        router.replace('/(app)/(drawer)/(tab)');
-        return true; // Prevents default back behavior
-      }
-      
-      // Default back behavior for other sources
-      return false;
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction
-    );
-
-    return () => backHandler.remove();
-  }, [source]);
+ 
 
   // ============================================================================
   // Handlers
@@ -51,14 +33,6 @@ const ProfileScreen = () => {
   /**
    * Handles the back button press
    */
-  const handleBack = () => {
-    if (source === 'tab') {
-      router.replace('/(app)/(drawer)/(tab)');
-    } else {
-      router.back();
-    }
-  };
-
   // ============================================================================
   // Computed Values
   // ============================================================================
@@ -78,7 +52,7 @@ const ProfileScreen = () => {
     <ThemedView style={styles.container} lightColor="#ffffff" darkColor="#ffffff">
       {/* Profile Header with Back Button */}
       <View style={styles.profileHeader}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="#8B5CF6" />
         </TouchableOpacity>
         <View style={styles.profileIcon}>
