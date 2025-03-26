@@ -6,6 +6,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/lib/firebase-config"; // Adjust the path as needed
 import { getAuth } from "firebase/auth";
 import { getFirestore, collection, addDoc, Timestamp } from "firebase/firestore";
+import { DB_API_URL } from '@/config';
 
 export default function StrayCows() {
   const [image, setImage] = useState<string | null>(null);
@@ -136,6 +137,43 @@ export default function StrayCows() {
       };
 
       await addDoc(collection(db, "strayCows"), metadata);
+ 
+      try {
+        console.log("Data being sent to notify nearby users:", {
+          latitude: location.latitude,
+          longitude: location.longitude,
+          radius: 10,
+        });
+
+        const response = await fetch(`${DB_API_URL}/notify_nearby_users`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            latitude: location.latitude,
+            longitude: location.longitude,
+            radius: 10,
+          }),
+        });
+
+        // Log the raw response for debugging
+        const responseText = await response.text();
+        console.log("Raw response:", responseText);
+
+        if (!response.ok) {
+          console.error("Failed to notify nearby users:", responseText);
+          Alert.alert("Error", "Failed to notify nearby users. Please try again.");
+          return;
+        }
+
+        // Parse the response as JSON if it's valid
+        const responseData = JSON.parse(responseText);
+        console.log("Successfully notified nearby users:", responseData);
+      } catch (error) {
+        console.error("Error notifying nearby users:", error);
+        Alert.alert("Error", "An error occurred while notifying nearby users. Please try again.");
+      }
 
       Alert.alert("Success", "Image and location saved successfully!");
       console.log("Image URL:", imageUrl);
@@ -193,6 +231,8 @@ export default function StrayCows() {
           <Text style={styles.submitButtonText}>Submit</Text>
         </TouchableOpacity>
       )}
+
+      
     </View>
   );
 }
@@ -273,5 +313,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',
+  },
+  notificationsButton: {
+    backgroundColor: '#007BFF',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginTop: 20,
+  },
+  notificationsButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

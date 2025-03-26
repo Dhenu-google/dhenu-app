@@ -13,6 +13,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Picker } from '@react-native-picker/picker';
 import { DB_API_URL } from '@/config';
+import NotificationsModal from '@/app/(app)/notifications'; // Import the NotificationsModal component
 
 // Define cow data structure
 interface CowStatus {
@@ -96,6 +97,7 @@ export default function Dashboard() {
   const [cowDetails, setCowDetails] = useState<Cow | null>(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [detailsError, setDetailsError] = useState<string | null>(null);
+  const [notificationsVisible, setNotificationsVisible] = useState(false); // State to control modal visibility
 
   // Load cows from storage on initial load
 
@@ -251,15 +253,6 @@ export default function Dashboard() {
       // Reset the form and close the modal
       setNewCowForm(initialFormState);
       setFormVisible(false);
-
-      // Refresh the breeds list
-      if (user?.uid) {
-        const breedsResponse = await fetch(`${DB_API_URL}/get_cow_breeds_owned/${user.uid}`);
-        if (breedsResponse.ok) {
-          const breedsData = await breedsResponse.json();
-          setBreedsOwned(breedsData);
-        }
-      }
   
       // Optionally, refresh the cow list or update the UI
       alert('Cow added successfully!');
@@ -777,6 +770,14 @@ export default function Dashboard() {
            viewMode === 'animals' ? selectedBreed : 
            selectedAnimal?.name}
         </ThemedText>
+
+        {/* Notifications Button */}
+        <TouchableOpacity
+          onPress={() => setNotificationsVisible(true)}
+          style={styles.notificationsButton}
+        >
+          <Ionicons name="notifications-outline" size={24} color="#8B5CF6" />
+        </TouchableOpacity>
       </View>
 
       <ScrollView
@@ -788,15 +789,21 @@ export default function Dashboard() {
         {renderContent()}
       </ScrollView>
 
-      <View style={styles.bottomNav}>
-      </View>
-      
-      <View style={styles.bottomDivider} />
+      <View style={styles.bottomNav}></View>
+      <View style={styles.bottomDivider}></View>
 
       <ChatbotButton />
 
       {/* Render add cow form modal */}
       {renderAddCowForm()}
+
+      {/* Notifications Modal */}
+      {notificationsVisible && (
+        <NotificationsModal 
+          modalVisible={notificationsVisible} 
+          setModalVisible={setNotificationsVisible} 
+        />
+      )}
     </ThemedView>
   );
 }
@@ -1192,5 +1199,10 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     paddingBottom: 80,
+  },
+  notificationsButton: {
+    position: 'absolute',
+    right: 20, // Align to the right
+    top: 16, // Align vertically with the header
   },
 });
