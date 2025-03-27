@@ -49,8 +49,7 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ buttonStyle }) => {
         style={[styles.button, buttonStyle]}
         onPress={() => setModalVisible(true)}
       >
-        <Ionicons name="language" size={22} color="#333" />
-        <Text style={styles.buttonText}>{t('common.language', 'Language')}</Text>
+        <Ionicons name="language" size={20} color="#333" />
       </TouchableOpacity>
       
       {/* Language Selection Modal */}
@@ -116,16 +115,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingVertical: 6,
+    paddingHorizontal: 6,
     backgroundColor: '#f0f0f0',
-    borderRadius: 8,
-    marginHorizontal: 8,
-  },
-  buttonText: {
-    marginLeft: 4,
-    fontSize: 14,
-    color: '#333',
+    borderRadius: 20,
   },
   modalBackground: {
     flex: 1,

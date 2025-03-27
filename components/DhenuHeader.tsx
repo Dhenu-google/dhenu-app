@@ -33,9 +33,11 @@ export default function DhenuHeader({ showBackButton = false, title }: DhenuHead
   return (
     <View style={styles.container}>
       {/* Left side - profile button */}
-      <TouchableOpacity onPress={gotoprofile} style={styles.iconButton}>
-        <Ionicons name="person" size={24} color="#333" />
-      </TouchableOpacity>
+      <View style={styles.sideContainer}>
+        <TouchableOpacity onPress={gotoprofile} style={styles.iconButton}>
+          <Ionicons name="person" size={24} color="#333" />
+        </TouchableOpacity>
+      </View>
       
       {/* Center - Logo */}
       <View style={styles.titleContainer}>
@@ -47,13 +49,12 @@ export default function DhenuHeader({ showBackButton = false, title }: DhenuHead
       </View>
       
       {/* Right side - Language switcher or screen title */}
-      <View style={styles.rightContainer}>
-        {/* Language Switcher Button */}
-        <LanguageSwitcher buttonStyle={styles.languageButton} />
-        
-        {/* Title (if provided) */}
-        {title && (
+      <View style={styles.sideContainer}>
+        {title ? (
           <Text style={styles.subtitleText}>{title}</Text>
+        ) : (
+          /* Language Switcher Button */
+          <LanguageSwitcher buttonStyle={styles.languageButton} />
         )}
       </View>
     </View>
@@ -72,6 +73,10 @@ const styles = StyleSheet.create({
     borderBottomColor: '#e0e0e0',
     paddingTop: Platform.OS === 'ios' ? 0 : 8,
   },
+  sideContainer: {
+    width: 80,
+    alignItems: 'center',
+  },
   iconButton: {
     width: 40,
     height: 40,
@@ -87,14 +92,11 @@ const styles = StyleSheet.create({
     width: 120,
     height: 40,
   },
-  rightContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   languageButton: {
-    height: 36,
+    height: 32,
+    paddingHorizontal: 8,
     backgroundColor: '#f0f0f0',
-    marginRight: 8,
+    borderRadius: 16,
   },
   subtitleText: {
     fontSize: 16,
