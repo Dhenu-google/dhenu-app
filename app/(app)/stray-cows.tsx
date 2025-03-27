@@ -7,8 +7,15 @@ import { storage } from "@/lib/firebase-config"; // Adjust the path as needed
 import { getAuth } from "firebase/auth";
 import { getFirestore, collection, addDoc, Timestamp } from "firebase/firestore";
 import { DB_API_URL } from '@/config';
+import { Ionicons } from "@expo/vector-icons";
+import { router } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { useTranslation } from "react-i18next";
 
 export default function StrayCows() {
+  const { t } = useTranslation();
   const [image, setImage] = useState<string | null>(null);
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [address, setAddress] = useState<string | null>(null);
@@ -194,137 +201,224 @@ export default function StrayCows() {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Title */}
-      <Text style={styles.title}>Report Stray Cows</Text>
-
-      {/* Dotted Box for Image Selection */}
-      <View style={styles.imageBox}>
-        <TouchableOpacity onPress={handleUploadPicture}>
-          <Text style={styles.imageBoxText}>Upload Picture</Text>
-        </TouchableOpacity>
-        <Text style={styles.orText}>OR</Text>
-        <TouchableOpacity onPress={handleClickPicture}>
-          <Text style={styles.imageBoxText}>Take a Picture</Text>
-        </TouchableOpacity>
+    <ThemedView style={styles.container}>
+      {/* Header Bar */}
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <Ionicons name="arrow-back" size={24} color="#333" />
+          </TouchableOpacity>
+          <ThemedText type="title" style={styles.headerTitle}>
+            {t('explore.strayCows', 'Report Stray Cows')}
+          </ThemedText>
+        </View>
       </View>
 
-      {/* Image Preview */}
-      {image && <Image source={{ uri: image }} style={styles.imagePreview} />}
+      {/* Dotted Box for Image Selection */}
+      <View style={styles.cardContainer}>
+        <View style={styles.imageBox}>
+          {image ? (
+            <Image source={{ uri: image }} style={styles.imagePreview} />
+          ) : (
+            <>
+              <TouchableOpacity style={styles.uploadButton} onPress={handleUploadPicture}>
+                <Ionicons name="cloud-upload-outline" size={24} color="#4C6EF5" />
+                <Text style={styles.buttonText}>Upload Picture</Text>
+              </TouchableOpacity>
+              <Text style={styles.orText}>OR</Text>
+              <TouchableOpacity style={styles.uploadButton} onPress={handleClickPicture}>
+                <Ionicons name="camera-outline" size={24} color="#4C6EF5" />
+                <Text style={styles.buttonText}>Take a Picture</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
 
-      {/* Location */}
-      {location ? (
-        <Text style={styles.locationText}>
-          Location: Latitude {location.latitude}, Longitude {location.longitude}
-        </Text>
-      ) : (
-        <Text style={styles.locationText}>Fetching location...</Text>
-      )}
-
-      {/* Address */}
-      {address && <Text style={styles.addressText}>Address: {address}</Text>}
+        {/* Location Info */}
+        <View style={styles.infoContainer}>
+          <Text style={styles.sectionTitle}>Location Information</Text>
+          {location ? (
+            <>
+              <View style={styles.locationItem}>
+                <Ionicons name="location-outline" size={20} color="#4C6EF5" />
+                <Text style={styles.locationText}>
+                  Lat: {location.latitude.toFixed(6)}, Long: {location.longitude.toFixed(6)}
+                </Text>
+              </View>
+              {address && (
+                <View style={styles.locationItem}>
+                  <Ionicons name="home-outline" size={20} color="#4C6EF5" />
+                  <Text style={styles.addressText}>{address}</Text>
+                </View>
+              )}
+            </>
+          ) : (
+            <View style={styles.locationItem}>
+              <ActivityIndicator size="small" color="#4C6EF5" />
+              <Text style={styles.loadingText}>Fetching location...</Text>
+            </View>
+          )}
+        </View>
+      </View>
 
       {/* Submit Button */}
-      {loading ? (
-        <ActivityIndicator size="large" color="#4CAF50" /> // Show loading spinner
-      ) : (
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitButtonText}>Submit</Text>
-        </TouchableOpacity>
-      )}
-
-      
-    </View>
+      <TouchableOpacity 
+        style={styles.submitButton} 
+        onPress={handleSubmit}
+        disabled={!image || !location || loading}
+      >
+        <LinearGradient
+          colors={['#E53E3E', '#C53030', '#9B2C2C']}
+          style={styles.gradientButton}
+        >
+          {loading ? (
+            <ActivityIndicator size="small" color="#FFFFFF" />
+          ) : (
+            <>
+              <Ionicons name="send-outline" size={20} color="#FFFFFF" style={styles.submitIcon} />
+              <Text style={styles.submitButtonText}>Submit Report</Text>
+            </>
+          )}
+        </LinearGradient>
+      </TouchableOpacity>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#f9f9f9',
+    backgroundColor: "#FFFFFF"
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginTop: 20,
-    textAlign: 'center',
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 16,
+    paddingBottom: 10,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#8B5CF6',
+  },
+  backButton: {
+    padding: 4,
+  },
+  cardContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginHorizontal: 16,
+    marginTop: 16, 
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   imageBox: {
     borderWidth: 1,
-    borderColor: '#aaa',
+    borderColor: '#E8EFFF',
+    borderRadius: 12,
     borderStyle: 'dashed',
-    paddingVertical: 40,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    width: '100%',
+    padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 20,
+    marginBottom: 16,
+    backgroundColor: '#FAFBFF',
   },
-  imageBoxText: {
-    fontSize: 16,
-    color: '#555',
-    textAlign: 'center',
-    marginBottom: 10,
+  uploadButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: '#EFF3FF',
+  },
+  buttonText: {
+    color: '#4C6EF5',
+    fontWeight: '500',
+    marginLeft: 8,
   },
   orText: {
-    fontSize: 14,
-    color: '#999',
-    marginVertical: 10,
+    marginVertical: 12,
+    color: '#666',
+    fontWeight: '500',
   },
   imagePreview: {
-    width: 250,
-    height: 250,
-    borderRadius: 15,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#ddd',
+    width: '100%',
+    height: 200,
+    borderRadius: 8,
+  },
+  infoContainer: {
+    marginTop: 10,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 12,
+    color: '#333',
+  },
+  locationItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   locationText: {
-    fontSize: 16,
-    color: '#555',
-    textAlign: 'center',
-    marginBottom: 20,
+    fontSize: 14,
+    color: '#444',
+    marginLeft: 8,
+    flex: 1,
   },
   addressText: {
-    fontSize: 16,
-    color: '#555',
-    textAlign: 'center',
-    marginBottom: 20,
+    fontSize: 14,
+    color: '#444',
+    marginLeft: 8,
+    flex: 1,
+  },
+  loadingText: {
+    fontSize: 14,
+    color: '#666',
+    marginLeft: 8,
   },
   submitButton: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    borderRadius: 25,
+    overflow: 'hidden',
+    shadowColor: '#E53E3E',
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 5,
-    width: '100%',
+    shadowRadius: 4,
+    elevation: 3,
+    marginHorizontal: 16,
+    marginBottom: 20,
+  },
+  gradientButton: {
+    padding: 15,
     alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  disabledButton: {
+    backgroundColor: '#A0AEC0',
+    shadowOpacity: 0,
   },
   submitButtonText: {
-    color: '#fff',
+    color: '#FFFFFF',
+    fontWeight: 'bold',
     fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
   },
-  notificationsButton: {
-    backgroundColor: '#007BFF',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    marginTop: 20,
-  },
-  notificationsButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+  submitIcon: {
+    marginRight: 8,
   },
 });

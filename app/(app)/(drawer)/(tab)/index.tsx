@@ -12,13 +12,14 @@ import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import MooAIChat from '@/app/(app)/persona-ai';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
 
 export default function HomeScreen() {
   const { user } = useSession();
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   const [isChatVisible, setIsChatVisible] = useState(false);
-  
+  const { t } = useTranslation();
   
   // Handle pull-to-refresh action
   const onRefresh = () => {
@@ -66,11 +67,11 @@ export default function HomeScreen() {
         {/* Dashboard Header */}
         <View style={styles.headerContainer}>
           <ThemedText type="title" style={styles.dashboardTitle}>
-            Dashboard
+            {t('dashboard.title', 'Dashboard')}
           </ThemedText>
           <View style={styles.welcomeTextContainer}>
-            <ThemedText style={styles.welcomeLabel}>Welcome, </ThemedText>
-            <ThemedText style={styles.nameText}>{user?.displayName || "User"}</ThemedText>
+            <ThemedText style={styles.welcomeLabel}>{t('common.welcome', 'Welcome')}, </ThemedText>
+            <ThemedText style={styles.nameText}>{user?.displayName || t('common.user', 'User')}</ThemedText>
             <ThemedText style={styles.exclamation}>!</ThemedText>
           </View>
         </View>
@@ -86,8 +87,8 @@ export default function HomeScreen() {
               <View style={styles.iconCircle}>
                 <Ionicons name="chatbubbles-outline" size={30} color="#FFF" />
               </View>
-              <Text style={styles.cardTitle}>Forum</Text>
-              <Text style={styles.cardDescription}>Know about others opinions, and share yours!</Text>
+              <Text style={styles.cardTitle}>{t('explore.forum', 'Forum')}</Text>
+              <Text style={styles.cardDescription}>{t('home.forumDescription', 'Know about others opinions, and share yours!')}</Text>
             </View>
           </TouchableOpacity>
 
@@ -100,8 +101,8 @@ export default function HomeScreen() {
               <View style={styles.iconCircle}>
                 <Ionicons name="alert-circle-outline" size={30} color="#FFF" />
               </View>
-              <Text style={styles.cardTitle}>Report stray cow</Text>
-              <Text style={styles.cardDescription}>Help the helpless</Text>
+              <Text style={styles.cardTitle}>{t('home.reportStrayCow', 'Report stray cow')}</Text>
+              <Text style={styles.cardDescription}>{t('home.helpHelpless', 'Help the helpless')}</Text>
             </View>
           </TouchableOpacity>
 
@@ -114,22 +115,22 @@ export default function HomeScreen() {
               <View style={styles.iconCircle}>
                 <Ionicons name="basket-outline" size={30} color="#FFF" />
               </View>
-              <Text style={styles.cardTitle}>Marketplace</Text>
-              <Text style={styles.cardDescription}>Find Dairy products, services near you</Text>
+              <Text style={styles.cardTitle}>{t('marketplace.title', 'Marketplace')}</Text>
+              <Text style={styles.cardDescription}>{t('home.marketplaceDescription', 'Find Dairy products, services near you')}</Text>
             </View>
           </TouchableOpacity>
 
-          {/* DhenuAI Card */}
+          {/* Network Card */}
           <TouchableOpacity 
             style={styles.menuCard}
-            onPress={() => navigateToSection('dhenuai')}
+            onPress={() => navigateToSection('network')}
           >
             <View style={styles.cardContent}>
               <View style={styles.iconCircle}>
                 <Ionicons name="map-outline" size={30} color="#FFF" />
               </View>
-              <Text style={styles.cardTitle}>Network</Text>
-              <Text style={styles.cardDescription}>Find Cows near you</Text>
+              <Text style={styles.cardTitle}>{t('home.network', 'Network')}</Text>
+              <Text style={styles.cardDescription}>{t('home.networkDescription', 'Find Cows near you')}</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -149,7 +150,7 @@ export default function HomeScreen() {
             activeOpacity={0.8}
           >
             <View style={styles.buttonContent}>
-              <Text style={styles.buttonText}>Ask Moo AI</Text>
+              <Text style={styles.buttonText}>{t('moomateAI.askMooMate', 'Ask Moo AI')}</Text>
               <TouchableOpacity
                 style={styles.micContainer}
                 onPress={(e) => e.stopPropagation()} // Prevent triggering the parent button
@@ -171,7 +172,7 @@ export default function HomeScreen() {
         <SafeAreaView style={{ flex: 1 }}>
           <Appbar.Header>
             <Appbar.BackAction onPress={() => setIsChatVisible(false)} />
-            <Appbar.Content title="Moo AI Chat" />
+            <Appbar.Content title={t('moomateAI.title', 'Moo AI Chat')} />
           </Appbar.Header>
           <MooAIChat />
         </SafeAreaView>
