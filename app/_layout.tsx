@@ -5,6 +5,8 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 // Import your global CSS file
 import "../global.css";
 import '@/lib/i18n'; // Import i18n configuration
+import { ActivityIndicator } from "react-native-paper";
+import { View } from "react-native";
 
 /**
  * Root Layout is the highest-level layout in the app, wrapping all other layouts and screens.
@@ -19,24 +21,41 @@ import '@/lib/i18n'; // Import i18n configuration
 
 // Ensure authentication is set up properly with routing
 function AuthRoot() {
-  const { user, isLoading } = useSession();
+  const { user, role, isLoading, isRoleLoading } = useSession();
   const segments = useSegments();
   const router = useRouter();
 
   useEffect(() => {
-    if (isLoading) return;
+    if (isLoading || isRoleLoading) return;
 
     // Check if user is authenticated
     const inAuthGroup = segments[0] === "(app)";
 
     if (!user && inAuthGroup) {
       // If not authenticated but trying to access protected routes
-      router.replace("/sign-in");
+      router.replace("/landing");
     } else if (user && !inAuthGroup) {
+      if(role==="Farmer" || role === "Gaushala Owner")
+      {
+        router.replace("/(app)/(drawer)/(tabs)");
+      }
+      else if(role==="Public")
+      {
+        router.replace("/(app)/(drawer)/(tab)");
+      }
+      else{
       // If authenticated and accessing auth routes, redirect to app
-      router.replace("/(app)/(drawer)/(tabs)");
+      router.replace("/landing");
+      }
     }
-  }, [user, segments, isLoading]);
+  }, [user, role, segments, isLoading, isRoleLoading]);
+
+  if(isLoading || isRoleLoading){
+    return (
+     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>);
+  }
 
   return <Stack screenOptions={{ headerShown: false }} />;
 }

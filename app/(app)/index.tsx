@@ -3,41 +3,14 @@ import { Redirect } from "expo-router";
 import { ActivityIndicator, View, Text } from "react-native";
 import { useSession } from "@/context"; // Import the custom hook from AuthContext
 import { DB_API_URL } from "@/config";
+import { use } from "i18next";
 
 export default function Index() {
   console.log("Index() is being rendered");
   const { user, isLoading } = useSession(); // Access user and loading state from AuthContext
-  const [role, setRole] = useState<string | null>(null);
-  const [roleLoading, setRoleLoading] = useState(true);
+  const { role, isRoleLoading } = useSession();
 
-  useEffect(() => {
-    const fetchRole = async () => {
-      if (!user) {
-        setRoleLoading(false);
-        return;
-      }
-
-      try {
-        const response = await fetch(`${DB_API_URL}/get_role/${user.uid}`); // Fetch role using user ID
-        const data = await response.json();
-
-        if (response.ok) {
-          console.log("Fetched this role for user (index.tsx) :", data.role);
-          setRole(data.role);
-        } else {
-          console.error(data.error || "Failed to fetch role");
-        }
-      } catch (error) {
-        console.error("Error fetching role:", error);
-      } finally {
-        setRoleLoading(false);
-      }
-    };
-
-    fetchRole();
-  }, [user]);
-
-  if (isLoading || roleLoading) {
+  if (isLoading || isRoleLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="#0000ff" />
@@ -45,11 +18,9 @@ export default function Index() {
     );
   }
 
-  if (!user) {
+  if (!user || !role) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Please log in to continue.</Text>
-      </View>
+      <Redirect href="../signin" />
     );
   }
 

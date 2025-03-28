@@ -18,7 +18,7 @@ import { findNodeHandle } from "react-native";
 // ============================================================================
 // Types & Interfaces
 // ============================================================================
-type UserRole = "Farmer" | "Gaushal Owner" | "Public" | null;
+type UserRole = "Farmer" | "Gaushala Owner" | "Public" | null;
 /**
  * Authentication context interface defining available methods and state
  * for managing user authentication throughout the application.
@@ -153,12 +153,14 @@ export function SessionProvider(props: { children: React.ReactNode }) {
   const [isRoleLoading, setIsRoleLoading] = useState(true);
 
 
-  const fetchAndSetRole = async(uid:string) => {
+  const fetchAndSetRole = async (uid: string) => {
     setIsRoleLoading(true);
-    try{
+    try {
       const userRole = await fetchUserRole(uid);
       setRole(userRole);
-    }finally{
+    } catch (error) {
+      console.error("Error fetching role:", error);
+    } finally {
       setIsRoleLoading(false);
     }
   };
@@ -173,21 +175,24 @@ export function SessionProvider(props: { children: React.ReactNode }) {
    */
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      console.log("Auth state changed:", user);
       setIsLoading(true);
-      setUser(user);
-
-      if(user){
-        await(fetchAndSetRole(user.uid));
-      } else {
-        setRole(null);
+      try {
+        setUser(user);
+        if (user) {
+          console.log("Fetching role for user:", user.uid);
+          await fetchAndSetRole(user.uid);
+        } else {
+          setRole(null);
+          setIsRoleLoading(false); // Explicitly set isRoleLoading to false when no user
+        }
+      } finally {
+        console.log("Setting isLoading to false");
+        setIsLoading(false);
       }
-
-      setIsLoading(false);
     });
-
-    // Cleanup subscription on unmount
     return () => unsubscribe();
-  }, []);
+  }, []); // Ensure no unnecessary dependencies
 
   // ============================================================================
   // Handlers
@@ -278,6 +283,7 @@ export function SessionProvider(props: { children: React.ReactNode }) {
       }}
     >
       {props.children}
+      {console.log("isRoleLoading:", isRoleLoading)}
     </AuthContext.Provider>
   );
 }

@@ -1,7 +1,9 @@
-import { Stack } from "expo-router";
-import { LogBox } from "react-native";
+import { Redirect, Stack } from "expo-router";
+import { LogBox, View } from "react-native";
 import DhenuHeader from "@/components/DhenuHeader";
 import { ProductsProvider } from "./context/ProductsContext";
+import {useSession} from "@/context/index";
+import { ActivityIndicator } from "react-native-paper";
 
 // Ignore specific harmless warnings
 LogBox.ignoreLogs([
@@ -19,6 +21,17 @@ LogBox.ignoreLogs([
  * allowing authentication flows to remain accessible.
  */
 export default function AppLayout() {
+  const {user, isLoading} = useSession();
+
+  if(isLoading){
+    console.log("Loading User");
+    return (
+     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>);
+  }
+  if(!user) return <Redirect href="../landing" />;
+
   return (
     <ProductsProvider>
       <Stack 
