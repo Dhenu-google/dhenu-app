@@ -1,7 +1,9 @@
 import React from "react";
-import { ActivityIndicator, View, Button, Text } from "react-native"; // Fixed missing imports
+import { ActivityIndicator, View, Button, Text, Dimensions, TouchableOpacity, StyleSheet, Image } from "react-native"; // Fixed missing imports
 import { useSession } from "@/context/index";
 import { useRouter } from "expo-router"; // Corrected router import
+import OnboardingScreen from "./OnboardingScreen.js";
+
 
 export default function Landing() {
   const { user, role, isLoading, isRoleLoading } = useSession();
@@ -14,7 +16,7 @@ export default function Landing() {
 
   if (user && role) {
     // Redirect based on role
-    if (role === "Farmer" || role === "Gaushal Owner") {
+    if (role === "Farmer" || role === "Gaushala Owner") {
       router.replace("/(app)/drawer/(tabs)/");
     } else if (role === "Public") {
       router.replace("/(app)/drawer/(tab)/");
@@ -28,11 +30,7 @@ export default function Landing() {
         <ActivityIndicator size="large" />
       ) : (
         <>
-          <Text>Welcome to Our App!</Text>
-          <Button
-            title="Get Started"
-            onPress={() => router.push('/sign-in')}
-          />
+          <OnboardingScreen/>
         </>
       )}
     </View>
