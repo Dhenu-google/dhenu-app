@@ -12,11 +12,13 @@ import {
   register,
 } from "@/lib/firebase-service";
 import { auth } from "@/lib/firebase-config";
+import { DB_API_URL } from "@/config";
+import { findNodeHandle } from "react-native";
 
 // ============================================================================
 // Types & Interfaces
 // ============================================================================
-
+type UserRole = "Farmer" | "Gaushal Owner" | "Public" | null;
 /**
  * Authentication context interface defining available methods and state
  * for managing user authentication throughout the application.
@@ -52,8 +54,10 @@ interface AuthContextType {
 
   /** Currently authenticated user */
   user: User | null;
+  role : UserRole;
   /** Loading state for authentication operations */
   isLoading: boolean;
+  isRoleLoading: boolean;
 }
 
 // ============================================================================
@@ -65,6 +69,37 @@ interface AuthContextType {
  * @type {React.Context<AuthContextType>}
  */
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+
+
+/* Helper Function - fetches user role from the API */
+const fetchUserRole = async (uid: string): Promise<UserRole> => {
+  if (!uid) {
+    console.error("Error fetching user role: User ID was not provided");
+    return null;
+  }
+
+  try {
+    const response = await fetch(`${DB_API_URL}/get_role/${uid}`);
+
+    if (!response.ok) {
+      // Handle specific HTTP error statuses
+      if (response.status === 400) {
+        console.error("Error fetching user role: User ID was not provided");
+      } else if (response.status === 404) {
+        console.error("Error fetching user role: User not found");
+      } else {
+        console.error(`Error fetching user role: ${response.statusText}`);
+      }
+      return null;
+    }
+
+    const data = await response.json();
+    return data.role || null;
+  } catch (error) {
+    console.error("Error fetching user role: ", error);
+    return null;
+  }
+};
 
 // ============================================================================
 // Hook
@@ -107,12 +142,26 @@ export function SessionProvider(props: { children: React.ReactNode }) {
    * @type {[User | null, React.Dispatch<React.SetStateAction<User | null>>]}
    */
   const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<UserRole>(null);
+
 
   /**
    * Loading state for authentication operations
    * @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]}
    */
   const [isLoading, setIsLoading] = useState(true);
+  const [isRoleLoading, setIsRoleLoading] = useState(true);
+
+
+  const fetchAndSetRole = async(uid:string) => {
+    setIsRoleLoading(true);
+    try{
+      const userRole = await fetchUserRole(uid);
+      setRole(userRole);
+    }finally{
+      setIsRoleLoading(false);
+    }
+  };
 
   // ============================================================================
   // Effects
@@ -123,8 +172,16 @@ export function SessionProvider(props: { children: React.ReactNode }) {
    * Automatically updates user state on auth changes
    */
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setIsLoading(true);
       setUser(user);
+
+      if(user){
+        await(fetchAndSetRole(user.uid));
+      } else {
+        setRole(null);
+      }
+
       setIsLoading(false);
     });
 
@@ -144,11 +201,17 @@ export function SessionProvider(props: { children: React.ReactNode }) {
    */
   const handleSignIn = async (email: string, password: string) => {
     try {
+      setIsLoading(true);
       const response = await login(email, password);
+      if(response?.user){
+        await fetchAndSetRole(response.user.uid);
+      }
       return response?.user;
     } catch (error) {
       console.error("[handleSignIn error] ==>", error);
       return undefined;
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -165,11 +228,18 @@ export function SessionProvider(props: { children: React.ReactNode }) {
     name?: string
   ) => {
     try {
+      setIsLoading(true);
       const response = await register(email, password, name);
+      if(response?.user){
+        await fetchAndSetRole(response.user.uid);
+      }
       return response?.user;
     } catch (error) {
       console.error("[handleSignUp error] ==>", error);
       return undefined;
+    }
+    finally{
+      setIsLoading(false);
     }
   };
 
@@ -179,10 +249,15 @@ export function SessionProvider(props: { children: React.ReactNode }) {
    */
   const handleSignOut = async () => {
     try {
+      setIsLoading(true);
       await logout();
       setUser(null);
+      setRole(null);
     } catch (error) {
       console.error("[handleSignOut error] ==>", error);
+    }
+    finally{
+      setIsLoading(false);
     }
   };
 
@@ -197,7 +272,9 @@ export function SessionProvider(props: { children: React.ReactNode }) {
         signUp: handleSignUp,
         signOut: handleSignOut,
         user,
-        isLoading,
+        role,
+        isLoading : isLoading || isRoleLoading,
+        isRoleLoading,
       }}
     >
       {props.children}
