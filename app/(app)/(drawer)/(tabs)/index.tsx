@@ -631,54 +631,56 @@ useEffect(() => {
   const renderContent = () => {
     if (viewMode === 'breeds') {
       return (
-        <View style={styles.contentContainer}>
-          <ThemedText type="subtitle" style={styles.subtitle}>MY ANIMALS</ThemedText>
-          <View style={styles.breedGrid}>
-            {loadingBreedsOwned ? (
-              <Text>Loading breeds...</Text>
-            ) : (
-              breedsOwned.map(({ breed, count }) => (
-                <TouchableOpacity
-                  key={breed}
-                  style={styles.breedCard}
-                  onPress={() => handleBreedSelect(breed)}
-                >
-                  <LinearGradient
-                    colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.breedGradient}
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <View style={styles.contentContainer}>
+            <ThemedText type="subtitle" style={styles.subtitle}>MY ANIMALS</ThemedText>
+            <View style={styles.breedGrid}>
+              {loadingBreedsOwned ? (
+                <Text>Loading breeds...</Text>
+              ) : (
+                breedsOwned.map(({ breed, count }) => (
+                  <TouchableOpacity
+                    key={breed}
+                    style={styles.breedCard}
+                    onPress={() => handleBreedSelect(breed)}
                   >
-                    <View style={styles.breedContent}>
-                      <ThemedText style={styles.breedName}>{breed}</ThemedText>
-                      <ThemedText style={styles.breedCount}>
-                        {count} animals
-                      </ThemedText>
-                    </View>
-                  </LinearGradient>
-                </TouchableOpacity>
-              ))
-            )}
+                    <LinearGradient
+                      colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={styles.breedGradient}
+                    >
+                      <View style={styles.breedContent}>
+                        <ThemedText style={styles.breedName}>{breed}</ThemedText>
+                        <ThemedText style={styles.breedCount}>
+                          {count} animals
+                        </ThemedText>
+                      </View>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                ))
+              )}
 
-            {/* Add new cow button */}
-            <TouchableOpacity
-              style={styles.addCowCard}
-              onPress={() => setFormVisible(true)}
-            >
-              <LinearGradient
-                colors={['#E7F0FD', '#CBE1FB', '#A4C9F9']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.addCowGradient}
+              {/* Add new cow button */}
+              <TouchableOpacity
+                style={styles.addCowCard}
+                onPress={() => setFormVisible(true)}
               >
-                <View style={styles.addIconContainer}>
-                  <Ionicons name="add-circle" size={44} color="#4C6EF5" />
-                  <ThemedText style={styles.addCowText}>Add New Cow</ThemedText>
-                </View>
-              </LinearGradient>
-            </TouchableOpacity>
+                <LinearGradient
+                  colors={['#E7F0FD', '#CBE1FB', '#A4C9F9']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.addCowGradient}
+                >
+                  <View style={styles.addIconContainer}>
+                    <Ionicons name="add-circle" size={44} color="#4C6EF5" />
+                    <ThemedText style={styles.addCowText}>Add New Cow</ThemedText>
+                  </View>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </ScrollView>
       );
     }
     
@@ -1017,8 +1019,7 @@ const styles = StyleSheet.create({
     top: 16, // Align vertically with the header
   },
   scrollContent: {
-    flex: 1,
-    paddingBottom: 80,
+    paddingBottom: 16, // Add padding at the bottom for better spacing
   },
   header: {
     flexDirection: 'row',
@@ -1267,6 +1268,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   contentContainer: {
+    flexGrow: 1, // Allow the content to grow and enable scrolling
     padding: 16,
   },
   subtitle: { 
