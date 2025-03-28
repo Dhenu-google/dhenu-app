@@ -91,6 +91,9 @@ export default function Dashboard() {
   // State to store cows of the selected breed
   const [cowsByBreed, setCowsByBreed] = useState<Cow[]>([]);
   const [loadingCows, setLoadingCows] = useState(false); // Track loading state for cows
+  const [deleteMode, setDeleteMode] = useState<number | null>(null); // Move here
+  const [confirmationVisible, setConfirmationVisible] = useState(false);
+  const [cowToRemove, setCowToRemove] = useState<Cow | null>(null);
   
   const { user } = useSession();
   const router = useRouter();
@@ -112,16 +115,89 @@ export default function Dashboard() {
   // Check cow needs on initial load and every minute
 
   // Handle marking a cow as milked
-  const handleMarkMilked = (cowId: number, event: any) => {
+  const handleMarkMilked = async (cowId: number, event: any) => {
     console.log(`Marking cow with ID ${cowId} as milked.`);
-    // Add any additional logic or UI feedback here if needed
+    
+    if (!user?.uid || !cowDetails?.name) {
+      console.error('User UID or Cow Name is missing.');
+      return;
+    }
+  
+    try {
+      // Format the datetime to match SQL's DATETIME format
+      const formattedDatetime = new Date().toISOString().replace('T', ' ').split('.')[0];
+  
+      const response = await fetch(`${DB_API_URL}/update_cow/${user.uid}/${cowDetails.name}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          last_milked: formattedDatetime, // Use the formatted datetime
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error marking cow as milked:', errorData.error);
+        alert(`Failed to mark cow as milked: ${errorData.error}`);
+        return;
+      }
+  
+      const responseData = await response.json();
+      console.log('Cow marked as milked successfully:', responseData);
+  
+      // Optionally, refresh cow details or update the UI
+      await fetchCowDetails(cowDetails.name);
+      alert('Cow marked as milked successfully!');
+    } catch (error) {
+      console.error('Error marking cow as milked:', error);
+      alert('An error occurred while marking the cow as milked. Please try again.');
+    }
   };
-
+  
   // Handle marking a cow as fed
-  const handleMarkFed = (cowId: number, event: any) => {
+  const handleMarkFed = async (cowId: number, event: any) => {
     console.log(`Marking cow with ID ${cowId} as fed.`);
-    // Add any additional logic or UI feedback here if needed
+    
+    if (!user?.uid || !cowDetails?.name) {
+      console.error('User UID or Cow Name is missing.');
+      return;
+    }
+  
+    try {
+      // Format the datetime to match SQL's DATETIME format
+      const formattedDatetime = new Date().toISOString().replace('T', ' ').split('.')[0];
+  
+      const response = await fetch(`${DB_API_URL}/update_cow/${user.uid}/${cowDetails.name}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          last_fed: formattedDatetime, // Use the formatted datetime
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error marking cow as fed:', errorData.error);
+        alert(`Failed to mark cow as fed: ${errorData.error}`);
+        return;
+      }
+  
+      const responseData = await response.json();
+      console.log('Cow marked as fed successfully:', responseData);
+  
+      // Optionally, refresh cow details or update the UI
+      await fetchCowDetails(cowDetails.name);
+      alert('Cow marked as fed successfully!');
+    } catch (error) {
+      console.error('Error marking cow as fed:', error);
+      alert('An error occurred while marking the cow as fed. Please try again.');
+    }
   };
+  
 
   // Handle pull-to-refresh action
   const onRefresh = async () => {
@@ -617,8 +693,24 @@ useEffect(() => {
               {cowsByBreed.map((cow) => (
                 <TouchableOpacity
                   key={cow.id}
-                  style={styles.cowCard}
-                  onPress={() => handleAnimalSelect(cow)}
+                  style={[
+                    styles.cowCard,
+                    deleteMode === cow.id && styles.deleteModeCard, // Highlight card in delete mode
+                  ]}
+                  onPress={() => {
+                    if (deleteMode === cow.id) {
+                      handleRemoveCow(cow); // Trigger remove if already in delete mode
+                    } else {
+                      handleAnimalSelect(cow); // Normal press behavior
+                    }
+                  }}
+                  onLongPress={() => {
+                    if (deleteMode === cow.id) {
+                      setDeleteMode(null); // Undo delete mode
+                    } else {
+                      setDeleteMode(cow.id); // Enable delete mode
+                    }
+                  }}
                 >
                   <View style={styles.cardContent}>
                     <Image 
@@ -635,6 +727,11 @@ useEffect(() => {
                         </View>
                       </View>
                     </View>
+                    {deleteMode === cow.id && (
+                      <View style={styles.deleteOverlay}>
+                        <Ionicons name="close-circle" size={32} color="red" />
+                      </View>
+                    )}
                   </View>
                 </TouchableOpacity>
               ))}
@@ -677,7 +774,9 @@ useEffect(() => {
                   resizeMode="cover"
                 />
                 <View style={styles.nameStatusContainer}>
-                  <ThemedText type="subtitle" style={styles.detailsName}>{cowDetails.name}</ThemedText>
+                  <ThemedText type="subtitle" style={[styles.detailsName, { color: '#000' }]}>
+                    {cowDetails.name}
+                  </ThemedText>
                   <ThemedText style={styles.detailsBreed}>{cowDetails.breed}</ThemedText>
                   
                   <View style={styles.detailsTagsContainer}>
@@ -709,7 +808,7 @@ useEffect(() => {
                 </View>
                 <View style={styles.detailsRow}>
                   <ThemedText style={styles.detailsLabel}>Weight:</ThemedText>
-                  <ThemedText style={styles.detailsValue}>{cowDetails.weight || 'Unknown'} lbs</ThemedText>
+                  <ThemedText style={styles.detailsValue}>{cowDetails.weight || 'Unknown'} Kg</ThemedText>
                 </View>
                 <View style={styles.detailsRow}>
                   <ThemedText style={styles.detailsLabel}>Height:</ThemedText>
@@ -717,12 +816,12 @@ useEffect(() => {
                 </View>
                 <View style={styles.detailsRow}>
                   <ThemedText style={styles.detailsLabel}>Milk Yield:</ThemedText>
-                  <ThemedText style={styles.detailsValue}>{cowDetails.milkYield || 'Unknown'} gal/day</ThemedText>
+                  <ThemedText style={styles.detailsValue}>{cowDetails.milkYield || 'Unknown'} L/day</ThemedText>
                 </View>
-                <View style={styles.detailsRow}>
-                  <ThemedText style={styles.detailsLabel}>Origin:</ThemedText>
-                  <ThemedText style={styles.detailsValue}>{cowDetails.origin || 'Unknown'}</ThemedText>
-                </View>
+                  <ThemedText style={[styles.detailsParagraph]}>
+                    {cowDetails.origin || 'Unknown'}
+                  </ThemedText>
+                
               </View>
               
               {/* Actions */}
@@ -782,6 +881,42 @@ useEffect(() => {
     }
   };
 
+  const handleRemoveCow = (cow: Cow) => {
+    setCowToRemove(cow);
+    setConfirmationVisible(true);
+};
+
+const confirmRemoveCow = async () => {
+    if (!cowToRemove) return;
+
+    try {
+        const response = await fetch(`${DB_API_URL}/delete_cow/${user?.uid}/${cowToRemove.name}`, {
+            method: 'DELETE',
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Error removing cow:', errorData.error);
+            alert(`Failed to remove cow: ${errorData.error}`);
+            return;
+        }
+
+        setCowsByBreed((prevCows) => prevCows.filter((c) => c.id !== cowToRemove.id));
+        setDeleteMode(null);
+        alert(`${cowToRemove.name} has been removed successfully.`);
+
+        if (selectedBreed) {
+            await fetchCowsByBreed(selectedBreed);
+        }
+    } catch (error) {
+        console.error('Error removing cow:', error);
+        alert('An error occurred while removing the cow. Please try again.');
+    } finally {
+        setConfirmationVisible(false);
+        setCowToRemove(null);
+    }
+};
+
   return (
     <ThemedView style={styles.container} lightColor="#ffffff" darkColor="#ffffff">
       <SafeAreaView style={{ flex: 1 }}>
@@ -819,6 +954,39 @@ useEffect(() => {
 
         {/* Add cow form modal */}
         {formVisible && renderAddCowForm()}
+
+        {/* Confirmation Modal */}
+        <Modal
+            visible={confirmationVisible}
+            transparent={true}
+            animationType="fade"
+            onRequestClose={() => setConfirmationVisible(false)}
+        >
+            <View style={styles.modalOverlay}>
+                <View style={styles.modalContent}>
+                    <Text style={styles.modalTitle}>Confirm Removal</Text>
+                    <Text style={styles.modalMessage}>
+                        Are you sure you want to remove {cowToRemove?.name}?
+                    </Text>
+                    <View style={styles.modalActions}>
+                        <Button
+                            mode="outlined"
+                            onPress={() => setConfirmationVisible(false)}
+                            style={styles.cancelButton}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            mode="contained"
+                            onPress={confirmRemoveCow}
+                            style={styles.confirmButton}
+                        >
+                            Remove
+                        </Button>
+                    </View>
+                </View>
+            </View>
+        </Modal>
       </SafeAreaView>
     </ThemedView>
   );
@@ -1103,7 +1271,7 @@ const styles = StyleSheet.create({
   },
   subtitle: { 
     fontSize: 14,
-    color: '#333',
+    color: '#000',
     marginBottom: 16,
     fontWeight: '500'
   },
@@ -1291,5 +1459,64 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     backgroundColor: '#007AFF',
+  },
+  detailsParagraph: {
+    fontSize: 16, // Slightly larger font size for readability
+    lineHeight: 24, // Add line height for better spacing between lines
+    color: '#333', // Dark gray for better contrast
+    textAlign: 'justify', // Justify text for a clean paragraph look
+    marginVertical: 8, // Add vertical spacing
+    paddingHorizontal: 10, // Add horizontal padding for better alignment
+  },
+  deleteModeCard: {
+    borderColor: 'red', // Highlight the card with a red border
+    borderWidth: 2,
+  },
+  deleteOverlay: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 0, 0, 0.1)', // Semi-transparent red overlay
+    borderRadius: 12,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalMessage: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  cancelButton: {
+    flex: 1,
+    marginRight: 10,
+  },
+  confirmButton: {
+    flex: 1,
+    marginLeft: 10,
   },
 });
