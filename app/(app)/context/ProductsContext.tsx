@@ -7,7 +7,8 @@ import {
   getFirestore, 
   query, 
   orderBy,
-  Timestamp 
+  Timestamp,
+  FirestoreError
 } from 'firebase/firestore';
 import app from '@/lib/firebase-config';
 import { getCurrentUser, FirebaseUserResponse } from '@/lib/firebase-service';
@@ -29,27 +30,32 @@ export interface Product {
 interface ProductsContextType {
   products: Product[];
   loading: boolean;
+  error: string | null;
   addProduct: (product: { name: string; category: string; description?: string; location?: string; }) => Promise<void>;
 }
 
 export const ProductsContext = createContext<ProductsContextType>({
   products: [],
   loading: false,
+  error: null,
   addProduct: async () => {},
 });
 
 export const ProductsProvider = ({ children }: { children: ReactNode }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch products from Firestore
   const fetchProducts = async () => {
     try {
       setLoading(true);
+      setError(null);
       const userResponse = await getCurrentUser() as FirebaseUserResponse | null;
       const userId = userResponse?.user?.uid;
       
       if (!userId) {
+        setError('User not authenticated');
         setLoading(false);
         return;
       }
@@ -76,6 +82,8 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
 
       setProducts(fetchedProducts);
     } catch (error) {
+      const firestoreError = error as FirestoreError;
+      setError(firestoreError.message || 'Error fetching products');
       console.error('Error fetching products:', error);
     } finally {
       setLoading(false);
@@ -90,6 +98,7 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
   // Add a new product to Firestore
   const addProduct = async (product: { name: string; category: string; description?: string; location?: string; }) => {
     try {
+      setError(null);
       const userResponse = await getCurrentUser() as FirebaseUserResponse | null;
       const userId = userResponse?.user?.uid;
       
@@ -112,14 +121,19 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
       // Refresh products after adding a new one
       fetchProducts();
     } catch (error) {
+      const firestoreError = error as FirestoreError;
+      setError(firestoreError.message || 'Error adding product');
       console.error('Error adding product:', error);
       throw error;
     }
   };
 
   return (
-    <ProductsContext.Provider value={{ products, loading, addProduct }}>
+    <ProductsContext.Provider value={{ products, loading, error, addProduct }}>
       {children}
     </ProductsContext.Provider>
   );
 };
+
+export default ProductsProvider;
+
