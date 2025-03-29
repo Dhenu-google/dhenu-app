@@ -13,7 +13,9 @@ import {
 } from "@/lib/firebase-service";
 import { auth } from "@/lib/firebase-config";
 import { DB_API_URL } from "@/config";
-import { findNodeHandle } from "react-native";
+import { findNodeHandle, Alert } from "react-native";
+import { loadBundle } from "firebase/firestore";
+import { FirebaseError } from "firebase/app";
 
 // ============================================================================
 // Types & Interfaces
@@ -43,7 +45,10 @@ interface AuthContextType {
   signUp: (
     email: string,
     password: string,
-    name?: string
+    name: string,
+    role: UserRole  | null,
+    latitude:number | null,
+    longitude:number|null,
   ) => Promise<User | undefined>;
 
   /**
@@ -155,14 +160,29 @@ export function SessionProvider(props: { children: React.ReactNode }) {
 
   const fetchAndSetRole = async (uid: string) => {
     setIsRoleLoading(true);
-    try {
-      const userRole = await fetchUserRole(uid);
-      setRole(userRole);
-    } catch (error) {
-      console.error("Error fetching role:", error);
-    } finally {
-      setIsRoleLoading(false);
+    let retries = 3; // Number of retry attempts
+
+    while (retries > 0) {
+      try {
+        const userRole = await fetchUserRole(uid);
+        if (userRole) {
+          setRole(userRole); // Successfully fetched the role
+          break; // Exit the loop
+        }
+      } catch (error) {
+        console.error("Error fetching role:", error);
+
+        // Retry logic for specific error conditions
+        if (error instanceof Error && error.message.includes("User not found") && retries > 0) {
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before retrying
+          retries--; // Decrement the retry counter
+        } else {
+          break; // Exit the loop for other errors
+        }
+      }
     }
+
+    setIsRoleLoading(false); // Ensure loading state is updated
   };
 
   // ============================================================================
@@ -181,10 +201,11 @@ export function SessionProvider(props: { children: React.ReactNode }) {
         setUser(user);
         if (user) {
           console.log("Fetching role for user:", user.uid);
+          await new Promise(resolve => setTimeout(resolve, 500));
+          await user.getIdToken(true); //refresh auth state
           await fetchAndSetRole(user.uid);
         } else {
           setRole(null);
-          setIsRoleLoading(false); // Explicitly set isRoleLoading to false when no user
         }
       } finally {
         console.log("Setting isLoading to false");
@@ -230,15 +251,30 @@ export function SessionProvider(props: { children: React.ReactNode }) {
   const handleSignUp = async (
     email: string,
     password: string,
-    name?: string
+    name: string,
+    role: UserRole,
+    latitude:number,
+    longitude:number,
   ) => {
     try {
       setIsLoading(true);
       const response = await register(email, password, name);
+      let user = null;
+      
       if(response?.user){
-        await fetchAndSetRole(response.user.uid);
+        //Send User data to db.
+        user = response.user;
+        await createBackendUser(
+          user.uid,
+          name,
+          email,
+          role,
+          latitude,
+          longitude,
+        );
+        await user.getIdToken(true); //refresh auth state
       }
-      return response?.user;
+      return user;
     } catch (error) {
       console.error("[handleSignUp error] ==>", error);
       return undefined;
@@ -247,6 +283,43 @@ export function SessionProvider(props: { children: React.ReactNode }) {
       setIsLoading(false);
     }
   };
+
+  const createBackendUser = async (uid:string, name:string|null, email:string|null,
+     role:string|null,
+     longitude:number, latitude:number
+  ) => {
+    try{
+      console.log("sendLocationToDB Params:", { uid, name, email, role, longitude, latitude }); // Debug log
+      const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+      const response = await fetch(`${DB_API_URL}/add_user`,
+        {method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+        },
+        body:JSON.stringify({
+          oauthID:uid,
+          name,
+          email,
+          role:role||"",
+          location:mapsUrl,
+        }),
+      });
+
+      console.log("DB response : ", response.status);
+      const responseData = await response.json();
+      console.log("DB Repsonse Data:", responseData);
+      if(response.status===200 || response.status===201) {
+        console.log("Locatoin Added to DB");
+      }
+      else if(!response.ok){
+        throw new Error("Failed to send locatoin to backend");
+      }
+    } catch(err){
+      console.error("[SendLocatoinToDB] ==> ",err);
+      Alert.alert("Error","Failed to send location to DB");
+    }
+  };
+
 
   /**
    * Handles user sign-out process
