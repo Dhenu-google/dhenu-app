@@ -17,7 +17,8 @@ export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [role, setRole] = useState("Farmer"); // Add state for role selection
+  type UserRole = "Farmer" | "Gaushala Owner" | "Public";
+  const [role, setRole] = useState<UserRole>("Farmer"); // Add state for role selection
   const { signUp } = useSession();
 
   // ============================================================================
@@ -30,25 +31,13 @@ export default function SignUp() {
    */
   const handleRegister = async () => {
     try {
-      const user = await signUp(email, password, name);
-      if (user) {
-        const uid = user.uid;
-        const name = user.displayName;
-        const email = user.email;
+      const location = await fetchUserLocation();
+      let user = null;
 
-        const location = await fetchUserLocation();
-        if (location) {
-          const { latitude, longitude } = location;
-          await sendLocationToDB(uid, name, email, role, longitude, latitude); // Pass role to DB
-        }
-
-        // Redirect based on role
-        if (role === "Farmer" || role === "Gaushala Owner") {
-          router.replace("/(app)/(drawer)/(tabs)/dashboard");
-        } else if (role === "Public") {
-          router.replace("/(app)/(drawer)/(tab)");
-        }
+      if (location) {
+        user = await signUp(email, password, name, role, location.latitude, location.longitude);
       }
+      
     } catch (err) {
       console.log("[handleRegister] ==>", err);
       Alert.alert("Error", "Failed to sign up. Please try again.");
@@ -56,42 +45,7 @@ export default function SignUp() {
     }
   };
 
-  const sendLocationToDB = async (uid:string, name:string|null, email:string|null,
-     role:string|null,
-     longitude:number, latitude:number
-  ) => {
-    try{
-      console.log("sendLocationToDB Params:", { uid, name, email, role, longitude, latitude }); // Debug log
-      const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
-      const response = await fetch(`${DB_API_URL}/add_user`,
-        {method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-        },
-        body:JSON.stringify({
-          oauthID:uid,
-          name,
-          email,
-          role:role||"",
-          location:mapsUrl,
-        }),
-      });
-
-      console.log("DB response : ", response.status);
-      const responseData = await response.json();
-      console.log("DB Repsonse Data:", responseData);
-      if(response.status===200 || response.status===201) {
-        console.log("Locatoin Added to DB");
-      }
-      else if(!response.ok){
-        throw new Error("Failed to send locatoin to backend");
-      }
-    } catch(err){
-      console.error("[SendLocatoinToDB] ==> ",err);
-      Alert.alert("Error","Failed to send location to DB");
-    }
-  };
-
+  
   /** Fetch User's Current Location 
   /* @returns {Promise<latitude:number; longitude:number>}
   */
