@@ -195,6 +195,7 @@ export function SessionProvider(props: { children: React.ReactNode }) {
    */
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+console.log("Auth state changed:", user);
       console.log("Auth state changed:", user);
       setIsLoading(true);
       try {
@@ -210,6 +211,7 @@ export function SessionProvider(props: { children: React.ReactNode }) {
       } finally {
         console.log("Setting isLoading to false");
         setIsLoading(false);
+        setIsRoleLoading(false);
       }
     });
     return () => unsubscribe();
