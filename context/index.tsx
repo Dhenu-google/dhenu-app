@@ -170,15 +170,19 @@ export function SessionProvider(props: { children: React.ReactNode }) {
           break; // Exit the loop
         }
       } catch (error) {
-        console.error("Error fetching role:", error);
+        // Log the error only if it's the last retry
+        if (retries === 1) {
+          console.error("Error fetching role after retries:", error);
+        }
 
         // Retry logic for specific error conditions
-        if (error instanceof Error && error.message.includes("User not found") && retries > 0) {
+        if (error instanceof Error && error.message.includes("User not found") && retries > 1) {
           await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second before retrying
-          retries--; // Decrement the retry counter
         } else {
           break; // Exit the loop for other errors
         }
+      } finally {
+        retries--; // Decrement the retry counter
       }
     }
 
