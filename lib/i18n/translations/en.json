@@ -53,7 +53,15 @@
     "title": "Explore",
     "networkAndNavigation": "Network and Navigation",
     "forum": "Forum",
+    "forumDescription": "Know about others opinions, and share yours!",
+    "reportStrayCow": "Report stray cow",
+    "strayCows": "Report Stray Cows",
+    "helpHelpless": "Help the helpless",
     "moomateAI": "MooMate AI",
+    "mooAIChat": "Moo AI Chat",
+    "askMooAI": "Ask Moo AI",
+    "network": "Network",
+    "networkDescription": "Find Cows near you",
     "nearbyVets": "Nearby Veterinarians",
     "cattleMarkets": "Cattle Markets",
     "dairyShops": "Dairy Shops",
@@ -76,6 +84,7 @@
   },
   "marketplace": {
     "title": "Marketplace",
+    "description": "Find Dairy products, services near you",
     "buy": "Buy",
     "sell": "Sell",
     "listings": "Listings",
@@ -94,7 +103,7 @@
     "editListing": "Edit Listing",
     "delete": "Delete Listing",
     "contact": "Contact Seller",
-    "description": "Description",
+    "productDescription": "Description",
     "condition": "Condition",
     "new": "New",
     "used": "Used",
@@ -142,5 +151,13 @@
   "dashboard": {
     "title": "Dashboard",
     "animals": "Animals"
+  },
+  "forum": {
+    "reply": "Reply",
+    "sortByRecent": "Most Recent",
+    "sortByOldest": "Oldest First",
+    "sortByLikes": "Most Liked",
+    "sortByReplies": "Most Replied",
+    "noPosts": "No posts yet. Be the first to start a discussion!"
   }
 } 

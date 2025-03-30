@@ -50,11 +50,19 @@
     "created": "बनाया गया"
   },
   "explore": {
-    "title": "एक्सप्लोर",
+    "title": "अन्वेषण करें",
     "networkAndNavigation": "नेटवर्क और नेविगेशन",
     "forum": "फोरम",
-    "moomateAI": "मूमेट AI",
-    "nearbyVets": "नजदीकी पशु चिकित्सक",
+    "forumDescription": "दूसरों की राय जानें और अपनी राय साझा करें!",
+    "reportStrayCow": "आवारा गाय की सूचना दें",
+    "strayCows": "आवारा गायों की सूचना दें",
+    "helpHelpless": "असहाय की मदद करें",
+    "moomateAI": "मूमेट एआई",
+    "mooAIChat": "मू एआई चैट",
+    "askMooAI": "मू एआई से पूछें",
+    "network": "नेटवर्क",
+    "networkDescription": "अपने आस-पास गायों को खोजें",
+    "nearbyVets": "निकटतम पशु चिकित्सक",
     "cattleMarkets": "पशु बाजार",
     "dairyShops": "डेयरी की दुकानें",
     "animalHospitals": "पशु अस्पताल",
@@ -75,7 +83,8 @@
     "noResults": "कोई परिणाम नहीं मिला"
   },
   "marketplace": {
-    "title": "मार्केटप्लेस",
+    "title": "बाज़ार",
+    "description": "डेयरी उत्पादों, सेवाओं को आप के पास खोजें",
     "buy": "खरीदें",
     "sell": "बेचें",
     "listings": "लिस्टिंग",
@@ -94,7 +103,7 @@
     "editListing": "लिस्टिंग संपादित करें",
     "delete": "लिस्टिंग हटाएं",
     "contact": "विक्रेता से संपर्क करें",
-    "description": "विवरण",
+    "productDescription": "विवरण",
     "condition": "स्थिति",
     "new": "नया",
     "used": "इस्तेमाल किया हुआ",
@@ -143,5 +152,13 @@
   "dashboard": {
     "title": "डैशबोर्ड",
     "animals": "पशु"
+  },
+  "forum": {
+    "reply": "जवाब दें",
+    "sortByRecent": "सबसे हाल का",
+    "sortByOldest": "सबसे पुराना पहले",
+    "sortByLikes": "सबसे अधिक पसंद किया गया",
+    "sortByReplies": "सबसे अधिक जवाब वाला",
+    "noPosts": "अभी तक कोई पोस्ट नहीं। चर्चा शुरू करने वाले पहले व्यक्ति बनें!"
   }
 } 
