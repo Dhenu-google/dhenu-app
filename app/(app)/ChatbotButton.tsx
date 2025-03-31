@@ -639,7 +639,7 @@ export default function ChatbotButton() {
           >
             <View style={styles.buttonContent}>
               {/*<Ionicons name="add" size={22} color="#666" style={styles.addIcon} />*/}
-              <Text style={styles.buttonText}>Ask Gemini</Text>
+              <Text style={styles.buttonText}>Ask Moo AI</Text>
               <TouchableOpacity 
                 style={styles.micContainer}
                 onPress={(e) => {
