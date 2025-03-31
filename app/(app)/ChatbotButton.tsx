@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet, SafeAreaView, TextInput, ScrollView, KeyboardAvoidingView, Platform, Image, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -506,6 +506,17 @@ export default function ChatbotButton() {
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const [conversationBuffer, setConversationBuffer] = useState<string[]>([]);
+  const scrollViewRef = useRef<ScrollView>(null); // Reference for ScrollView
+
+  // Scroll to the bottom when the modal opens or messages change
+  useEffect(() => {
+    if (isOpen && scrollViewRef.current) {
+      // Delay the scroll to ensure the modal is fully rendered
+      setTimeout(() => {
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+      }, 100);
+    }
+  }, [isOpen]);
 
   const saveConversationToFirestore = async(messages:Message[]) => {
     try{
@@ -704,7 +715,10 @@ export default function ChatbotButton() {
             <View style={{ width: 24 }} />
           </View>
           
-          <ScrollView style={styles.messagesContainer}>
+          <ScrollView
+            style={styles.messagesContainer}
+            ref={scrollViewRef} // Attach the ref to ScrollView
+          >
             {messages.map((message) => (
               <View 
                 key={message.id} 

@@ -1,13 +1,20 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, ScrollView, Text, StyleSheet } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, TextInput, Button, ScrollView, StyleSheet } from 'react-native';
 import ChatBubble from '@/app/(app)/persona-ai-ChatBubble';
 import { fetchBotResponse } from '@/app/(app)/persona-ai-api';
 
-const MooAIChat = () => {
-  const [messages, setMessages] = useState([
-    { text: 'Welcome to Moo AI! 🐄 Ask me about Indian cow breeds.\n\n1️⃣ Learn about a breed’s origin, history & socio-economic benefits.\n2️⃣ Don’t know a breed? I can list all or filter by region.\n3️⃣ No cruelty-related queries allowed.', sender: 'bot' },
-  ]);
+const MooAIChat = ({ messages, setMessages, isOpen }) => {
   const [input, setInput] = useState('');
+  const scrollViewRef = useRef(null); // Reference for ScrollView
+
+  // Auto-scroll when the chat is opened or reopened
+  useEffect(() => {
+    if (isOpen && scrollViewRef.current) {
+      setTimeout(() => {
+        scrollViewRef.current.scrollToEnd({ animated: true });
+      }, 100); // Delay to ensure rendering is complete
+    }
+  }, [isOpen]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -22,7 +29,7 @@ const MooAIChat = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.chatBox}>
+      <ScrollView style={styles.chatBox} ref={scrollViewRef}>
         {messages.map((msg, index) => (
           <ChatBubble key={index} message={msg.text} sender={msg.sender} />
         ))}

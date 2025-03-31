@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl, TouchableOpacity, Dimensions, Image, Text as RNText, Modal, TextInput, KeyboardAvoidingView, Platform, BackHandler } from 'react-native';
-import { Text, Appbar, Divider } from 'react-native-paper';
+import { Text, Appbar, Divider, Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useSession } from '@/context';
@@ -20,6 +20,9 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [isChatVisible, setIsChatVisible] = useState(false);
   const { t } = useTranslation();
+  const [messages, setMessages] = useState([
+    { text: 'Welcome to Moo AI! 🐄 Ask me about Indian cow breeds.\n\n1️⃣ Learn about a breed’s origin, history & socio-economic benefits.\n2️⃣ Don’t know a breed? I can list all or filter by region.\n3️⃣ No cruelty-related queries allowed.', sender: 'bot' },
+  ]);
   
   // Handle pull-to-refresh action
   const onRefresh = () => {
@@ -174,7 +177,8 @@ export default function HomeScreen() {
             <Appbar.BackAction onPress={() => setIsChatVisible(false)} />
             <Appbar.Content title={t('explore.mooAIChat', 'Moo AI Chat')} />
           </Appbar.Header>
-          <MooAIChat />
+          <MooAIChat messages={messages} setMessages={setMessages} isOpen={isChatVisible} />
+          <Button title="Close Chat" onPress={() => setIsChatVisible(false)} />
         </SafeAreaView>
       </Modal>
     </ThemedView>
