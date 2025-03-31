@@ -1,26 +1,62 @@
-import React, { useState, useContext } from "react";
-import { View, TextInput, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
-import { router } from "expo-router";
+import React, { useState, useContext, useEffect } from "react";
+import { View, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { ProductsContext } from "@/app/(app)/context/ProductsContext";
+import { ProductsContext, Product } from "@/app/(app)/context/ProductsContext";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
+import { useTranslation } from "react-i18next";
 
 export default function AddProductScreen() {
-  const { addProduct } = useContext(ProductsContext);
+  const { t } = useTranslation();
+  const { addProduct, editProduct } = useContext(ProductsContext);
+  const { product } = useLocalSearchParams<{ product: string }>();
+  const isEditing = !!product;
+  const existingProduct = product ? JSON.parse(product) as Product : null;
 
   const [productName, setProductName] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
 
-  const handleListProduct = () => {
-    if (productName && category) {
-      addProduct({ name: productName, category, description, location });
-      router.back(); // Navigate back to the Marketplace
-    } else {
-      alert("Please fill in product name and category.");
+  useEffect(() => {
+    if (existingProduct) {
+      setProductName(existingProduct.name);
+      setCategory(existingProduct.category);
+      setDescription(existingProduct.description || "");
+      setLocation(existingProduct.location || "");
+    }
+  }, [existingProduct]);
+
+  const handleSubmit = async () => {
+    if (!productName || !category) {
+      Alert.alert(t('common.error', 'Error'), t('addProduct.requiredFields', 'Please fill in product name and category.'));
+      return;
+    }
+
+    try {
+      if (isEditing && existingProduct) {
+        await editProduct(existingProduct.id, {
+          name: productName,
+          category,
+          description,
+          location,
+        });
+      } else {
+        await addProduct({
+          name: productName,
+          category,
+          description,
+          location,
+        });
+      }
+      router.back();
+    } catch (error) {
+      Alert.alert(
+        t('common.error', 'Error'),
+        t('addProduct.submitError', 'Failed to save product. Please try again.')
+      );
     }
   };
 
@@ -30,16 +66,18 @@ export default function AddProductScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="#5D4037" />
         </TouchableOpacity>
-        <ThemedText type="title" style={styles.headerTitle}>New Product</ThemedText>
+        <ThemedText type="title" style={styles.headerTitle}>
+          {isEditing ? t('addProduct.editTitle', 'Edit Product') : t('addProduct.newTitle', 'New Product')}
+        </ThemedText>
         <View style={{width: 24}} />
       </View>
       
       <ScrollView style={styles.contentContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.inputSection}>
-          <ThemedText style={styles.label}>Product Name*</ThemedText>
+          <ThemedText style={styles.label}>{t('addProduct.nameLabel', 'Product Name*')}</ThemedText>
           <TextInput
             style={styles.input}
-            placeholder="Enter product name"
+            placeholder={t('addProduct.namePlaceholder', 'Enter product name')}
             placeholderTextColor="#777"
             value={productName}
             onChangeText={setProductName}
@@ -47,10 +85,10 @@ export default function AddProductScreen() {
         </View>
         
         <View style={styles.inputSection}>
-          <ThemedText style={styles.label}>Category*</ThemedText>
+          <ThemedText style={styles.label}>{t('addProduct.categoryLabel', 'Category*')}</ThemedText>
           <TextInput
             style={styles.input}
-            placeholder="Enter category (e.g., Dairy, Feed)"
+            placeholder={t('addProduct.categoryPlaceholder', 'Enter category (e.g., Dairy, Feed)')}
             placeholderTextColor="#777"
             value={category}
             onChangeText={setCategory}
@@ -58,10 +96,10 @@ export default function AddProductScreen() {
         </View>
         
         <View style={styles.inputSection}>
-          <ThemedText style={styles.label}>Description</ThemedText>
+          <ThemedText style={styles.label}>{t('addProduct.descriptionLabel', 'Description')}</ThemedText>
           <TextInput
             style={[styles.input, styles.textArea]}
-            placeholder="Enter product description"
+            placeholder={t('addProduct.descriptionPlaceholder', 'Enter product description')}
             placeholderTextColor="#777"
             multiline
             numberOfLines={4}
@@ -72,24 +110,26 @@ export default function AddProductScreen() {
         </View>
         
         <View style={styles.inputSection}>
-          <ThemedText style={styles.label}>Location</ThemedText>
+          <ThemedText style={styles.label}>{t('addProduct.locationLabel', 'Location')}</ThemedText>
           <TextInput
             style={styles.input}
-            placeholder="Where is this product available?"
+            placeholder={t('addProduct.locationPlaceholder', 'Where is this product available?')}
             placeholderTextColor="#777"
             value={location}
             onChangeText={setLocation}
           />
         </View>
         
-        <ThemedText style={styles.requiredText}>* Required fields</ThemedText>
+        <ThemedText style={styles.requiredText}>{t('addProduct.requiredFields', '* Required fields')}</ThemedText>
         
         <TouchableOpacity 
           style={styles.addButton} 
-          onPress={handleListProduct}
+          onPress={handleSubmit}
         >
           <View style={styles.gradientButton}>
-            <ThemedText style={styles.addButtonText}>LIST PRODUCT</ThemedText>
+            <ThemedText style={styles.addButtonText}>
+              {isEditing ? t('addProduct.updateButton', 'UPDATE PRODUCT') : t('addProduct.listButton', 'LIST PRODUCT')}
+            </ThemedText>
           </View>
         </TouchableOpacity>
       </ScrollView>

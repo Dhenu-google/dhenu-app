@@ -4,6 +4,7 @@ import { useLocalSearchParams, router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
+import { useTranslation } from "react-i18next";
 
 interface Enquiry {
   name: string;
@@ -13,6 +14,7 @@ interface Enquiry {
 }
 
 export default function ProductDetailsScreen() {
+  const { t } = useTranslation();
   const { product } = useLocalSearchParams<{ product: string }>();
   const productData = product ? JSON.parse(product) : null;
   const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null);
@@ -30,7 +32,6 @@ export default function ProductDetailsScreen() {
 
   const handleCallPress = async (phoneNumber: string) => {
     try {
-      // Remove any non-numeric characters from the phone number
       const cleanNumber = phoneNumber.replace(/\D/g, '');
       const url = `tel:${cleanNumber}`;
       
@@ -39,13 +40,13 @@ export default function ProductDetailsScreen() {
         await Linking.openURL(url);
       } else {
         Alert.alert(
-          'Error',
-          'Unable to open phone dialer. Please check your device settings.'
+          t('common.error', 'Error'),
+          t('productDetails.dialerError', 'Unable to open phone dialer. Please check your device settings.')
         );
       }
     } catch (error) {
       console.error('Error opening phone dialer:', error);
-      Alert.alert('Error', 'Failed to open phone dialer');
+      Alert.alert(t('common.error', 'Error'), t('productDetails.dialerError', 'Failed to open phone dialer'));
     }
   };
 
@@ -54,17 +55,17 @@ export default function ProductDetailsScreen() {
       <ThemedView style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="#8B5CF6" />
+            <Ionicons name="arrow-back" size={24} color="#5D4037" />
           </TouchableOpacity>
-          <ThemedText type="title" style={styles.headerTitle}>Product Details</ThemedText>
+          <ThemedText type="title" style={styles.headerTitle}>{t('productDetails.title', 'Product Details')}</ThemedText>
           <View style={{width: 24}} />
         </View>
         
         <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={60} color="#f44336" />
-          <ThemedText style={styles.errorText}>No product data available.</ThemedText>
+          <Ionicons name="alert-circle-outline" size={60} color="#5D4037" />
+          <ThemedText style={styles.errorText}>{t('productDetails.noData', 'No product data available.')}</ThemedText>
           <TouchableOpacity style={styles.returnButton} onPress={() => router.back()}>
-            <ThemedText style={styles.returnButtonText}>Return to Marketplace</ThemedText>
+            <ThemedText style={styles.returnButtonText}>{t('productDetails.returnToMarketplace', 'Return to Marketplace')}</ThemedText>
           </TouchableOpacity>
         </View>
       </ThemedView>
@@ -75,9 +76,9 @@ export default function ProductDetailsScreen() {
     <ThemedView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#8B5CF6" />
+          <Ionicons name="arrow-back" size={24} color="#5D4037" />
         </TouchableOpacity>
-        <ThemedText type="title" style={styles.headerTitle}>Product Details</ThemedText>
+        <ThemedText type="title" style={styles.headerTitle}>{t('productDetails.title', 'Product Details')}</ThemedText>
         <View style={{width: 24}} />
       </View>
       
@@ -90,27 +91,27 @@ export default function ProductDetailsScreen() {
         </View>
         
         <View style={styles.detailSection}>
-          <ThemedText style={styles.sectionTitle}>Description</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t('productDetails.description', 'Description')}</ThemedText>
           <ThemedText style={styles.descriptionText}>
-            {productData.description || "No description provided"}
+            {productData.description || t('productDetails.noDescription', 'No description provided')}
           </ThemedText>
         </View>
         
         {productData.location && (
           <View style={styles.detailSection}>
-            <ThemedText style={styles.sectionTitle}>Location</ThemedText>
+            <ThemedText style={styles.sectionTitle}>{t('productDetails.location', 'Location')}</ThemedText>
             <View style={styles.locationContainer}>
-              <Ionicons name="location" size={16} color="#4C6EF5" />
+              <Ionicons name="location" size={16} color="#5D4037" />
               <ThemedText style={styles.locationText}>{productData.location}</ThemedText>
             </View>
           </View>
         )}
         
         <View style={styles.detailSection}>
-          <ThemedText style={styles.sectionTitle}>Enquiries</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t('productDetails.enquiries', 'Enquiries')}</ThemedText>
           <View style={styles.enquiryContainer}>
             <ThemedText style={styles.enquiryCount}>{productData.enquiries}</ThemedText>
-            <ThemedText style={styles.enquiryText}>people have shown interest</ThemedText>
+            <ThemedText style={styles.enquiryText}>{t('productDetails.interest', 'people have shown interest')}</ThemedText>
           </View>
           
           {productData.enquiryList && productData.enquiryList.length > 0 && (
@@ -127,7 +128,7 @@ export default function ProductDetailsScreen() {
                       {new Date(enquiry.createdAt).toLocaleDateString()}
                     </ThemedText>
                   </View>
-                  <Ionicons name="chevron-forward" size={20} color="#666" />
+                  <Ionicons name="chevron-forward" size={20} color="#5D4037" />
                 </TouchableOpacity>
               ))}
             </View>
@@ -146,33 +147,33 @@ export default function ProductDetailsScreen() {
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <TouchableOpacity onPress={closeModal} style={styles.modalCloseButton}>
-                <Ionicons name="close" size={24} color="#666" />
+                <Ionicons name="close" size={24} color="#5D4037" />
               </TouchableOpacity>
-              <ThemedText style={styles.modalTitle}>Enquiry Details</ThemedText>
+              <ThemedText style={styles.modalTitle}>{t('productDetails.enquiryDetails', 'Enquiry Details')}</ThemedText>
             </View>
 
             {selectedEnquiry && (
               <View style={styles.modalBody}>
                 <View style={styles.modalDetailRow}>
-                  <ThemedText style={styles.modalLabel}>Name:</ThemedText>
+                  <ThemedText style={styles.modalLabel}>{t('productDetails.name', 'Name:')}</ThemedText>
                   <ThemedText style={styles.modalValue}>{selectedEnquiry.name}</ThemedText>
                 </View>
                 <View style={styles.modalDetailRow}>
-                  <ThemedText style={styles.modalLabel}>Contact:</ThemedText>
+                  <ThemedText style={styles.modalLabel}>{t('productDetails.contact', 'Contact:')}</ThemedText>
                   <TouchableOpacity 
                     onPress={() => handleCallPress(selectedEnquiry.contact)}
                     style={styles.contactButton}
                   >
                     <ThemedText style={styles.contactValue}>{selectedEnquiry.contact}</ThemedText>
-                    <Ionicons name="call" size={16} color="#4C6EF5" style={styles.callIcon} />
+                    <Ionicons name="call" size={16} color="#5D4037" style={styles.callIcon} />
                   </TouchableOpacity>
                 </View>
                 <View style={styles.modalDetailRow}>
-                  <ThemedText style={styles.modalLabel}>Message:</ThemedText>
+                  <ThemedText style={styles.modalLabel}>{t('productDetails.message', 'Message:')}</ThemedText>
                   <ThemedText style={styles.modalMessage}>{selectedEnquiry.message}</ThemedText>
                 </View>
                 <View style={styles.modalDetailRow}>
-                  <ThemedText style={styles.modalLabel}>Date:</ThemedText>
+                  <ThemedText style={styles.modalLabel}>{t('productDetails.date', 'Date:')}</ThemedText>
                   <ThemedText style={styles.modalValue}>
                     {new Date(selectedEnquiry.createdAt).toLocaleString()}
                   </ThemedText>
@@ -189,7 +190,7 @@ export default function ProductDetailsScreen() {
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: 'white',
+    backgroundColor: '#faebd7',
   },
   header: {
     flexDirection: 'row',
@@ -204,7 +205,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#8B5CF6',
+    color: '#5D4037',
   },
   backButton: {
     padding: 4,
@@ -219,28 +220,37 @@ const styles = StyleSheet.create({
   title: { 
     fontSize: 24, 
     fontWeight: "700", 
-    marginBottom: 8 
+    marginBottom: 8,
+    color: '#5D4037',
   },
   categoryChip: {
-    backgroundColor: 'rgba(76, 110, 245, 0.1)',
+    backgroundColor: 'rgba(93, 64, 55, 0.1)',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
     alignSelf: 'flex-start',
   },
   categoryText: {
-    color: '#4C6EF5',
+    color: '#5D4037',
     fontSize: 14,
     fontWeight: '500',
   },
   detailSection: {
     marginBottom: 24,
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 8,
-    color: '#555',
+    color: '#5D4037',
   },
   descriptionText: {
     fontSize: 16,
@@ -254,21 +264,114 @@ const styles = StyleSheet.create({
   locationText: {
     fontSize: 16,
     marginLeft: 8,
-    color: '#333',
+    color: '#5D4037',
   },
   enquiryContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'rgba(93, 64, 55, 0.1)',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
   },
   enquiryCount: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#4C6EF5',
+    color: '#5D4037',
     marginRight: 8,
   },
   enquiryText: {
     fontSize: 16,
+    color: '#5D4037',
+  },
+  enquiryList: {
+    marginTop: 8,
+  },
+  enquiryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(93, 64, 55, 0.1)',
+  },
+  enquiryButtonContent: {
+    flex: 1,
+  },
+  enquiryButtonName: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#5D4037',
+    marginBottom: 4,
+  },
+  enquiryButtonDate: {
+    fontSize: 14,
+    color: '#666',
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    width: '90%',
+    maxHeight: '80%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  modalTitle: {
+    flex: 1,
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#5D4037',
+    textAlign: 'center',
+  },
+  modalCloseButton: {
+    padding: 4,
+  },
+  modalBody: {
+    padding: 16,
+  },
+  modalDetailRow: {
+    marginBottom: 16,
+  },
+  modalLabel: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#5D4037',
+    marginBottom: 4,
+  },
+  modalValue: {
+    fontSize: 16,
     color: '#333',
+  },
+  contactButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  contactValue: {
+    fontSize: 16,
+    color: '#5D4037',
+    marginRight: 8,
+  },
+  callIcon: {
+    marginLeft: 4,
+  },
+  modalMessage: {
+    fontSize: 16,
+    color: '#333',
+    lineHeight: 24,
   },
   errorContainer: {
     flex: 1,
@@ -278,108 +381,20 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 18,
-    color: '#333',
+    color: '#5D4037',
     textAlign: 'center',
     marginTop: 16,
     marginBottom: 24,
   },
   returnButton: {
-    backgroundColor: '#8B5CF6',
+    backgroundColor: '#5D4037',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
   },
   returnButtonText: {
-    color: 'white',
-    fontWeight: '600',
-    fontSize: 16,
-  },
-  enquiryList: {
-    marginTop: 16,
-  },
-  enquiryButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#F8F9FA',
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 8,
-  },
-  enquiryButtonContent: {
-    flex: 1,
-  },
-  enquiryButtonName: {
+    color: '#fff',
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
-    marginBottom: 4,
-  },
-  enquiryButtonDate: {
-    fontSize: 14,
-    color: '#666',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    width: '90%',
-    borderRadius: 12,
-    padding: 20,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  modalCloseButton: {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    padding: 8,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#333',
-  },
-  modalBody: {
-    marginTop: 16,
-  },
-  modalDetailRow: {
-    marginBottom: 16,
-  },
-  modalLabel: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 4,
-  },
-  modalValue: {
-    fontSize: 16,
-    color: '#333',
-    fontWeight: '500',
-  },
-  modalMessage: {
-    fontSize: 16,
-    color: '#333',
-    lineHeight: 24,
-  },
-  contactButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 4,
-  },
-  contactValue: {
-    fontSize: 16,
-    color: '#4C6EF5',
-    fontWeight: '500',
-    textDecorationLine: 'underline',
-  },
-  callIcon: {
-    marginLeft: 8,
   },
 }); 

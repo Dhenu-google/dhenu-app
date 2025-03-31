@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { View, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import React, { useContext, useState } from "react";
+import { View, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, Modal } from "react-native";
 import { router } from "expo-router";
 import { ProductsContext, Product } from "@/app/(app)/context/ProductsContext";
 import { Ionicons } from "@expo/vector-icons";
@@ -10,14 +10,53 @@ import { useTranslation } from "react-i18next";
 
 export default function MarketplaceScreen() {
   const { t } = useTranslation();
-  const { products, loading } = useContext(ProductsContext);
+  const { products, loading, deleteProduct } = useContext(ProductsContext);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [showOptions, setShowOptions] = useState(false);
 
   const handleProductPress = (product: Product) => {
-    // Navigate to product details and pass the product data as params
-    router.push({
-      pathname: "/(app)/product-details",
-      params: { product: JSON.stringify(product) },
-    });
+    setSelectedProduct(product);
+    setShowOptions(true);
+  };
+
+  const handleDelete = async () => {
+    if (!selectedProduct) return;
+
+    Alert.alert(
+      t('marketplace.deleteTitle', 'Delete Product'),
+      t('marketplace.deleteConfirm', 'Are you sure you want to delete this product?'),
+      [
+        {
+          text: t('common.cancel', 'Cancel'),
+          style: 'cancel',
+        },
+        {
+          text: t('common.delete', 'Delete'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteProduct(selectedProduct.id);
+              setShowOptions(false);
+            } catch (error) {
+              Alert.alert(
+                t('common.error', 'Error'),
+                t('marketplace.deleteError', 'Failed to delete product. Please try again.')
+              );
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleViewDetails = () => {
+    if (selectedProduct) {
+      router.push({
+        pathname: "/(app)/product-details",
+        params: { product: JSON.stringify(selectedProduct) },
+      });
+    }
+    setShowOptions(false);
   };
 
   // Render loading state
@@ -91,6 +130,38 @@ export default function MarketplaceScreen() {
           </View>
         </TouchableOpacity>
       </View>
+
+      {/* Options Modal */}
+      <Modal
+        visible={showOptions}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowOptions(false)}
+      >
+        <TouchableOpacity 
+          style={styles.modalOverlay} 
+          activeOpacity={1} 
+          onPress={() => setShowOptions(false)}
+        >
+          <View style={styles.modalContent}>
+            <TouchableOpacity 
+              style={styles.modalOption}
+              onPress={handleViewDetails}
+            >
+              <Ionicons name="eye-outline" size={24} color="#5D4037" />
+              <ThemedText style={styles.modalOptionText}>{t('marketplace.viewDetails', 'View Details')}</ThemedText>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={[styles.modalOption, styles.deleteOption]}
+              onPress={handleDelete}
+            >
+              <Ionicons name="trash-outline" size={24} color="#dc2626" />
+              <ThemedText style={[styles.modalOptionText, styles.deleteText]}>{t('marketplace.delete', 'Delete Product')}</ThemedText>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </ThemedView>
   );
 }
@@ -224,5 +295,35 @@ const styles = StyleSheet.create({
     marginTop: 16,
     fontSize: 16,
     color: '#5D4037',
-  }
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    paddingBottom: 40,
+  },
+  modalOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  modalOptionText: {
+    fontSize: 16,
+    marginLeft: 12,
+    color: '#5D4037',
+  },
+  deleteOption: {
+    marginTop: 8,
+  },
+  deleteText: {
+    color: '#dc2626',
+  },
 });

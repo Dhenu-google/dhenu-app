@@ -1,5 +1,5 @@
 import { router, Link } from "expo-router";
-import { Text, TextInput, View, Pressable, Alert, ActivityIndicator } from "react-native";
+import { Text, TextInput, View, Pressable, Alert, ActivityIndicator, ImageBackground, Image } from "react-native";
 import { useState } from "react";
 import { useSession } from "@/context";
 import { getFirebaseAuthErrorMessage } from "@/lib/auth-err-handler";
@@ -64,61 +64,73 @@ export default function SignIn() {
   // ============================================================================
 
   return (
-    <View className="flex-1 bg-white p-4">
-      <View className="flex-1 items-center justify-center">
-        <View className="w-full max-w-sm">
-          <Text className="text-3xl font-bold mb-6 text-center">Sign In</Text>
-
-          <View className="space-y-4">
-            <View className="mb-4">
-              <TextInput
-                className="p-3 border border-gray-300 rounded-lg"
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
+    <ImageBackground
+      source={require("@/assets/images/bg.png")}
+      className="flex-1"
+    >
+      <View className="flex-1 bg-black/30">
+        <View className="flex-1 items-center justify-center p-4">
+          <View className="w-full max-w-sm bg-white/90 p-6 rounded-2xl shadow-lg">
+            <View className="items-center mb-6">
+              <Image 
+                source={require("@/assets/images/Moo.jpg")}
+                className="w-24 h-24 rounded-full mb-4"
+                resizeMode="cover"
               />
+              <Text className="text-3xl font-bold text-center text-gray-800">Sign In</Text>
             </View>
 
-            <View className="mb-6">
-              <TextInput
-                className="p-3 border border-gray-300 rounded-lg"
-                placeholder="Password"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
-              />
-            </View>
+            <View className="space-y-4">
+              <View className="mb-4">
+                <TextInput
+                  className="p-3 border border-gray-300 rounded-lg bg-white"
+                  placeholder="Email"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              </View>
 
-            {/* Sign In Button */}
-            <Pressable
-              onPress={handleSignInPress}
-              disabled={isLoading} // Disable button while loading
-              className={`${
-                isLoading ? "bg-blue-400" : "bg-blue-500"
-              } px-4 py-3 rounded-lg`}
-            >
-              {isLoading ? (
-                <ActivityIndicator color="#ffffff" /> // Show loading spinner
-              ) : (
-                <Text className="text-white text-center font-semibold">
-                  Sign In
-                </Text>
-              )}
-            </Pressable>
-          </View>
+              <View className="mb-6">
+                <TextInput
+                  className="p-3 border border-gray-300 rounded-lg bg-white"
+                  placeholder="Password"
+                  secureTextEntry
+                  value={password}
+                  onChangeText={setPassword}
+                />
+              </View>
 
-          <View className="mt-8 flex-row justify-center">
-            <Text className="text-gray-600">Don't have an account? </Text>
-            <Link href="/sign-up" asChild>
-              <Pressable>
-                <Text className="text-blue-500 font-semibold">Sign Up</Text>
+              {/* Sign In Button */}
+              <Pressable
+                onPress={handleSignInPress}
+                disabled={isLoading}
+                className={`${
+                  isLoading ? "bg-blue-400" : "bg-blue-500"
+                } px-4 py-3 rounded-lg`}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color="#ffffff" />
+                ) : (
+                  <Text className="text-white text-center font-semibold">
+                    Sign In
+                  </Text>
+                )}
               </Pressable>
-            </Link>
+            </View>
+
+            <View className="mt-8 flex-row justify-center">
+              <Text className="text-gray-600">Don't have an account? </Text>
+              <Link href="/sign-up" asChild>
+                <Pressable>
+                  <Text className="text-blue-500 font-semibold">Sign Up</Text>
+                </Pressable>
+              </Link>
+            </View>
           </View>
         </View>
       </View>
-    </View>
+    </ImageBackground>
   );
 }
