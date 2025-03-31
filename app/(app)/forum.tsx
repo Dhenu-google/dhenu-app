@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
+import DhenuHeader from "@/components/DhenuHeader";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import {
@@ -104,7 +105,7 @@ const ComposeModal = React.memo(
           >
             <View style={styles.gradientBorderContainer}>
               <LinearGradient
-                colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
+                colors={['#5D4037', '#5D4037', '#5D4037']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.gradientBorder}
@@ -117,7 +118,7 @@ const ComposeModal = React.memo(
                 <TextInput
                   style={styles.titleInput}
                   placeholder={t('forum.titlePlaceholder', 'Title')}
-                  placeholderTextColor="#777"
+                  placeholderTextColor="#5D4037"
                   value={newPostTitle}
                   onChangeText={setNewPostTitle}
                   blurOnSubmit={false}
@@ -125,7 +126,7 @@ const ComposeModal = React.memo(
                 <TextInput
                   style={styles.composeInput}
                   placeholder={t('forum.contentPlaceholder', "What's on your mind?")}
-                  placeholderTextColor="#777"
+                  placeholderTextColor="#5D4037"
                   value={newPostContent}
                   onChangeText={setNewPostContent}
                   multiline
@@ -462,7 +463,7 @@ export default function Forum() {
             <Ionicons
               name="person-circle-outline"
               size={24}
-              color="#4C6EF5"
+              color="#5D4037"
               style={styles.postAuthorIcon}
             />
             <ThemedText style={styles.postAuthor}>{item.author.name}</ThemedText>
@@ -491,7 +492,7 @@ export default function Forum() {
             <Ionicons
               name={hasUserLiked ? "heart" : "heart-outline"}
               size={20}
-              color={hasUserLiked ? "#4C6EF5" : "#888"}
+              color={hasUserLiked ? "#5D4037" : "#5D4037"}
             />
             <ThemedText style={[styles.reactionCount, hasUserLiked ? styles.activeReaction : null]}>
               {item.likes}
@@ -509,7 +510,7 @@ export default function Forum() {
             <Ionicons
               name={hasUserDisliked ? "thumbs-down" : "thumbs-down-outline"}
               size={20}
-              color={hasUserDisliked ? "#E03131" : "#888"}
+              color={hasUserDisliked ? "#5D4037" : "#5D4037"}
             />
             <ThemedText style={[styles.reactionCount, hasUserDisliked ? styles.activeDislike : null]}>
               {item.dislikes}
@@ -518,7 +519,7 @@ export default function Forum() {
 
           {/* Reply Counter */}
           <View style={styles.reactionButton}>
-            <Ionicons name="chatbox-outline" size={20} color="#888" />
+            <Ionicons name="chatbox-outline" size={20} color="#5D4037" />
             <ThemedText style={styles.reactionCount}>
               {item.replies.length}
             </ThemedText>
@@ -576,7 +577,7 @@ export default function Forum() {
                   value={replyContent}
                   onChangeText={setReplyContent}
                   multiline
-                  placeholderTextColor="#777"
+                  placeholderTextColor="#5D4037"
                 />
                 <TouchableOpacity
                   style={[
@@ -609,33 +610,20 @@ export default function Forum() {
 
   return (
     <ThemedView style={styles.container}>
-      {/* Header Bar */}
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
-            <Ionicons name="arrow-back" size={24} color="#333" />
-          </TouchableOpacity>
-          <ThemedText type="title" style={styles.headerTitle}>
-            {t('explore.forum', 'Forum')}
-          </ThemedText>
-        </View>
-      </View>
-
+      <DhenuHeader title="Forum" />
+      
       {/* Sorting Dropdown */}
       <View style={styles.sortingContainer}>
         <TouchableOpacity
           style={styles.sortButton}
           onPress={() => setShowSortDropdown(!showSortDropdown)}
         >
-          <Ionicons name={getSortIcon()} size={18} color="#4C6EF5" />
+          <Ionicons name={getSortIcon()} size={18} color="#5D4037" />
           <ThemedText style={styles.sortButtonText}>{getSortLabel()}</ThemedText>
           <Ionicons
             name={showSortDropdown ? "chevron-up" : "chevron-down"}
             size={18}
-            color="#4C6EF5"
+            color="#5D4037"
           />
         </TouchableOpacity>
 
@@ -648,7 +636,7 @@ export default function Forum() {
                 setShowSortDropdown(false);
               }}
             >
-              <Ionicons name="time-outline" size={18} color="#333" />
+              <Ionicons name="time-outline" size={18} color="#5D4037" />
               <ThemedText style={styles.sortOptionText}>
                 {t('forum.sortByRecent', 'Most Recent')}
               </ThemedText>
@@ -660,7 +648,7 @@ export default function Forum() {
                 setShowSortDropdown(false);
               }}
             >
-              <Ionicons name="calendar-outline" size={18} color="#333" />
+              <Ionicons name="calendar-outline" size={18} color="#5D4037" />
               <ThemedText style={styles.sortOptionText}>
                 {t('forum.sortByOldest', 'Oldest First')}
               </ThemedText>
@@ -672,7 +660,7 @@ export default function Forum() {
                 setShowSortDropdown(false);
               }}
             >
-              <Ionicons name="heart-outline" size={18} color="#333" />
+              <Ionicons name="heart-outline" size={18} color="#5D4037" />
               <ThemedText style={styles.sortOptionText}>
                 {t('forum.sortByLikes', 'Most Liked')}
               </ThemedText>
@@ -684,7 +672,7 @@ export default function Forum() {
                 setShowSortDropdown(false);
               }}
             >
-              <Ionicons name="chatbox-outline" size={18} color="#333" />
+              <Ionicons name="chatbox-outline" size={18} color="#5D4037" />
               <ThemedText style={styles.sortOptionText}>
                 {t('forum.sortByReplies', 'Most Replied')}
               </ThemedText>
@@ -696,7 +684,7 @@ export default function Forum() {
       {/* Post List */}
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#4C6EF5" />
+          <ActivityIndicator size="large" color="#5D4037" />
           <ThemedText style={styles.loadingText}>{t('common.loading', 'Loading...')}</ThemedText>
         </View>
       ) : (
@@ -704,7 +692,7 @@ export default function Forum() {
           data={getSortedPosts()}
           renderItem={renderPost}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.postList}
+          contentContainerStyle={styles.postsList}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Ionicons name="chatbubbles-outline" size={48} color="#aaa" />
@@ -728,10 +716,10 @@ export default function Forum() {
         }}
       >
         <LinearGradient
-          colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
+          colors={['#5D4037', '#5D4037', '#5D4037']}
           style={styles.gradientButton}
         >
-          <Ionicons name="add" size={24} color="#fff" />
+          <Ionicons name="add" size={24} color="#FFFFFF" />
         </LinearGradient>
       </TouchableOpacity>
 
@@ -755,7 +743,7 @@ export default function Forum() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF"
+    backgroundColor: "#faebd7"
   },
   header: {
     flexDirection: 'row',
@@ -765,12 +753,12 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: '#5D4037',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#8B5CF6',
+    color: '#5D4037',
   },
   backButton: {
     padding: 4,
@@ -789,19 +777,19 @@ const styles = StyleSheet.create({
   sortDropdownButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F6F8FF",
+    backgroundColor: "#faebd7",
     paddingVertical: 6,
     paddingHorizontal: 10,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#E8EFFF"
+    borderColor: "#5D4037"
   },
   sortIcon: {
     marginRight: 4
   },
   sortButtonText: {
     fontSize: 12,
-    color: "#4C6EF5",
+    color: '#5D4037',
     fontWeight: "500",
     marginRight: 4
   },
@@ -813,8 +801,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#E8EFFF",
-    backgroundColor: "#FFFFFF",
+    borderColor: '#5D4037',
+    backgroundColor: "#faebd7",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -829,28 +817,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12
   },
   sortMenuItemActive: {
-    backgroundColor: "#F6F8FF"
+    backgroundColor: "#faebd7"
   },
   sortMenuItemText: {
     fontSize: 13,
-    color: "#666",
+    color: '#5D4037',
     marginLeft: 8
   },
   sortMenuItemTextActive: {
     fontWeight: "600",
-    color: "#4C6EF5"
+    color: '#5D4037'
   },
   postsList: {
     padding: 16,
-    backgroundColor: "#FFFFFF"
+    backgroundColor: "#faebd7"
   },
   postContainer: {
     borderRadius: 12,
     marginBottom: 12,
     padding: 14,
     borderWidth: 1,
-    borderColor: "#eaeaea",
-    backgroundColor: "#FFFFFF",
+    borderColor: '#5D4037',
+    backgroundColor: "#faebd7",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
@@ -877,13 +865,13 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontSize: 16,
     fontWeight: "600",
-    color: "#000000"
+    color: '#5D4037'
   },
   postContent: {
     marginBottom: 14,
     lineHeight: 21,
     fontSize: 15,
-    color: "#333"
+    color: '#5D4037'
   },
   actionsRow: {
     flexDirection: "row",
@@ -928,13 +916,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 40,
-    backgroundColor: "#FFFFFF"
+    backgroundColor: "#faebd7"
   },
   emptyText: {
     fontSize: 18,
     fontWeight: "bold",
     marginTop: 16,
-    color: "#000000"
+    color: '#5D4037'
   },
   emptySubtext: {
     fontSize: 14,
@@ -964,11 +952,11 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     paddingVertical: 8,
     paddingHorizontal: 16,
-    backgroundColor: "#4C6EF5",
+    backgroundColor: '#5D4037',
     borderRadius: 20
   },
   replyButtonText: {
-    color: "white",
+    color: "#FFFFFF",
     fontWeight: "bold"
   },
   repliesSection: {
@@ -987,18 +975,27 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 8
   },
+  replyItem: {
+    backgroundColor: "#faebd7",
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: "#5D4037",
+  },
   replyHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 4
+    marginBottom: 4,
   },
-  replyAuthor: {
-    fontSize: 14,
-    color: "#333"
-  },
-  replyTimestamp: {
+  replyTime: {
     fontSize: 12,
-    color: "#333"
+    color: "#5D4037",
+  },
+  replyContent: {
+    fontSize: 14,
+    color: "#5D4037",
+    marginTop: 4,
   },
   // ---------- Compose Modal Overlay ----------
   modalOverlay: {
@@ -1031,34 +1028,34 @@ const styles = StyleSheet.create({
     width: "100%",
     borderRadius: 14,
     padding: 20,
-    backgroundColor: "#FFFFFF"
+    backgroundColor: "#faebd7"
   },
   modalTitle: {
     marginBottom: 16,
     textAlign: "center",
     fontSize: 18,
-    color: "#4C6EF5"
+    color: '#5D4037'
   },
   titleInput: {
     borderWidth: 1,
-    borderColor: "#E8EFFF",
+    borderColor: '#5D4037',
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
     marginBottom: 12,
-    backgroundColor: "#FFFFFF",
-    color: "#000000"
+    backgroundColor: "#faebd7",
+    color: '#5D4037'
   },
   composeInput: {
     borderWidth: 1,
-    borderColor: "#E8EFFF",
+    borderColor: '#5D4037',
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
     minHeight: 120,
     textAlignVertical: "top",
-    backgroundColor: "#FFFFFF",
-    color: "#000000"
+    backgroundColor: "#faebd7",
+    color: '#5D4037'
   },
   modalButtons: {
     flexDirection: "row",
@@ -1073,13 +1070,15 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   cancelButton: {
-    backgroundColor: "#f5f5f5"
+    backgroundColor: "#faebd7",
+    borderWidth: 1,
+    borderColor: '#5D4037'
   },
   postButton: {
-    backgroundColor: "#4C6EF5"
+    backgroundColor: '#5D4037'
   },
   postButtonText: {
-    color: "white",
+    color: "#FFFFFF",
     fontWeight: "bold"
   },
   replyButtonDisabled: {
@@ -1143,8 +1142,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: '#5D4037',
     zIndex: 100,
+    backgroundColor: '#faebd7',
   },
   sortButton: {
     flexDirection: 'row',
@@ -1152,7 +1152,8 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#E8EFFF',
+    borderColor: '#5D4037',
+    backgroundColor: '#faebd7',
   },
   sortDropdown: {
     position: 'absolute',
@@ -1160,10 +1161,10 @@ const styles = StyleSheet.create({
     left: 10,
     zIndex: 1000,
     width: 200,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#faebd7',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#E8EFFF',
+    borderColor: '#5D4037',
     padding: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -1179,17 +1180,18 @@ const styles = StyleSheet.create({
   sortOptionText: {
     marginLeft: 10,
     fontSize: 14,
-    color: '#333',
+    color: '#5D4037',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#faebd7',
   },
   loadingText: {
     marginTop: 10,
     fontSize: 14,
-    color: '#333',
+    color: '#5D4037',
   },
   createPostButton: {
     position: 'absolute',
@@ -1198,10 +1200,10 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: '#4C6EF5',
+    backgroundColor: '#5D4037',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#4C6EF5',
+    shadowColor: '#5D4037',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
@@ -1213,6 +1215,7 @@ const styles = StyleSheet.create({
     borderRadius: 26,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#5D4037',
   },
   postAuthorContainer: {
     flexDirection: 'row',
@@ -1224,11 +1227,11 @@ const styles = StyleSheet.create({
   postAuthor: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#000000',
+    color: '#5D4037',
   },
   postTime: {
     fontSize: 12,
-    color: '#333',
+    color: '#5D4037',
   },
   postStats: {
     flexDirection: 'row',
@@ -1243,38 +1246,44 @@ const styles = StyleSheet.create({
   reactionCount: {
     marginLeft: 4,
     fontSize: 14,
-    color: '#777',
+    color: '#5D4037',
   },
   activeReaction: {
-    color: '#4C6EF5',
+    color: '#5D4037',
   },
   activeDislike: {
-    color: '#E03131',
+    color: '#5D4037',
   },
   replyInputContainer: {
     marginTop: 10,
     padding: 10,
     borderWidth: 1,
-    borderColor: '#E8EFFF',
+    borderColor: '#5D4037',
     borderRadius: 8,
+    backgroundColor: '#faebd7',
   },
   submitReplyButton: {
     padding: 10,
     borderRadius: 20,
-    backgroundColor: '#4C6EF5',
+    backgroundColor: '#5D4037',
     alignItems: 'center',
   },
   submitReplyText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontWeight: 'bold',
   },
   disabledButton: {
-    backgroundColor: '#B0BEC5',
+    backgroundColor: '#5D4037',
     opacity: 0.7,
   },
   noReplies: {
     textAlign: 'center',
-    color: '#333',
+    color: '#5D4037',
+  },
+  replyAuthor: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#5D4037",
   },
 });
 

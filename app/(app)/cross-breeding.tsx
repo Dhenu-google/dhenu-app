@@ -320,11 +320,12 @@ export default function CrossBreedingScreen() {
         options={{
           title: 'Cross-Breed Recommendation System',
           headerStyle: {
-            backgroundColor: '#a5d8ff',
+            backgroundColor: '#5D4037',
           },
-          headerTintColor: '#333',
+          headerTintColor: '#faebd7',
           headerTitleStyle: {
             fontWeight: 'bold',
+            color: '#faebd7',
           },
         }} 
       />
@@ -342,7 +343,7 @@ export default function CrossBreedingScreen() {
                 }}
               >
                 <ThemedText style={styles.pickerText}>{selectedBreed || 'Select a breed'}</ThemedText>
-                <Ionicons name="chevron-down" size={24} color="#333" />
+                <Ionicons name="chevron-down" size={24} color="#5D4037" />
               </TouchableOpacity>
             ) : (
               <View style={styles.androidPickerContainer}>
@@ -381,7 +382,7 @@ export default function CrossBreedingScreen() {
 
           <View style={styles.responseContainer}>
             {loading ? (
-              <ActivityIndicator size="large" color="#ef4444" />
+              <ActivityIndicator size="large" color="#5D4037" />
             ) : recommendationData ? (
               <>
                 <Text style={styles.tableTitleText}>Breeding Recommendation for {selectedBreed}</Text>
@@ -392,7 +393,7 @@ export default function CrossBreedingScreen() {
                   <Ionicons
                     name={isSpeaking ? "pause" : "volume-high"}
                     size={24}
-                    color="#333"
+                    color="#5D4037"
                   />
                 </TouchableOpacity>
               </>
@@ -411,19 +412,19 @@ export default function CrossBreedingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#faebd7',
   },
   scrollView: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#faebd7',
   },
   scrollViewContent: {
     flexGrow: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#faebd7',
   },
   content: {
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#faebd7',
   },
   pickerContainer: {
     marginBottom: 25,
@@ -432,34 +433,34 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 8,
     fontWeight: '500',
-    color: '#111827',
+    color: '#5D4037',
   },
   pickerButton: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#8b5cf6', // Gemini-inspired purple
+    borderColor: '#5D4037',
     borderRadius: 8,
     padding: 16,
-    backgroundColor: '#fff',
-    shadowColor: '#8b5cf6',
+    backgroundColor: '#faebd7',
+    shadowColor: '#5D4037',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
   },
   pickerText: {
-    color: '#111827',
+    color: '#5D4037',
     fontSize: 16,
   },
   androidPickerContainer: {
     borderWidth: 2,
-    borderColor: '#8b5cf6', // Gemini-inspired purple
+    borderColor: '#5D4037',
     borderRadius: 8,
-    backgroundColor: '#fff',
+    backgroundColor: '#faebd7',
     overflow: 'hidden',
-    shadowColor: '#8b5cf6',
+    shadowColor: '#5D4037',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -468,41 +469,41 @@ const styles = StyleSheet.create({
   picker: {
     height: 50,
     width: '100%',
-    color: '#111827',
+    color: '#5D4037',
   },
   cowCountContainer: {
     marginTop: 12,
   },
   cowCount: {
     fontSize: 16,
-    color: '#0369a1',
+    color: '#5D4037',
   },
   countHighlight: {
     fontWeight: 'bold',
-    color: '#0369a1',
+    color: '#5D4037',
   },
   button: {
-    backgroundColor: '#ef4444',
+    backgroundColor: '#5D4037',
     borderRadius: 8,
     padding: 15,
     alignItems: 'center',
     marginBottom: 25,
   },
   buttonDisabled: {
-    backgroundColor: '#f87171',
+    backgroundColor: '#8D6E63',
     opacity: 0.7,
   },
   buttonText: {
-    color: '#fff',
+    color: '#faebd7',
     fontSize: 16,
     fontWeight: 'bold',
   },
   responseContainer: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#5D4037',
     borderRadius: 8,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#faebd7',
     minHeight: 200,
     justifyContent: 'center',
     marginBottom: 20,
@@ -517,48 +518,48 @@ const styles = StyleSheet.create({
   },
   tableContainer: {
     borderWidth: 1,
-    borderColor: '#3b82f6', // Blue border for table
+    borderColor: '#5D4037',
     borderRadius: 4,
     overflow: 'hidden',
     marginTop: 10,
-    backgroundColor: '#fff',
+    backgroundColor: '#faebd7',
   },
   headerRow: {
     flexDirection: 'row',
-    backgroundColor: '#3b82f6', // Blue header background
+    backgroundColor: '#5D4037',
     borderBottomWidth: 1,
-    borderColor: '#3b82f6',
+    borderColor: '#5D4037',
   },
   tableRow: {
     flexDirection: 'row',
-    backgroundColor: '#fff', // White rows
+    backgroundColor: '#faebd7',
   },
   evenRow: {
-    backgroundColor: '#fff',
+    backgroundColor: '#faebd7',
   },
   oddRow: {
-    backgroundColor: '#f9fafb', // Very light gray for alternating rows
+    backgroundColor: '#f5e9da',
   },
   headerCell: {
     padding: 12,
     fontWeight: 'bold',
-    color: '#fff', // White text for header
+    color: '#faebd7',
     fontSize: 14,
   },
   tableCell: {
     padding: 12,
-    color: '#111827',
+    color: '#5D4037',
     fontSize: 14,
   },
   featureColumn: {
     width: 140,
     borderRightWidth: 1,
-    borderColor: '#3b82f6', // Blue border between columns
+    borderColor: '#5D4037',
   },
   breedColumn: {
     width: 100,
     borderRightWidth: 1,
-    borderColor: '#3b82f6', // Blue border between columns
+    borderColor: '#5D4037',
   },
   reasonColumn: {
     width: 200,
@@ -567,12 +568,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#3b82f6', // Blue title text
+    color: '#5D4037',
     textAlign: 'center',
   },
   placeholder: {
     fontSize: 16,
-    color: '#4b5563',
+    color: '#5D4037',
     textAlign: 'center',
     fontStyle: 'italic',
   },
@@ -580,7 +581,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 10,
     right: 10,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: '#f5e9da',
     borderRadius: 20,
     width: 40,
     height: 40,

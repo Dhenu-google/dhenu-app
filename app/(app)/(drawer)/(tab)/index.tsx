@@ -21,7 +21,7 @@ export default function HomeScreen() {
   const [isChatVisible, setIsChatVisible] = useState(false);
   const { t } = useTranslation();
   const [messages, setMessages] = useState([
-    { text: 'Welcome to Moo AI! 🐄 Ask me about Indian cow breeds.\n\n1️⃣ Learn about a breed’s origin, history & socio-economic benefits.\n2️⃣ Don’t know a breed? I can list all or filter by region.\n3️⃣ No cruelty-related queries allowed.', sender: 'bot' },
+    { text: "Welcome to Moo AI! 🐄 Ask me about Indian cow breeds.\n\n1️⃣ Learn about a breed's origin, history & socio-economic benefits.\n2️⃣ Don't know a breed? I can list all or filter by region.\n3️⃣ No cruelty-related queries allowed.", sender: 'bot' },
   ]);
   
   // Handle pull-to-refresh action
@@ -142,7 +142,7 @@ export default function HomeScreen() {
       {/* Chatbot Button */}
       <View style={styles.chatButtonContainer}>
         <LinearGradient
-          colors={['rgba(218, 163, 255, 0.8)', 'rgba(151, 159, 250, 0.8)']}
+          colors={['#8D6E63', '#795548', '#5D4037']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.gradientBorder}
@@ -158,7 +158,7 @@ export default function HomeScreen() {
                 style={styles.micContainer}
                 onPress={(e) => e.stopPropagation()} // Prevent triggering the parent button
               >
-                <Ionicons name="mic" size={22} color="white" />
+                <Ionicons name="mic" size={22} color="#faebd7" />
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
@@ -178,7 +178,7 @@ export default function HomeScreen() {
             <Appbar.Content title={t('explore.mooAIChat', 'Moo AI Chat')} />
           </Appbar.Header>
           <MooAIChat messages={messages} setMessages={setMessages} isOpen={isChatVisible} />
-          <Button title="Close Chat" onPress={() => setIsChatVisible(false)} />
+          <Button mode="contained" onPress={() => setIsChatVisible(false)}>Close Chat</Button>
         </SafeAreaView>
       </Modal>
     </ThemedView>
@@ -188,7 +188,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#faebd7',
   },
   scrollView: {
     flex: 1,
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 8,
-    color: '#4C6EF5',
+    color: '#5D4037',
   },
   welcomeTextContainer: {
     flexDirection: 'row',
@@ -211,16 +211,16 @@ const styles = StyleSheet.create({
   },
   welcomeLabel: {
     fontSize: 18,
-    color: '#333',
+    color: '#5D4037',
   },
   nameText: {
     fontSize: 18,
-    color: '#9254de',
+    color: '#5D4037',
     fontWeight: '600',
   },
   exclamation: {
     fontSize: 18,
-    color: '#333',
+    color: '#5D4037',
   },
   menuGrid: {
     flexDirection: 'row',
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginBottom: 16,
     overflow: 'hidden',
-    backgroundColor: '#4070F4',
+    backgroundColor: '#5D4037',
   },
   cardContent: {
     padding: 16,
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 28,
     padding: 3.25, // Border thickness
-    shadowColor: 'rgba(218, 163, 255, 0.8)',
+    shadowColor: 'rgba(93, 64, 55, 0.8)',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 12,
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
   chatButton: {
     flex: 1,
     borderRadius: 27,
-    backgroundColor: 'white',
+    backgroundColor: '#faebd7',
     overflow: 'hidden',
   },
   buttonContent: {
@@ -300,13 +300,13 @@ const styles = StyleSheet.create({
   buttonText: {
     flex: 1,
     fontSize: 16,
-    color: '#666',
+    color: '#5D4037',
   },
   micContainer: {
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: '#8e79ee',
+    backgroundColor: '#5D4037',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 8,

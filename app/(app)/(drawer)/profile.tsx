@@ -45,14 +45,14 @@ const ProfileScreen = () => {
   // ============================================================================
   
   return (
-    <ThemedView style={styles.container} lightColor="#ffffff" darkColor="#ffffff">
+    <ThemedView style={styles.container} lightColor="#faebd7" darkColor="#faebd7">
       {/* Profile Header with Back Button */}
       <View style={styles.profileHeader}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#8B5CF6" />
+          <Ionicons name="arrow-back" size={24} color="#5D4037" />
         </TouchableOpacity>
         <View style={styles.profileIcon}>
-          <Ionicons name="person" size={40} color="#8B5CF6" />
+          <Ionicons name="person" size={40} color="#5D4037" />
         </View>
         <ThemedText type="title" style={styles.headerTitle}>{t('profile.title', 'My Profile')}</ThemedText>
       </View>
@@ -87,15 +87,10 @@ const ProfileScreen = () => {
           onPress={handleLogout}
           activeOpacity={0.8}
         >
-          <LinearGradient
-            colors={['#E53E3E', '#C53030', '#9B2C2C']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.gradientButton}
-          >
+          <View style={styles.gradientButton}>
             <Ionicons name="log-out-outline" size={20} color="#fff" style={styles.buttonIcon} />
             <ThemedText style={styles.buttonText}>{t('common.logout', 'Logout')}</ThemedText>
-          </LinearGradient>
+          </View>
         </TouchableOpacity>
       </View>
     </ThemedView>
@@ -106,7 +101,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#faebd7',
   },
   profileHeader: {
     flexDirection: 'row',
@@ -118,17 +113,17 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: '#f0ebff',
+    backgroundColor: 'rgba(93, 64, 55, 0.1)',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 16,
   },
   headerTitle: {
     fontSize: 28,
-    color: '#8B5CF6',
+    color: '#5D4037',
   },
   infoCard: {
-    backgroundColor: '#fff',
+    backgroundColor: '#faebd7',
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
@@ -137,6 +132,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: '#5D4037',
   },
   infoRow: {
     flexDirection: 'row',
@@ -145,11 +142,11 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     width: 100,
-    color: '#8B5CF6',
+    color: '#5D4037',
   },
   infoValue: {
     flex: 1,
-    color: '#000',
+    color: '#5D4037',
   },
   buttonContainer: {
     alignItems: 'center',
@@ -160,6 +157,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     overflow: 'hidden',
+    backgroundColor: '#5D4037',
   },
   gradientButton: {
     flexDirection: 'row',
@@ -168,6 +166,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 25,
+    backgroundColor: '#5D4037',
   },
   buttonIcon: {
     marginRight: 8,

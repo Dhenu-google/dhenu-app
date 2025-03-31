@@ -35,7 +35,7 @@ export default function DhenuHeader({ showBackButton = false, title }: DhenuHead
       {/* Left side - profile button */}
       <View style={styles.sideContainer}>
         <TouchableOpacity onPress={gotoprofile} style={styles.iconButton}>
-          <Ionicons name="person" size={24} color="#333" />
+          <Ionicons name="person" size={24} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
       
@@ -68,9 +68,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     height: 56,
     paddingHorizontal: 16,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#5D4037',
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: '#faebd7',
     paddingTop: Platform.OS === 'ios' ? 0 : 8,
   },
   sideContainer: {
@@ -95,24 +95,24 @@ const styles = StyleSheet.create({
   languageButton: {
     height: 32,
     paddingHorizontal: 8,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#faebd7',
     borderRadius: 16,
   },
   subtitleText: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#333',
+    color: '#FFFFFF',
     marginRight: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#333',
+    color: '#FFFFFF',
     marginBottom: 8,
   },
   welcomeText: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#333',
+    color: '#FFFFFF',
     marginRight: 8,
   },
 });

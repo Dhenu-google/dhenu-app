@@ -28,7 +28,7 @@ export default function MarketplaceScreen() {
           <ThemedText type="title" style={styles.title}>{t('marketplace.title', 'Marketplace')}</ThemedText>
         </View>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#8B5CF6" />
+          <ActivityIndicator size="large" color="#5D4037" />
           <ThemedText style={styles.loadingText}>{t('common.loading', 'Loading products...')}</ThemedText>
         </View>
       </ThemedView>
@@ -85,15 +85,10 @@ export default function MarketplaceScreen() {
           style={styles.addButton} 
           onPress={() => router.push("/(app)/add-product")}
         >
-          <LinearGradient
-            colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.gradientButton}
-          >
+          <View style={styles.gradientButton}>
             <Ionicons name="add" size={20} color="#fff" />
             <ThemedText style={styles.addButtonText}>{t('marketplace.postListing', 'ADD NEW PRODUCT')}</ThemedText>
-          </LinearGradient>
+          </View>
         </TouchableOpacity>
       </View>
     </ThemedView>
@@ -103,7 +98,7 @@ export default function MarketplaceScreen() {
 const styles = StyleSheet.create({
   container: { 
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#faebd7',
   },
   header: {
     paddingTop: 16,
@@ -115,7 +110,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '600',
-    color: '#8B5CF6', // Lavender color
+    color: '#5D4037',
   },
   contentContainer: {
     flex: 1,
@@ -123,7 +118,7 @@ const styles = StyleSheet.create({
   },
   subtitle: { 
     fontSize: 14,
-    color: '#333',
+    color: '#5D4037',
     marginBottom: 16,
     fontWeight: '500'
   },
@@ -150,10 +145,11 @@ const styles = StyleSheet.create({
     fontSize: 16, 
     fontWeight: "600",
     marginBottom: 4,
+    color: '#5D4037',
   },
   category: { 
     fontSize: 14, 
-    color: "#333",
+    color: "#5D4037",
     marginBottom: 8, 
   },
   locationContainer: {
@@ -162,36 +158,38 @@ const styles = StyleSheet.create({
   },
   locationText: {
     fontSize: 13,
-    color: '#333',
+    color: '#5D4037',
     marginLeft: 4,
   },
   enquiryContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(76, 110, 245, 0.1)',
+    backgroundColor: 'rgba(93, 64, 55, 0.1)',
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 6,
   },
   enquiryCount: { 
     fontSize: 18, 
-    color: "#4C6EF5", 
+    color: "#5D4037", 
     fontWeight: "bold" 
   },
   enquiryLabel: {
     fontSize: 12,
-    color: "#4C6EF5",
+    color: "#5D4037",
   },
   addButton: {
     borderRadius: 8,
     overflow: 'hidden',
     marginTop: 8,
+    backgroundColor: '#5D4037',
   },
   gradientButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 14,
+    backgroundColor: '#5D4037',
   },
   addButtonText: { 
     color: "#fff", 
@@ -209,13 +207,13 @@ const styles = StyleSheet.create({
     marginTop: 16, 
     fontSize: 16,
     fontWeight: '500',
-    color: "#333" 
+    color: "#5D4037" 
   },
   emptySubtext: {
     textAlign: "center",
     marginTop: 8,
     fontSize: 14,
-    color: "#333"
+    color: "#5D4037"
   },
   loadingContainer: {
     flex: 1,
@@ -225,6 +223,6 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: '#666',
+    color: '#5D4037',
   }
 });
