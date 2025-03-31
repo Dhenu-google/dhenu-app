@@ -1,7 +1,8 @@
 import { router, Link } from "expo-router";
-import { Text, TextInput, View, Pressable } from "react-native";
+import { Text, TextInput, View, Pressable, Alert, ActivityIndicator } from "react-native";
 import { useState } from "react";
 import { useSession } from "@/context";
+import { getFirebaseAuthErrorMessage } from "@/lib/auth-err-handler";
 
 /**
  * SignIn component handles user authentication through email and password
@@ -15,6 +16,7 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { signIn } = useSession();
+  const [isLoading, setIsLoading] = useState(false); // State for loading indicator
 
   // ============================================================================
   // Handlers
@@ -26,9 +28,19 @@ export default function SignIn() {
    */
   const handleLogin = async () => {
     try {
+      // Attempt to sign in the user
       return await signIn(email, password);
-    } catch (err) {
-      console.log("[handleLogin] ==>", err);
+    } catch (err: any) {
+      // Log the error for debugging purposes
+      console.error("[handleLogin Error] ==> ", err);
+
+      // Get a user-friendly error message based on the error code
+      const errorMessage = getFirebaseAuthErrorMessage(err.code || "unknown");
+
+      // Display the error message in an alert
+      Alert.alert("Sign-In Error", errorMessage);
+
+      // Return null to indicate failure
       return null;
     }
   };
@@ -37,8 +49,14 @@ export default function SignIn() {
    * Handles the sign-in button press
    */
   const handleSignInPress = async () => {
+    setIsLoading(true); // Show loading indicator
     const resp = await handleLogin();
-    router.replace("/(app)");
+    setIsLoading(false); // Hide loading indicator
+    console.log("response data : ",resp);
+    if (resp) {
+      // Navigate to the app's main page if sign-in is successful
+      router.replace("/(app)");
+    }
   };
 
   // ============================================================================
@@ -73,13 +91,21 @@ export default function SignIn() {
               />
             </View>
 
+            {/* Sign In Button */}
             <Pressable
-              className="bg-blue-500 px-4 py-3 rounded-lg"
               onPress={handleSignInPress}
+              disabled={isLoading} // Disable button while loading
+              className={`${
+                isLoading ? "bg-blue-400" : "bg-blue-500"
+              } px-4 py-3 rounded-lg`}
             >
-              <Text className="text-white text-center font-semibold">
-                Sign In
-              </Text>
+              {isLoading ? (
+                <ActivityIndicator color="#ffffff" /> // Show loading spinner
+              ) : (
+                <Text className="text-white text-center font-semibold">
+                  Sign In
+                </Text>
+              )}
             </Pressable>
           </View>
 

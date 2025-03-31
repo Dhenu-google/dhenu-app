@@ -30,7 +30,7 @@ export default function AppLayout() {
         <ActivityIndicator size="large" color="#0000ff" />
       </View>);
   }
-  if(!user) return <Redirect href="../landing" />;
+  if(!user) return <Redirect href="../sign-in" />;
 
   return (
     <ProductsProvider>

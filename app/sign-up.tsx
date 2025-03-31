@@ -1,10 +1,12 @@
 import { router, Link } from "expo-router";
-import { Text, TextInput, View, Pressable, Alert } from "react-native";
+import { Text, TextInput, View, Pressable, Alert, ActivityIndicator } from "react-native";
 import { useState } from "react";
 import { useSession } from "@/context";
 import * as Location from "expo-location";
 import { DB_API_URL } from "@/config";
 import { Picker } from "@react-native-picker/picker"; // Import Picker for dropdown
+import { getFirebaseAuthErrorMessage } from "@/lib/auth-err-handler";
+
 /**
  * SignUp component handles new user registration
  * @returns {JSX.Element} Sign-up form component
@@ -20,6 +22,7 @@ export default function SignUp() {
   type UserRole = "Farmer" | "Gaushala Owner" | "Public";
   const [role, setRole] = useState<UserRole>("Farmer"); // Add state for role selection
   const { signUp } = useSession();
+  const [isLoading, setIsLoading] = useState(false); // State for loading indicator
 
   // ============================================================================
   // Handlers
@@ -32,15 +35,14 @@ export default function SignUp() {
   const handleRegister = async () => {
     try {
       const location = await fetchUserLocation();
-      let user = null;
-
       if (location) {
-        user = await signUp(email, password, name, role, location.latitude, location.longitude);
+        const user = await signUp(email, password, name, role, location.latitude, location.longitude);
+        return user;
       }
-      
-    } catch (err) {
-      console.log("[handleRegister] ==>", err);
-      Alert.alert("Error", "Failed to sign up. Please try again.");
+    } catch (err: any) {
+      console.error("[handleRegister Error] ==> ", err); // Log the full error object
+      const errorMessage = getFirebaseAuthErrorMessage(err.code || "unknown");
+      Alert.alert("Sign-Up Error", errorMessage);
       return null;
     }
   };
@@ -75,7 +77,12 @@ const fetchUserLocation = async():Promise<{latitude:number; longitude:number} | 
    * Handles the sign-up button press
    */
   const handleSignUpPress = async () => {
+    setIsLoading(true); // Show loading indicator
     const resp = await handleRegister();
+    setIsLoading(false); // Hide loading indicator
+    if (resp) {
+      router.replace("/(app)");
+    }
   };
 
   // ============================================================================
@@ -166,11 +173,18 @@ const fetchUserLocation = async():Promise<{latitude:number; longitude:number} | 
       {/* Sign Up Button */}
       <Pressable
         onPress={handleSignUpPress}
-        className="bg-blue-600 w-full max-w-[300px] py-3 rounded-lg active:bg-blue-700"
+        disabled={isLoading} // Disable button while loading
+        className={`${
+          isLoading ? "bg-blue-400" : "bg-blue-600"
+        } w-full max-w-[300px] py-3 rounded-lg active:bg-blue-700`}
       >
-        <Text className="text-white font-semibold text-base text-center">
-          Sign Up
-        </Text>
+        {isLoading ? (
+          <ActivityIndicator color="#ffffff" /> // Show loading spinner
+        ) : (
+          <Text className="text-white font-semibold text-base text-center">
+            Sign Up
+          </Text>
+        )}
       </Pressable>
 
       {/* Sign In Link */}
