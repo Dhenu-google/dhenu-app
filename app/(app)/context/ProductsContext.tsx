@@ -7,7 +7,9 @@ import {
   getFirestore, 
   query, 
   orderBy,
-  Timestamp 
+  Timestamp,
+  deleteDoc,
+  updateDoc
 } from 'firebase/firestore';
 import app from '@/lib/firebase-config';
 import { getCurrentUser, FirebaseUserResponse } from '@/lib/firebase-service';
@@ -30,12 +32,16 @@ interface ProductsContextType {
   products: Product[];
   loading: boolean;
   addProduct: (product: { name: string; category: string; description?: string; location?: string; }) => Promise<void>;
+  deleteProduct: (productId: string) => Promise<void>;
+  editProduct: (productId: string, product: { name: string; category: string; description?: string; location?: string; }) => Promise<void>;
 }
 
 export const ProductsContext = createContext<ProductsContextType>({
   products: [],
   loading: false,
   addProduct: async () => {},
+  deleteProduct: async () => {},
+  editProduct: async () => {},
 });
 
 export const ProductsProvider = ({ children }: { children: ReactNode }) => {
@@ -117,8 +123,38 @@ export const ProductsProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Delete a product from Firestore
+  const deleteProduct = async (productId: string) => {
+    try {
+      await deleteDoc(doc(db, 'products', productId));
+      // Refresh products after deleting
+      fetchProducts();
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      throw error;
+    }
+  };
+
+  // Edit a product in Firestore
+  const editProduct = async (productId: string, product: { name: string; category: string; description?: string; location?: string; }) => {
+    try {
+      const productRef = doc(db, 'products', productId);
+      await updateDoc(productRef, {
+        name: product.name,
+        category: product.category,
+        description: product.description || '',
+        location: product.location || '',
+      });
+      // Refresh products after editing
+      fetchProducts();
+    } catch (error) {
+      console.error('Error editing product:', error);
+      throw error;
+    }
+  };
+
   return (
-    <ProductsContext.Provider value={{ products, loading, addProduct }}>
+    <ProductsContext.Provider value={{ products, loading, addProduct, deleteProduct, editProduct }}>
       {children}
     </ProductsContext.Provider>
   );

@@ -1,5 +1,5 @@
 import { router, Link } from "expo-router";
-import { Text, TextInput, View, Pressable, Alert, ActivityIndicator } from "react-native";
+import { Text, TextInput, View, Pressable, Alert, ActivityIndicator, ImageBackground, Image } from "react-native";
 import { useState } from "react";
 import { useSession } from "@/context";
 import * as Location from "expo-location";
@@ -90,112 +90,126 @@ const fetchUserLocation = async():Promise<{latitude:number; longitude:number} | 
   // ============================================================================
 
   return (
-    <View className="flex-1 justify-center items-center p-4">
-      {/* Welcome Section */}
-      <View className="items-center mb-8">
-        <Text className="text-2xl font-bold text-gray-800 mb-2">
-          Create Account
-        </Text>
-        <Text className="text-sm text-gray-500">
-          Sign up to get started
-        </Text>
+    <ImageBackground
+      source={require("@/assets/images/bg.png")}
+      className="flex-1"
+    >
+      <View className="flex-1 bg-black/30">
+        <View className="flex-1 items-center justify-center p-4">
+          <View className="w-full max-w-sm bg-white/90 p-6 rounded-2xl shadow-lg">
+            {/* Welcome Section */}
+            <View className="items-center mb-8">
+              <Image 
+                source={require("@/assets/images/Moo.jpg")}
+                className="w-24 h-24 rounded-full mb-4"
+                resizeMode="cover"
+              />
+              <Text className="text-2xl font-bold text-gray-800 mb-2">
+                Create Account
+              </Text>
+              <Text className="text-sm text-gray-500">
+                Sign up to get started
+              </Text>
+            </View>
+
+            {/* Form Section */}
+            <View className="space-y-4 mb-8">
+              <View>
+                <Text className="text-sm font-medium text-gray-700 mb-1 ml-1">
+                  Name
+                </Text>
+                <TextInput
+                  placeholder="Your full name"
+                  value={name}
+                  onChangeText={setName}
+                  textContentType="name"
+                  autoCapitalize="words"
+                  className="w-full p-3 border border-gray-300 rounded-lg text-base bg-white"
+                />
+              </View>
+
+              <View>
+                <Text className="text-sm font-medium text-gray-700 mb-1 ml-1">
+                  Email
+                </Text>
+                <TextInput
+                  placeholder="name@mail.com"
+                  value={email}
+                  onChangeText={setEmail}
+                  textContentType="emailAddress"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  className="w-full p-3 border border-gray-300 rounded-lg text-base bg-white"
+                />
+              </View>
+
+              <View>
+                <Text className="text-sm font-medium text-gray-700 mb-1 ml-1">
+                  Password
+                </Text>
+                <TextInput
+                  placeholder="Create a password"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                  textContentType="newPassword"
+                  className="w-full p-3 border border-gray-300 rounded-lg text-base bg-white"
+                />
+              </View>
+
+              {/* Role Selection */}
+              <View>
+                <Text className="text-sm font-medium text-gray-700 mb-1 ml-1">
+                  Select Role
+                </Text>
+                <Picker
+                  selectedValue={role}
+                  onValueChange={(itemValue) => setRole(itemValue)}
+                  style={{
+                    height: 50,
+                    width: "100%",
+                    borderWidth: 1,
+                    borderColor: "#ccc",
+                    borderRadius: 8,
+                    backgroundColor: "white",
+                  }}
+                >
+                  <Picker.Item label="Farmer" value="Farmer" />
+                  <Picker.Item label="Gaushala Owner" value="Gaushala Owner" />
+                  <Picker.Item label="Public" value="Public" />
+                </Picker>
+              </View>
+            </View>
+
+            {/* Sign Up Button */}
+            <Pressable
+              onPress={handleSignUpPress}
+              disabled={isLoading}
+              className={`${
+                isLoading ? "bg-blue-400" : "bg-blue-600"
+              } w-full py-3 rounded-lg active:bg-blue-700`}
+            >
+              {isLoading ? (
+                <ActivityIndicator color="#ffffff" />
+              ) : (
+                <Text className="text-white font-semibold text-base text-center">
+                  Sign Up
+                </Text>
+              )}
+            </Pressable>
+
+            {/* Sign In Link */}
+            <View className="flex-row items-center justify-center mt-6">
+              <Text className="text-gray-600">Already have an account?</Text>
+              <Link href="/sign-in" asChild>
+                <Pressable className="ml-2">
+                  <Text className="text-blue-600 font-semibold">Sign In</Text>
+                </Pressable>
+              </Link>
+            </View>
+          </View>
+        </View>
       </View>
-
-      {/* Form Section */}
-      <View className="w-full max-w-[300px] space-y-4 mb-8">
-        <View>
-          <Text className="text-sm font-medium text-gray-700 mb-1 ml-1">
-            Name
-          </Text>
-          <TextInput
-            placeholder="Your full name"
-            value={name}
-            onChangeText={setName}
-            textContentType="name"
-            autoCapitalize="words"
-            className="w-full p-3 border border-gray-300 rounded-lg text-base bg-white"
-          />
-        </View>
-
-        <View>
-          <Text className="text-sm font-medium text-gray-700 mb-1 ml-1">
-            Email
-          </Text>
-          <TextInput
-            placeholder="name@mail.com"
-            value={email}
-            onChangeText={setEmail}
-            textContentType="emailAddress"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            className="w-full p-3 border border-gray-300 rounded-lg text-base bg-white"
-          />
-        </View>
-
-        <View>
-          <Text className="text-sm font-medium text-gray-700 mb-1 ml-1">
-            Password
-          </Text>
-          <TextInput
-            placeholder="Create a password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            textContentType="newPassword"
-            className="w-full p-3 border border-gray-300 rounded-lg text-base bg-white"
-          />
-        </View>
-
-        {/* Role Selection */}
-        <View>
-          <Text className="text-sm font-medium text-gray-700 mb-1 ml-1">
-            Select Role
-          </Text>
-          <Picker
-            selectedValue={role}
-            onValueChange={(itemValue) => setRole(itemValue)}
-            style={{
-              height: 50,
-              width: "100%",
-              borderWidth: 1,
-              borderColor: "#ccc",
-              borderRadius: 8,
-              backgroundColor: "white",
-            }}
-          >
-            <Picker.Item label="Farmer" value="Farmer" />
-            <Picker.Item label="Gaushala Owner" value="Gaushala Owner" />
-            <Picker.Item label="Public" value="Public" />
-          </Picker>
-        </View>
-      </View>
-
-      {/* Sign Up Button */}
-      <Pressable
-        onPress={handleSignUpPress}
-        disabled={isLoading} // Disable button while loading
-        className={`${
-          isLoading ? "bg-blue-400" : "bg-blue-600"
-        } w-full max-w-[300px] py-3 rounded-lg active:bg-blue-700`}
-      >
-        {isLoading ? (
-          <ActivityIndicator color="#ffffff" /> // Show loading spinner
-        ) : (
-          <Text className="text-white font-semibold text-base text-center">
-            Sign Up
-          </Text>
-        )}
-      </Pressable>
-
-      {/* Sign In Link */}
-      <View className="flex-row items-center mt-6">
-        <Text className="text-gray-600">Already have an account?</Text>
-        <Link href="/sign-in" asChild>
-          <Pressable className="ml-2">
-            <Text className="text-blue-600 font-semibold">Sign In</Text>
-          </Pressable>
-        </Link>
-      </View>
-    </View>
+    </ImageBackground>
   );
 }
