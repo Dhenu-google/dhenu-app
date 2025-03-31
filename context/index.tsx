@@ -235,14 +235,21 @@ console.log("Auth state changed:", user);
     try {
       setIsLoading(true);
       const response = await login(email, password);
-      if(response?.user){
+      if (response?.user) {
         await fetchAndSetRole(response.user.uid);
       }
       return response?.user;
-    } catch (error) {
+    } catch (error: any) {
       console.error("[handleSignIn error] ==>", error);
-      return undefined;
-    }finally{
+
+      // Re-throw the error if it's a FirebaseError
+      if (error instanceof FirebaseError) {
+        throw error; // This will allow the calling component to handle it
+      }
+
+      // Handle non-Firebase errors
+      throw new Error("An unknown error occurred during sign-in.");
+    } finally {
       setIsLoading(false);
     }
   };
@@ -281,9 +288,16 @@ console.log("Auth state changed:", user);
         await user.getIdToken(true); //refresh auth state
       }
       return user;
-    } catch (error) {
+    } catch (error: any) {
       console.error("[handleSignUp error] ==>", error);
-      return undefined;
+
+      // Re-throw the error if it's a FirebaseError
+      if (error instanceof FirebaseError) {
+        throw error; // This will allow the calling component to handle it
+      }
+
+      // Handle non-Firebase errors
+      throw new Error("An unknown error occurred during sign-up.");
     }
     finally{
       setIsLoading(false);
