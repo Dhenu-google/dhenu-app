@@ -197,6 +197,7 @@ export default function StrayCows() {
       Alert.alert("Error", "Failed to submit data. Please try again.");
     } finally {
       setLoading(false); // Stop loading
+      fetchLocation();
     }
   };
 
