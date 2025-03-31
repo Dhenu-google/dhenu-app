@@ -16,7 +16,15 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#2196F3",
+        tabBarActiveTintColor: "#FFFFFF",
+        tabBarInactiveTintColor: "#FFFFFF",
+        tabBarStyle: {
+          backgroundColor: "#5D4037",
+          borderTopColor: "#faebd7",
+        },
+        tabBarLabelStyle: {
+          color: "#FFFFFF"
+        },
         headerShown: false, // Hide the tab headers since we're using the DhenuHeader
       }}
     >
@@ -25,7 +33,7 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="home" color={color} />
+            <TabBarIcon name="home" color="#FFFFFF" />
           ),
         }}
       />

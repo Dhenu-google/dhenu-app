@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
+import DhenuHeader from '@/components/DhenuHeader';
 import { sampleGaushaalas } from '@/lib/sample-gaushaalas';
 import * as GCloudSQLService from '@/lib/gcloud-sql-service';
 import * as Location from "expo-location";
@@ -251,85 +252,84 @@ export default function NetworkScreen() {
   if (isLoading) {
     return (
       <ThemedView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#8B5CF6" />
+        <ActivityIndicator size="large" color="#5D4037" />
         <ThemedText style={styles.loadingText}>Loading map...</ThemedText>
       </ThemedView>
     );
   }
 
   return (
-    <ThemedView style={styles.container}>
-      <View style={styles.header}>
-        <ThemedText type="title" style={styles.title}>Gaushaala Network</ThemedText>
-      </View>
-      
-      {renderSearchOptions()}
-      
-      <View style={styles.mapContainer}>
-        <MapView
-          provider={PROVIDER_GOOGLE}
-          style={styles.map}
-          region={region}
-          showsUserLocation
-          showsMyLocationButton
-        >
-          {filteredLocations.map((location) => (
-            <Marker
-              key={location.id} // Use the unique `id` field
-              coordinate={{
-                latitude: location.latitude,
-                longitude: location.longitude,
-              }}
-              title={location.name}
-              description={location.address}
-              onPress={() => handleMarkerPress(location)}
-              pinColor="#8B5CF6"
-            />
-          ))}
-        </MapView>
+    <SafeAreaView style={{ flex: 1 }}>
+      <DhenuHeader title="Network" />
+      <ThemedView style={styles.container}>
+        {renderSearchOptions()}
         
-        {selectedLocation && (
-          <View style={styles.infoWindow}>
-            <TouchableOpacity style={styles.closeButton} onPress={closeInfoWindow}>
-              <Ionicons name="close-circle" size={24} color="#8B5CF6" />
-            </TouchableOpacity>
-            
-            <ThemedText style={styles.infoTitle}>{selectedLocation.name}</ThemedText>
-            <ThemedText style={styles.infoAddress}>{selectedLocation.address}</ThemedText>
-            
-            {selectedLocation.distanceKm && (
-              <ThemedText style={styles.infoDistance}>
-                {selectedLocation.distanceKm.toFixed(2)} km away
-              </ThemedText>
-            )}
-            
-            {selectedLocation.cowBreed && (
-              <ThemedText style={styles.infoBreed}>Cow Breed: {selectedLocation.cowBreed}</ThemedText>
-            )}
-            
-            <View style={styles.buttonContainer}>
-              {selectedLocation.phone && (
-                <TouchableOpacity 
-                  style={styles.actionButton}
-                  onPress={() => callLocation(selectedLocation.phone!)}
-                >
-                  <Ionicons name="call" size={20} color="white" />
-                  <Text style={styles.buttonText}>Call</Text>
-                </TouchableOpacity>
+        <View style={styles.mapContainer}>
+          <MapView
+            provider={PROVIDER_GOOGLE}
+            style={styles.map}
+            region={region}
+            showsUserLocation
+            showsMyLocationButton
+          >
+            {filteredLocations.map((location) => (
+              <Marker
+                key={location.id} // Use the unique `id` field
+                coordinate={{
+                  latitude: location.latitude,
+                  longitude: location.longitude,
+                }}
+                title={location.name}
+                description={location.address}
+                onPress={() => handleMarkerPress(location)}
+                pinColor="#5D4037"
+              />
+            ))}
+          </MapView>
+          
+          {selectedLocation && (
+            <View style={styles.infoWindow}>
+              <TouchableOpacity style={styles.closeButton} onPress={closeInfoWindow}>
+                <Ionicons name="close-circle" size={24} color="#5D4037" />
+              </TouchableOpacity>
+              
+              <ThemedText style={styles.infoTitle}>{selectedLocation.name}</ThemedText>
+              <ThemedText style={styles.infoAddress}>{selectedLocation.address}</ThemedText>
+              
+              {selectedLocation.distanceKm && (
+                <ThemedText style={styles.infoDistance}>
+                  {selectedLocation.distanceKm.toFixed(2)} km away
+                </ThemedText>
               )}
               
-              <TouchableOpacity 
-                style={styles.actionButton}
-                onPress={() => openDirections(selectedLocation)}
-              >
-                <Ionicons name="navigate" size={20} color="white" />
-                <Text style={styles.buttonText}>Directions</Text>
-              </TouchableOpacity>
+              {selectedLocation.cowBreed && (
+                <ThemedText style={styles.infoBreed}>Cow Breed: {selectedLocation.cowBreed}</ThemedText>
+              )}
+              
+              <View style={styles.buttonContainer}>
+                {selectedLocation.phone && (
+                  <TouchableOpacity 
+                    style={styles.actionButton}
+                    onPress={() => callLocation(selectedLocation.phone!)}
+                  >
+                    <Ionicons name="call" size={20} color="#FFFFFF" />
+                    <Text style={styles.buttonText}>Call</Text>
+                  </TouchableOpacity>
+                )}
+                
+                <TouchableOpacity 
+                  style={styles.actionButton}
+                  onPress={() => openDirections(selectedLocation)}
+                >
+                  <Ionicons name="navigate" size={20} color="#FFFFFF" />
+                  <Text style={styles.buttonText}>Directions</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        )}
-      </View>
-    </ThemedView>
+          )}
+        </View>
+      </ThemedView>
+    </SafeAreaView>
   );
 }
 
@@ -356,33 +356,37 @@ const getReadableAddress = async (latitude: number, longitude: number): Promise<
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#faebd7',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#faebd7',
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
+    color: '#5D4037',
   },
   header: {
     paddingTop: 16,
     paddingBottom: 10,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: '#5D4037',
+    backgroundColor: '#faebd7',
   },
   title: {
     fontSize: 22,
     fontWeight: '600',
-    color: '#8B5CF6',
+    color: '#5D4037',
   },
   searchOptions: {
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: '#5D4037',
+    backgroundColor: '#faebd7',
   },
   searchRow: {
     flexDirection: 'row',
@@ -390,20 +394,20 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   distanceOption: {
-    backgroundColor: '#F3F4F6',
+    backgroundColor: '#faebd7',
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: '#5D4037',
   },
   activeOption: {
-    backgroundColor: '#EDE9FE',
-    borderColor: '#8B5CF6',
+    backgroundColor: '#5D4037',
+    borderColor: '#5D4037',
   },
   optionText: {
     fontSize: 12,
-    color: '#4B5563',
+    color: '#5D4037',
   },
   mapContainer: {
     flex: 1,
@@ -417,16 +421,16 @@ const styles = StyleSheet.create({
     bottom: 20,
     left: 20,
     right: 20,
-    backgroundColor: 'white', // Ensure a visible background color
+    backgroundColor: '#faebd7',
     borderRadius: 12,
     padding: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 5, // Add elevation for Android
-    borderWidth: 1, // Optional: Add a border for better visibility
-    borderColor: '#E5E7EB', // Optional: Border color
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: '#5D4037',
   },
   closeButton: {
     position: 'absolute',
@@ -435,24 +439,24 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   infoTitle: {
-    fontSize: 18, // Ensure a readable font size
+    fontSize: 18,
     fontWeight: '600',
-    color: '#333', // Ensure good contrast
+    color: '#5D4037',
     marginBottom: 4,
   },
   infoAddress: {
     fontSize: 14,
-    color: '#555', // Slightly lighter color for secondary text
+    color: '#5D4037',
     marginBottom: 8,
   },
   infoDistance: {
     fontSize: 13,
-    color: '#8B5CF6', // Highlight distance in a noticeable color
+    color: '#5D4037',
     marginBottom: 4,
   },
   infoBreed: {
     fontSize: 13,
-    color: '#4B5563', // Ensure good contrast
+    color: '#5D4037',
     marginBottom: 12,
   },
   buttonContainer: {
@@ -464,14 +468,14 @@ const styles = StyleSheet.create({
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#8B5CF6',
+    backgroundColor: '#5D4037',
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 20,
     marginLeft: 10,
   },
   buttonText: {
-    color: 'white',
+    color: '#FFFFFF',
     fontWeight: '500',
     marginLeft: 4,
   },

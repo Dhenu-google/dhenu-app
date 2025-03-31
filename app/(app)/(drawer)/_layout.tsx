@@ -16,8 +16,8 @@ const DrawerLayout = () => {
   const { user,role, isLoading, isRoleLoading } = useSession();
   if(isLoading||isRoleLoading){
     return (
-     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#0000ff" />
+     <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#faebd7" }}>
+        <ActivityIndicator size="large" color="#5D4037" />
       </View>);
   }
   if(!user) return <Redirect href="/landing" />;
@@ -26,6 +26,14 @@ const DrawerLayout = () => {
       <Drawer
         screenOptions={{
           header: () => <DhenuHeader />,
+          drawerStyle: {
+            backgroundColor: "#faebd7",
+          },
+          drawerActiveTintColor: "#5D4037",
+          drawerInactiveTintColor: "#5D4037",
+          drawerLabelStyle: {
+            color: "#5D4037"
+          }
         }}
       >
         {/* 

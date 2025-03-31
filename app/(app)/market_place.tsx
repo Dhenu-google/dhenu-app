@@ -181,7 +181,7 @@ export default function MarketPlace() {
   if (loading) {
     return (
       <ThemedView style={styles.container}>
-        <ActivityIndicator size="large" color="#8B5CF6" />
+        <ActivityIndicator size="large" color="#5D4037" />
         <ThemedText style={styles.loadingText}>Loading products...</ThemedText>
       </ThemedView>
     );
@@ -197,7 +197,7 @@ export default function MarketPlace() {
         </View>
         {item.location && (
           <View style={styles.locationContainer}>
-            <Ionicons name="location" size={16} color="#4C6EF5" />
+            <Ionicons name="location" size={16} color="#5D4037" />
             <ThemedText style={styles.locationText}>{item.location}</ThemedText>
           </View>
         )}
@@ -209,7 +209,7 @@ export default function MarketPlace() {
     <ThemedView style={styles.container}>
       {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color="#8B5CF6" />
+        <Ionicons name="arrow-back" size={24} color="#5D4037" />
         <ThemedText style={styles.backButtonText}>Back</ThemedText>
       </TouchableOpacity>
 
@@ -234,7 +234,7 @@ export default function MarketPlace() {
           <View style={styles.modalContent}>
             {/* Back Button in Modal */}
             <TouchableOpacity style={styles.backButton} onPress={closeModal}>
-              <Ionicons name="arrow-back" size={24} color="#8B5CF6" />
+              <Ionicons name="arrow-back" size={24} color="#5D4037" />
               <ThemedText style={styles.backButtonText}>Back</ThemedText>
             </TouchableOpacity>
 
@@ -251,7 +251,7 @@ export default function MarketPlace() {
                 )}
                 {selectedProduct.location && (
                   <View style={styles.locationContainer}>
-                    <Ionicons name="location" size={16} color="#4C6EF5" />
+                    <Ionicons name="location" size={16} color="#5D4037" />
                     <ThemedText style={styles.locationText}>{selectedProduct.location}</ThemedText>
                   </View>
                 )}
@@ -295,20 +295,18 @@ export default function MarketPlace() {
                     numberOfLines={4}
                   />
                   <TouchableOpacity 
-                    style={[styles.sendButton, isSubmitting && styles.sendButtonDisabled]}
+                    style={[
+                      styles.sendButton, 
+                      (isSubmitting || !enquiryForm.name || !enquiryForm.contact || !enquiryForm.message) && styles.sendButtonDisabled
+                    ]}
                     onPress={handleEnquirySubmit}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !enquiryForm.name || !enquiryForm.contact || !enquiryForm.message}
                   >
-                    <LinearGradient
-                      colors={['#FF4B4B', '#FF0000']}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 0 }}
-                      style={styles.gradientButton}
-                    >
-                      <ThemedText style={styles.sendButtonText}>
+                    <View style={styles.gradientButton}>
+                      <Text style={styles.sendButtonText}>
                         {isSubmitting ? 'Sending...' : 'Send Enquiry'}
-                      </ThemedText>
-                    </LinearGradient>
+                      </Text>
+                    </View>
                   </TouchableOpacity>
                 </View>
               </>
@@ -325,7 +323,7 @@ export default function MarketPlace() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#faebd7",
     padding: 16,
   },
   backButton: {
@@ -335,7 +333,7 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: 16,
-    color: "#8B5CF6",
+    color: "#5D4037",
     marginLeft: 8,
   },
   title: {
@@ -343,7 +341,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 8,
     textAlign: "left",
-    color: "#8B5CF6",
+    color: "#5D4037",
   },
   separator: {
     height: 1,
@@ -353,13 +351,13 @@ const styles = StyleSheet.create({
   subheading: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#4B5563",
+    color: "#5D4037",
     marginBottom: 12,
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: "#333",
+    color: "#5D4037",
     textAlign: "center",
   },
   listContainer: {
@@ -383,10 +381,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 8,
-    color: "#111",
+    color: "#5D4037",
   },
   categoryChip: {
-    backgroundColor: 'rgba(76, 110, 245, 0.1)',
+    backgroundColor: 'rgba(93, 64, 55, 0.1)',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
@@ -394,7 +392,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   categoryText: {
-    color: '#4C6EF5',
+    color: '#5D4037',
     fontSize: 14,
     fontWeight: '500',
   },
@@ -404,7 +402,7 @@ const styles = StyleSheet.create({
   },
   locationText: {
     fontSize: 14,
-    color: "#333",
+    color: "#5D4037",
     marginLeft: 4,
   },
   modalContainer: {
@@ -424,12 +422,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "700",
     marginBottom: 8,
-    color: "#222",
+    color: "#5D4037",
   },
   modalDescription: {
     fontSize: 16,
     lineHeight: 24,
-    color: "#333",
+    color: "#5D4037",
     marginBottom: 16,
   },
   modalSellerTitle: {
@@ -437,12 +435,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 20,
     marginBottom: 10,
-    color: "#222",
+    color: "#5D4037",
   },
   modalSellerInfo: {
     fontSize: 14,
     marginBottom: 5,
-    color: "#555",
+    color: "#5D4037",
   },
   enquiryForm: {
     width: '100%',
@@ -452,7 +450,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 15,
-    color: '#222',
+    color: '#5D4037',
   },
   input: {
     backgroundColor: '#F8F9FA',
@@ -470,10 +468,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
     marginTop: 10,
+    backgroundColor: '#5D4037',
   },
   gradientButton: {
     padding: 15,
     alignItems: 'center',
+    backgroundColor: '#5D4037',
   },
   sendButtonDisabled: {
     opacity: 0.7,
@@ -491,11 +491,11 @@ const styles = StyleSheet.create({
   enquiryCount: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#4C6EF5',
+    color: '#5D4037',
     marginRight: 8,
   },
   enquiryText: {
     fontSize: 16,
-    color: '#333',
+    color: '#5D4037',
   },
 });

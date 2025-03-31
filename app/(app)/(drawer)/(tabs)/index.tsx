@@ -645,7 +645,7 @@ useEffect(() => {
                     onPress={() => handleBreedSelect(breed)}
                   >
                     <LinearGradient
-                      colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
+                      colors={['#8D6E63', '#795548', '#5D4037']}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 1 }}
                       style={styles.breedGradient}
@@ -667,13 +667,13 @@ useEffect(() => {
                 onPress={() => setFormVisible(true)}
               >
                 <LinearGradient
-                  colors={['#E7F0FD', '#CBE1FB', '#A4C9F9']}
+                  colors={['#8D6E63', '#795548', '#5D4037']}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   style={styles.addCowGradient}
                 >
                   <View style={styles.addIconContainer}>
-                    <Ionicons name="add-circle" size={44} color="#4C6EF5" />
+                    <Ionicons name="add-circle" size={44} color="#faebd7" />
                     <ThemedText style={styles.addCowText}>Add New Cow</ThemedText>
                   </View>
                 </LinearGradient>
@@ -924,9 +924,10 @@ const confirmRemoveCow = async () => {
       <SafeAreaView style={{ flex: 1 }}>
         {/* Header with notifications */}
         <View style={styles.headerContainer}>
-          <RNText style={styles.welcomeText}>
-            {t('common.welcome', 'Welcome')}, {user?.displayName || t('common.user', 'User')}
-          </RNText>
+          <View style={styles.welcomeTextContainer}>
+            <RNText style={styles.welcomeLabel}>{t('common.welcome', 'Welcome')},</RNText>
+            <RNText style={styles.nameText}>{user?.displayName || t('common.user', 'User')}</RNText>
+          </View>
           <TouchableOpacity 
             style={styles.notificationButton}
             onPress={() => setNotificationsVisible(true)}
@@ -997,7 +998,7 @@ const confirmRemoveCow = async () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#faebd7',
   },
   headerContainer: {
     flexDirection: 'row',
@@ -1008,10 +1009,22 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#F0F0F0',
   },
-  welcomeText: {
-    fontSize: 22,
+  welcomeTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  welcomeLabel: {
+    fontSize: 18,
+    color: '#5D4037',
+  },
+  nameText: {
+    fontSize: 18,
+    color: '#5D4037',
     fontWeight: '600',
-    color: '#8B5CF6', // Lavender color
+  },
+  exclamation: {
+    fontSize: 18,
+    color: '#5D4037',
   },
   notificationButton: {
     position: 'absolute',
@@ -1036,7 +1049,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '600',
-    color: '#8B5CF6', // Lavender color
+    color: '#5D4037',
   },
   scrollView: {
     flex: 1,
@@ -1049,17 +1062,17 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   cowCard: {
-    backgroundColor: 'white',
+    backgroundColor: '#faebd7',
     borderRadius: 12,
     marginVertical: 6,
     marginHorizontal: 4,
-    shadowColor: '#000',
+    shadowColor: '#5D4037',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 2,
     borderWidth: 1,
-    borderColor: '#eee',
+    borderColor: '#5D4037',
     width: '47%', // Two columns with small margin
   },
   cardContent: {
@@ -1080,7 +1093,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 2,
     textAlign: 'center',
-    color: '#000',
+    color: '#5D4037',
   },
   breedName: {
     fontSize: 18,
@@ -1199,7 +1212,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 14,
     fontWeight: '500',
-    color: '#0D47A1',
+    color: '#FFFFFF',
   },
   
   // Modal form styles
@@ -1459,8 +1472,9 @@ const styles = StyleSheet.create({
   cancelButton: {
     backgroundColor: '#f5f5f5',
   },
-  submitButton: {
-    backgroundColor: '#007AFF',
+  confirmButton: {
+    backgroundColor: '#5D4037',
+    marginLeft: 10,
   },
   detailsParagraph: {
     fontSize: 16, // Slightly larger font size for readability
@@ -1512,13 +1526,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-  },
-  cancelButton: {
-    flex: 1,
-    marginRight: 10,
-  },
-  confirmButton: {
-    flex: 1,
-    marginLeft: 10,
   },
 });

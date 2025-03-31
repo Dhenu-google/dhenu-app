@@ -28,7 +28,7 @@ export default function AddProductScreen() {
     <ThemedView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#8B5CF6" />
+          <Ionicons name="arrow-back" size={24} color="#5D4037" />
         </TouchableOpacity>
         <ThemedText type="title" style={styles.headerTitle}>New Product</ThemedText>
         <View style={{width: 24}} />
@@ -88,14 +88,9 @@ export default function AddProductScreen() {
           style={styles.addButton} 
           onPress={handleListProduct}
         >
-          <LinearGradient
-            colors={['#4C6EF5', '#3B5BDB', '#364FC7']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.gradientButton}
-          >
+          <View style={styles.gradientButton}>
             <ThemedText style={styles.addButtonText}>LIST PRODUCT</ThemedText>
-          </LinearGradient>
+          </View>
         </TouchableOpacity>
       </ScrollView>
     </ThemedView>
@@ -105,7 +100,7 @@ export default function AddProductScreen() {
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: 'white',
+    backgroundColor: '#faebd7',
   },
   header: {
     flexDirection: 'row',
@@ -120,7 +115,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#8B5CF6',
+    color: '#5D4037',
   },
   backButton: {
     padding: 4,
@@ -136,7 +131,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginBottom: 8,
-    color: '#333',
+    color: '#5D4037',
   },
   input: {
     borderWidth: 1,
@@ -151,7 +146,7 @@ const styles = StyleSheet.create({
   },
   requiredText: {
     fontSize: 14,
-    color: '#555',
+    color: '#5D4037',
     marginTop: 8,
     marginBottom: 24,
   },
@@ -159,11 +154,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
     marginBottom: 24,
+    backgroundColor: '#5D4037',
   },
   gradientButton: {
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
+    backgroundColor: '#5D4037',
   },
   addButtonText: { 
     color: 'white', 

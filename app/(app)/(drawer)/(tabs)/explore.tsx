@@ -105,9 +105,9 @@ export default function ExploreScreen() {
                     { transform: [{ scale: animatedScales[index] }] }
                   ]}
                 >
-                  <Ionicons name={item.icon as any} size={22} color="#4C6EF5" />
+                  <Ionicons name={item.icon as any} size={22} color="#5D4037" />
                   <ThemedText style={styles.itemText}>{t(item.titleKey, item.titleKey.split('.')[1])}</ThemedText>
-                  <Ionicons name="chevron-forward" size={18} color="#A0A0A0" />
+                  <Ionicons name="chevron-forward" size={18} color="#5D4037" />
                 </Animated.View>
               </TouchableOpacity>
             ) : (
@@ -122,9 +122,9 @@ export default function ExploreScreen() {
                       { transform: [{ scale: animatedScales[index] }] }
                     ]}
                   >
-                    <Ionicons name={item.icon as any} size={22} color="#4C6EF5" />
+                    <Ionicons name={item.icon as any} size={22} color="#5D4037" />
                     <ThemedText style={styles.itemText}>{t(item.titleKey, item.titleKey.split('.')[1])}</ThemedText>
-                    <Ionicons name="chevron-forward" size={18} color="#A0A0A0" />
+                    <Ionicons name="chevron-forward" size={18} color="#5D4037" />
                   </Animated.View>
                 </TouchableOpacity>
               </Link>
@@ -140,7 +140,7 @@ export default function ExploreScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#faebd7',
   },
   header: {
     paddingTop: 16,
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '600',
-    color: '#8B5CF6', // Lavender color
+    color: '#5D4037',
   },
   listContainer: {
     paddingTop: 10,
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 16,
     flex: 1,
-    color: '#999',
+    color: '#5D4037',
     fontWeight: '500',
   },
   separator: {
