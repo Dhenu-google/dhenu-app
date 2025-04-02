@@ -10,7 +10,6 @@ const slides = [
   { id: '1', image: require('../assets/page1.png') },
   { id: '2', image: require('../assets/page2.png') },
   { id: '3', image: require('../assets/page3.png') },
-  { id: '4', image: require('../assets/page3.png') },
 ];
 
 const OnboardingScreen = () => {
