@@ -807,7 +807,7 @@ const styles = StyleSheet.create({
   buttonText: {
     flex: 1,
     fontSize: 16,
-    color: '#666',
+    color: '#5D4037',
   },
   micContainer: {
     width: 38,
