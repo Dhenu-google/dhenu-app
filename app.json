@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "firebase-rn-lib-app",
-    "slug": "firebase-rn-lib-app",
+    "name": "Dhenu",
+    "slug": "Dhenu",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/Moo.jpg",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/Moo.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -22,7 +22,7 @@
     "android": {
       "package": "com.aks.appwrnlibapp",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/Moo.jpg",
         "backgroundColor": "#ffffff"
       },
       "config": {
@@ -38,7 +38,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/Moo.jpg"
     },
     "plugins": [
       "expo-router",
