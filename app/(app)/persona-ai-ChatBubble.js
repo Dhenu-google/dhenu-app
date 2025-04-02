@@ -4,28 +4,39 @@ import { View, Text, StyleSheet } from 'react-native';
 const ChatBubble = ({ message, sender }) => {
   return (
     <View style={[styles.bubble, sender === 'user' ? styles.userBubble : styles.botBubble]}>
-      <Text style={styles.text}>{message}</Text>
+      <Text style={[styles.text, sender === 'user' ? styles.userText : styles.botText]}>{message}</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   bubble: {
-    padding: 10,
+    padding: 12,
     marginVertical: 5,
-    borderRadius: 10,
+    borderRadius: 16,
     maxWidth: '80%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   userBubble: {
-    backgroundColor: '#D1E7DD',
+    backgroundColor: 'rgb(100, 78, 13)',
     alignSelf: 'flex-end',
   },
   botBubble: {
-    backgroundColor: '#F8D7DA',
+    backgroundColor: 'rgb(93, 64, 55)',
     alignSelf: 'flex-start',
   },
   text: {
     fontSize: 16,
+  },
+  userText: {
+    color: '#fff',
+  },
+  botText: {
+    color: '#fff',
   },
 });
 
