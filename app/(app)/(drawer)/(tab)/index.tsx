@@ -118,7 +118,7 @@ export default function HomeScreen() {
               <View style={styles.iconCircle}>
                 <Ionicons name="basket-outline" size={30} color="#FFF" />
               </View>
-              <Text style={styles.cardTitle}>{t('marketplace.title', 'Marketplace')}</Text>
+              <Text style={styles.cardTitle}>{t('marketplace.title', 'Shop')}</Text>
               <Text style={styles.cardDescription}>{t('marketplace.description', 'Find Dairy products, services near you')}</Text>
             </View>
           </TouchableOpacity>

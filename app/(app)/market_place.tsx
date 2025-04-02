@@ -21,6 +21,7 @@ import { DB_API_URL } from "@/config";
 import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
+import DhenuHeader from "@/components/DhenuHeader";
 
 // Initialize Firestore and Auth
 const db = getFirestore(app);
@@ -207,21 +208,17 @@ export default function MarketPlace() {
 
   return (
     <ThemedView style={styles.container}>
-      {/* Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color="#5D4037" />
-        <ThemedText style={styles.backButtonText}>Back</ThemedText>
-      </TouchableOpacity>
-
-      <ThemedText style={styles.title}>Marketplace</ThemedText>
-      <View style={styles.separator} />
-      <ThemedText style={styles.subheading}>Products</ThemedText>
-      <FlatList
-        data={products}
-        keyExtractor={(item) => item.id}
-        renderItem={renderProduct}
-        contentContainerStyle={styles.listContainer}
-      />
+      <DhenuHeader title="Shop" />
+      <View style={styles.contentContainer}>
+        <View style={styles.separator} />
+        <ThemedText style={styles.subheading}>Products</ThemedText>
+        <FlatList
+          data={products}
+          keyExtractor={(item) => item.id}
+          renderItem={renderProduct}
+          contentContainerStyle={styles.listContainer}
+        />
+      </View>
 
       {/* Product Details Modal */}
       <Modal
@@ -324,6 +321,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#faebd7",
+  },
+  contentContainer: {
+    flex: 1,
     padding: 16,
   },
   backButton: {

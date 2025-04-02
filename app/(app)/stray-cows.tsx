@@ -13,6 +13,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useTranslation } from "react-i18next";
+import DhenuHeader from "@/components/DhenuHeader";
 
 export default function StrayCows() {
   const { t } = useTranslation();
@@ -203,88 +204,64 @@ export default function StrayCows() {
 
   return (
     <ThemedView style={styles.container}>
-      {/* Header Bar */}
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
-            <Ionicons name="arrow-back" size={24} color="#333" />
-          </TouchableOpacity>
-          <ThemedText type="title" style={styles.headerTitle}>
-            {t('explore.strayCows', 'Report Stray Cows')}
-          </ThemedText>
-        </View>
-      </View>
-
-      {/* Dotted Box for Image Selection */}
-      <View style={styles.cardContainer}>
-        <View style={styles.imageBox}>
+      <DhenuHeader title={t('explore.strayCows', 'Stray Cows')} />
+      
+      <View style={styles.content}>
+        <View style={styles.imageSection}>
           {image ? (
             <Image source={{ uri: image }} style={styles.imagePreview} />
           ) : (
-            <>
+            <View style={styles.imageUploadContainer}>
               <TouchableOpacity style={styles.uploadButton} onPress={handleUploadPicture}>
-                <Ionicons name="cloud-upload-outline" size={24} color="#4C6EF5" />
-                <Text style={styles.buttonText}>Upload Picture</Text>
+                <Ionicons name="cloud-upload" size={32} color="#000" />
+                <Text style={styles.uploadText}>Upload Picture</Text>
               </TouchableOpacity>
               <Text style={styles.orText}>OR</Text>
               <TouchableOpacity style={styles.uploadButton} onPress={handleClickPicture}>
-                <Ionicons name="camera-outline" size={24} color="#4C6EF5" />
-                <Text style={styles.buttonText}>Take a Picture</Text>
+                <Ionicons name="camera" size={32} color="#000" />
+                <Text style={styles.uploadText}>Take a Picture</Text>
               </TouchableOpacity>
-            </>
-          )}
-        </View>
-
-        {/* Location Info */}
-        <View style={styles.infoContainer}>
-          <Text style={styles.sectionTitle}>Location Information</Text>
-          {location ? (
-            <>
-              <View style={styles.locationItem}>
-                <Ionicons name="location-outline" size={20} color="#4C6EF5" />
-                <Text style={styles.locationText}>
-                  Lat: {location.latitude.toFixed(6)}, Long: {location.longitude.toFixed(6)}
-                </Text>
-              </View>
-              {address && (
-                <View style={styles.locationItem}>
-                  <Ionicons name="home-outline" size={20} color="#4C6EF5" />
-                  <Text style={styles.addressText}>{address}</Text>
-                </View>
-              )}
-            </>
-          ) : (
-            <View style={styles.locationItem}>
-              <ActivityIndicator size="small" color="#4C6EF5" />
-              <Text style={styles.loadingText}>Fetching location...</Text>
             </View>
           )}
         </View>
-      </View>
 
-      {/* Submit Button */}
-      <TouchableOpacity 
-        style={styles.submitButton} 
-        onPress={handleSubmit}
-        disabled={!image || !location || loading}
-      >
-        <LinearGradient
-          colors={['#E53E3E', '#C53030', '#9B2C2C']}
-          style={styles.gradientButton}
+        <View style={styles.locationSection}>
+          <ThemedText style={styles.sectionTitle}>Location Information</ThemedText>
+          {location ? (
+            <View style={styles.locationInfo}>
+              <View style={styles.locationRow}>
+                <Ionicons name="location" size={20} color="#000" />
+                <ThemedText style={styles.locationText}>
+                  Lat: {location.latitude.toFixed(6)}, Long: {location.longitude.toFixed(6)}
+                </ThemedText>
+              </View>
+              {address && (
+                <View style={styles.locationRow}>
+                  <Ionicons name="home" size={20} color="#000" />
+                  <ThemedText style={styles.addressText}>{address}</ThemedText>
+                </View>
+              )}
+            </View>
+          ) : (
+            <View style={styles.locationRow}>
+              <ActivityIndicator size="small" color="#000" />
+              <ThemedText style={styles.loadingText}>Fetching location...</ThemedText>
+            </View>
+          )}
+        </View>
+
+        <TouchableOpacity 
+          style={[styles.submitButton, (!image || !location || loading) && styles.disabledButton]} 
+          onPress={handleSubmit}
+          disabled={!image || !location || loading}
         >
           {loading ? (
             <ActivityIndicator size="small" color="#FFFFFF" />
           ) : (
-            <>
-              <Ionicons name="send-outline" size={20} color="#FFFFFF" style={styles.submitIcon} />
-              <Text style={styles.submitButtonText}>Submit Report</Text>
-            </>
+            <ThemedText style={styles.submitButtonText}>Submit Report</ThemedText>
           )}
-        </LinearGradient>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </View>
     </ThemedView>
   );
 }
@@ -292,134 +269,91 @@ export default function StrayCows() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF"
+    backgroundColor: '#faebd7',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingTop: 16,
-    paddingBottom: 10,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#8B5CF6',
-  },
-  backButton: {
-    padding: 4,
-  },
-  cardContainer: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+  content: {
+    flex: 1,
     padding: 16,
-    marginHorizontal: 16,
-    marginTop: 16, 
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
-  imageBox: {
-    borderWidth: 1,
-    borderColor: '#E8EFFF',
-    borderRadius: 12,
+  imageSection: {
+    marginBottom: 24,
+  },
+  imageUploadContainer: {
+    borderWidth: 2,
+    borderColor: '#5D4037',
     borderStyle: 'dashed',
-    padding: 20,
+    borderRadius: 12,
+    padding: 24,
     alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-    backgroundColor: '#FAFBFF',
+    backgroundColor: '#faebd7',
   },
   uploadButton: {
-    flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: '#EFF3FF',
+    padding: 16,
   },
-  buttonText: {
-    color: '#4C6EF5',
-    fontWeight: '500',
-    marginLeft: 8,
+  uploadText: {
+    marginTop: 8,
+    fontSize: 16,
+    color: '#5D4037',
   },
   orText: {
-    marginVertical: 12,
-    color: '#666',
-    fontWeight: '500',
+    marginVertical: 16,
+    fontSize: 16,
+    color: '#5D4037',
   },
   imagePreview: {
     width: '100%',
     height: 200,
-    borderRadius: 8,
+    borderRadius: 12,
   },
-  infoContainer: {
-    marginTop: 10,
+  locationSection: {
+    backgroundColor: '#faebd7',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: '#5D4037',
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
-    marginBottom: 12,
-    color: '#333',
+    marginBottom: 16,
+    color: '#5D4037',
   },
-  locationItem: {
+  locationInfo: {
+    gap: 12,
+  },
+  locationRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    gap: 8,
   },
   locationText: {
     fontSize: 14,
-    color: '#444',
-    marginLeft: 8,
-    flex: 1,
+    color: '#5D4037',
   },
   addressText: {
     fontSize: 14,
-    color: '#444',
-    marginLeft: 8,
     flex: 1,
+    color: '#5D4037',
   },
   loadingText: {
     fontSize: 14,
-    color: '#666',
-    marginLeft: 8,
+    color: '#5D4037',
   },
   submitButton: {
-    borderRadius: 25,
-    overflow: 'hidden',
-    shadowColor: '#E53E3E',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
-    marginHorizontal: 16,
-    marginBottom: 20,
-  },
-  gradientButton: {
-    padding: 15,
+    backgroundColor: '#5D4037',
+    padding: 16,
+    borderRadius: 12,
     alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
   },
   disabledButton: {
-    backgroundColor: '#A0AEC0',
-    shadowOpacity: 0,
+    backgroundColor: '#B0BEC5',
+    opacity: 0.7,
   },
   submitButtonText: {
     color: '#FFFFFF',
-    fontWeight: 'bold',
     fontSize: 16,
-  },
-  submitIcon: {
-    marginRight: 8,
+    fontWeight: '600',
   },
 });
