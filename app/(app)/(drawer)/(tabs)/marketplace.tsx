@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: '#5D4037',
   },
   modalOptionText: {
     fontSize: 16,

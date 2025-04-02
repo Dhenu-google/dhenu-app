@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 1,
-    backgroundColor: '#EFEFEF',
+    backgroundColor: '#5D4037',
     marginLeft: 20,
   }
 });

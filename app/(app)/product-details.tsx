@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: '#5D4037',
   },
   modalTitle: {
     flex: 1,
