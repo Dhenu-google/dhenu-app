@@ -650,7 +650,7 @@ export default function ChatbotButton() {
           >
             <View style={styles.buttonContent}>
               {/*<Ionicons name="add" size={22} color="#666" style={styles.addIcon} />*/}
-              <Text style={styles.buttonText}>Ask Moo AI</Text>
+              <Text style={styles.buttonText}>Ask EMoo AI</Text>
               <TouchableOpacity 
                 style={styles.micContainer}
                 onPress={(e) => {
@@ -895,7 +895,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 16,
     marginBottom: 12,
-    backgroundColor: 'rgba(90, 52, 22, 0.95)', // More opaque white background
+    backgroundColor: 'rgb(90, 51, 22)', // More opaque white background
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -904,7 +904,7 @@ const styles = StyleSheet.create({
   },
   userMessage: {
     alignSelf: 'flex-end',
-    backgroundColor: 'rgba(100, 78, 13, 0.95)', // More opaque blue background
+    backgroundColor: 'rgb(100, 78, 13)', // More opaque blue background
   },
   botMessage: {
     alignSelf: 'flex-start',
