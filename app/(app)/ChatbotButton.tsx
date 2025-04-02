@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet, SafeAreaView, TextInput, ScrollView, KeyboardAvoidingView, Platform, Image, Pressable } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, SafeAreaView, TextInput, ScrollView, KeyboardAvoidingView, Platform, Pressable, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { collection, addDoc, serverTimestamp, doc} from 'firebase/firestore';
@@ -706,62 +706,67 @@ export default function ChatbotButton() {
         onRequestClose={() => {saveConversationToFirestore(messages),setIsOpen(false)}}
         presentationStyle="pageSheet"
       >
-        <SafeAreaView style={styles.modalContainer}>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={() => setIsOpen(false)}>
-              <Ionicons name="arrow-back" size={24} color="#000" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>EMoo AI</Text>
-            <View style={{ width: 24 }} />
-          </View>
-          
-          <ScrollView
-            style={styles.messagesContainer}
-            ref={scrollViewRef} // Attach the ref to ScrollView
-          >
-            {messages.map((message) => (
-              <View 
-                key={message.id} 
-                style={[
-                  styles.messageBubble,
-                  message.isUser ? styles.userMessage : styles.botMessage
-                ]}
-              >
-                <Text style={styles.messageText}>{message.text}</Text>
-              </View>
-            ))}
-            {isLoading && (
-              <View style={styles.loadingContainer}>
-                <Text>Thinking...</Text>
-              </View>
-            )}
-          </ScrollView>
-          
-          <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={styles.inputContainer}
-          >
-            <TextInput
-              style={styles.input}
-              value={inputValue}
-              onChangeText={setInputValue}
-              placeholder="Type a message..."
-              placeholderTextColor="#666"
-              multiline
-            />
-            <TouchableOpacity 
-              style={styles.sendButton}
-              onPress={handleSend}
-              disabled={!inputValue.trim() || isLoading}
+        <ImageBackground 
+          source={require('@/assets/images/chat.png')}
+          style={styles.backgroundImage}
+        >
+          <SafeAreaView style={styles.modalContainer}>
+            <View style={styles.header}>
+              <TouchableOpacity onPress={() => setIsOpen(false)}>
+                <Ionicons name="arrow-back" size={24} color="#000" />
+              </TouchableOpacity>
+              <Text style={styles.headerTitle}>EMoo AI</Text>
+              <View style={{ width: 24 }} />
+            </View>
+            
+            <ScrollView
+              style={styles.messagesContainer}
+              ref={scrollViewRef}
             >
-              <Ionicons 
-                name="send" 
-                size={22} 
-                color={!inputValue.trim() || isLoading ? '#ccc' : '#5D4037'} 
+              {messages.map((message) => (
+                <View 
+                  key={message.id} 
+                  style={[
+                    styles.messageBubble,
+                    message.isUser ? styles.userMessage : styles.botMessage
+                  ]}
+                >
+                  <Text style={styles.messageText}>{message.text}</Text>
+                </View>
+              ))}
+              {isLoading && (
+                <View style={styles.loadingContainer}>
+                  <Text>Thinking...</Text>
+                </View>
+              )}
+            </ScrollView>
+            
+            <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              style={styles.inputContainer}
+            >
+              <TextInput
+                style={styles.input}
+                value={inputValue}
+                onChangeText={setInputValue}
+                placeholder="Type a message..."
+                placeholderTextColor="#666"
+                multiline
               />
-            </TouchableOpacity>
-          </KeyboardAvoidingView>
-        </SafeAreaView>
+              <TouchableOpacity 
+                style={styles.sendButton}
+                onPress={handleSend}
+                disabled={!inputValue.trim() || isLoading}
+              >
+                <Ionicons 
+                  name="send" 
+                  size={22} 
+                  color={!inputValue.trim() || isLoading ? '#ccc' : '#5D4037'} 
+                />
+              </TouchableOpacity>
+            </KeyboardAvoidingView>
+          </SafeAreaView>
+        </ImageBackground>
       </Modal>
     </>
   );
@@ -856,9 +861,15 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
   },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
   modalContainer: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'transparent', // Remove the white overlay
   },
   header: {
     flexDirection: 'row',
@@ -866,46 +877,56 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: 'rgba(238, 238, 238, 0.5)',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)', // Slightly transparent header
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#5D4037', // Match the theme color
   },
   messagesContainer: {
     flex: 1,
     padding: 16,
+    backgroundColor: 'transparent',
   },
   messageBubble: {
     maxWidth: '80%',
     padding: 12,
     borderRadius: 16,
     marginBottom: 12,
+    backgroundColor: 'rgba(90, 52, 22, 0.95)', // More opaque white background
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   userMessage: {
     alignSelf: 'flex-end',
-    backgroundColor: '#e6f7ff',
+    backgroundColor: 'rgba(100, 78, 13, 0.95)', // More opaque blue background
   },
   botMessage: {
     alignSelf: 'flex-start',
-    backgroundColor: '#f1f1f1',
+    backgroundColor: '#5D4037', // More opaque gray background
   },
   messageText: {
     fontSize: 16,
+    color: '#fff', // Darker text for better readability
   },
   loadingContainer: {
     alignSelf: 'flex-start',
     padding: 8,
     borderRadius: 16,
-    backgroundColor: '#f1f1f1',
+    backgroundColor: 'rgba(241, 241, 241, 0.95)',
     marginBottom: 12,
   },
   inputContainer: {
     flexDirection: 'row',
     padding: 12,
     borderTopWidth: 1,
-    borderTopColor: '#eee',
-    backgroundColor: '#fff',
+    borderTopColor: '#5D4037',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)', // More opaque white background
   },
   input: {
     flex: 1,
@@ -918,6 +939,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     marginRight: 8,
     fontSize: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)', // Slightly transparent input field
   },
   sendButton: {
     width: 40,
