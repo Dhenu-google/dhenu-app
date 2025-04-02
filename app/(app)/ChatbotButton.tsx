@@ -638,7 +638,7 @@ export default function ChatbotButton() {
       {/* Chatbot button that looks like Gemini */}
       <View style={styles.chatButtonContainer}>
         <LinearGradient
-          colors={['rgba(218, 163, 255, 0.8)', 'rgba(151, 159, 250, 0.8)']}
+          colors={['#a67b6d', '#5D4037']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.gradientBorder}
@@ -711,7 +711,7 @@ export default function ChatbotButton() {
             <TouchableOpacity onPress={() => setIsOpen(false)}>
               <Ionicons name="arrow-back" size={24} color="#000" />
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>Cattle Assistant</Text>
+            <Text style={styles.headerTitle}>EMoo AI</Text>
             <View style={{ width: 24 }} />
           </View>
           
@@ -757,7 +757,7 @@ export default function ChatbotButton() {
               <Ionicons 
                 name="send" 
                 size={22} 
-                color={!inputValue.trim() || isLoading ? '#ccc' : '#2196F3'} 
+                color={!inputValue.trim() || isLoading ? '#ccc' : '#5D4037'} 
               />
             </TouchableOpacity>
           </KeyboardAvoidingView>
@@ -791,7 +791,7 @@ const styles = StyleSheet.create({
   chatButton: {
     flex: 1,
     borderRadius: 27,
-    backgroundColor: 'white',
+    backgroundColor: '#faebd7',
     overflow: 'hidden',
   },
   buttonContent: {

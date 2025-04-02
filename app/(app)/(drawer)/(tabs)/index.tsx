@@ -1222,7 +1222,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   formContainer: {
-    backgroundColor: 'white',
+    backgroundColor: '#faebd7',
     margin: 20,
     borderRadius: 16,
     padding: 20,
@@ -1360,7 +1360,7 @@ const styles = StyleSheet.create({
   },
   detailsSectionTitle: {
     fontSize: 18,
-    color: '#8B5CF6',
+    color: '#5D4037',
     marginBottom: 12,
   },
   detailsRow: {
