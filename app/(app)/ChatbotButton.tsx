@@ -516,7 +516,7 @@ export default function ChatbotButton() {
         scrollViewRef.current?.scrollToEnd({ animated: true });
       }, 100);
     }
-  }, [isOpen]);
+  }, [isOpen, messages]);
 
   const saveConversationToFirestore = async(messages:Message[]) => {
     try{
