@@ -14,7 +14,7 @@ const MooAIChat = ({ messages, setMessages, isOpen }) => {
         scrollViewRef.current.scrollToEnd({ animated: true });
       }, 100); // Delay to ensure rendering is complete
     }
-  }, [isOpen]);
+  }, [isOpen, messages]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
