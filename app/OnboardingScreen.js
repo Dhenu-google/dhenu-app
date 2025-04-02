@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.5)',
   },
   button: {
-    backgroundColor: '#fff',
+    backgroundColor: '#5D4037',
     marginHorizontal: 40,
     paddingVertical: 15,
     borderRadius: 30,
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
   },
   buttonText: {
-    color: '#5D4037',
+    color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',

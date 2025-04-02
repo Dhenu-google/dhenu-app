@@ -173,12 +173,14 @@ export default function HomeScreen() {
         presentationStyle="pageSheet"
       >
         <SafeAreaView style={{ flex: 1 }}>
-          <Appbar.Header>
-            <Appbar.BackAction onPress={() => setIsChatVisible(false)} />
-            <Appbar.Content title={t('explore.mooAIChat', 'Moo AI Chat')} />
-          </Appbar.Header>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => setIsChatVisible(false)}>
+              <Ionicons name="arrow-back" size={24} color="#000" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Moo AI</Text>
+            <View style={{ width: 24 }} />
+          </View>
           <MooAIChat messages={messages} setMessages={setMessages} isOpen={isChatVisible} />
-          <Button mode="contained" onPress={() => setIsChatVisible(false)}>Close Chat</Button>
         </SafeAreaView>
       </Modal>
     </ThemedView>
@@ -310,6 +312,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 8,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(238, 238, 238, 0.5)',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#5D4037',
   },
 });
 
