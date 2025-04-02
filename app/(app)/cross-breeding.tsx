@@ -10,12 +10,13 @@ import {
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
-import { Stack, router } from 'expo-router';
+import { router } from 'expo-router';
 import * as Speech from 'expo-speech';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { DB_API_URL } from '@/config';
 import { getAuth } from 'firebase/auth'; // Import Firebase Auth
+import DhenuHeader from '@/components/DhenuHeader';
 
 // List of Indian cow breeds
 const INDIAN_COW_BREEDS = [
@@ -316,20 +317,7 @@ export default function CrossBreedingScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <Stack.Screen 
-        options={{
-          title: 'Cross-Breed Recommendation System',
-          headerStyle: {
-            backgroundColor: '#5D4037',
-          },
-          headerTintColor: '#faebd7',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-            color: '#faebd7',
-          },
-        }} 
-      />
-      
+      <DhenuHeader title="Cross-   Breeding" />
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.content}>
           <View style={styles.pickerContainer}>
