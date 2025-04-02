@@ -1151,13 +1151,13 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: 1,
-    backgroundColor: '#F0F0F0',
+    height: 4,
+    backgroundColor: '#5D4037',
   },
   actionsContainer: {
     flexDirection: 'row',
     borderTopWidth: 1,
-    borderTopColor: '#eee',
+    borderTopColor: '#5D4037',
     paddingVertical: 6,
   },
   actionSection: {
@@ -1168,7 +1168,7 @@ const styles = StyleSheet.create({
   },
   actionDivider: {
     width: 1,
-    backgroundColor: '#eee',
+    backgroundColor: '#5D4037',
   },
   actionButton: {
     flexDirection: 'row',

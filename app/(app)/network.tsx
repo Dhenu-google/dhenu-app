@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 12,
-    color: '#5D4037',
+    color: '#ddd',
   },
   mapContainer: {
     flex: 1,
