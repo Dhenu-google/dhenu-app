@@ -1,9 +1,10 @@
-import React, { useRef, useState } from 'react';
-import { View, Text, Dimensions, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { View, Text, Dimensions, TouchableOpacity, StyleSheet, Image, StatusBar } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import { router } from 'expo-router';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
-const { width, height } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const slides = [
   { id: '1', image: require('../assets/page1.png') },
@@ -14,41 +15,69 @@ const slides = [
 
 const OnboardingScreen = () => {
   const carouselRef = useRef(null);
-  const [activeSlide, setActiveSlide] = useState(0); // Track the active slide index
+  const [activeSlide, setActiveSlide] = useState(0);
 
-  console.log('Active Slide:', activeSlide);
+  useEffect(() => {
+    StatusBar.setBarStyle('light-content');
+    const interval = setInterval(() => {
+      if (carouselRef.current) {
+        const nextSlide = (activeSlide + 1) % slides.length;
+        carouselRef.current.scrollTo({ index: nextSlide, animated: true });
+      }
+    }, 3000);
+
+    return () => {
+      clearInterval(interval);
+      StatusBar.setBarStyle('default');
+    };
+  }, [activeSlide]);
 
   return (
     <View style={styles.container}>
       <Carousel
         ref={carouselRef}
         loop
-        width={width - 50} // Make the carousel smaller
-        height={height - 200} // Reduce the height of the carousel
+        width={SCREEN_WIDTH}
+        height={SCREEN_HEIGHT}
         data={slides}
-        scrollAnimationDuration={50}
-        onSnapToItem={(index) => setActiveSlide(index)} // Update active slide when snapping
+        scrollAnimationDuration={1000}
+        onSnapToItem={(index) => setActiveSlide(index)}
         renderItem={({ item }) => (
-          <View style={styles.slide}>
-            <Image source={item.image} style={styles.image} />
-          </View>
+          <Animated.View 
+            entering={FadeIn.duration(800)}
+            style={styles.slide}
+          >
+            <Image 
+              source={item.image} 
+              style={styles.image}
+            />
+          </Animated.View>
         )}
       />
-      {/* Pagination Dots */}
-      <View style={styles.pagination}>
-        {slides.map((_, index) => (
-          <View
-            key={index}
-            style={[
-              styles.dot,
-              activeSlide === index ? styles.activeDot : styles.inactiveDot, // Highlight active dot
-            ]}
-          />
-        ))}
+
+      {/* Overlay container for dots and button */}
+      <View style={styles.overlayContainer}>
+        <View style={styles.pagination}>
+          {slides.map((_, index) => (
+            <Animated.View
+              key={index}
+              entering={FadeIn.delay(index * 200)}
+              style={[
+                styles.dot,
+                activeSlide === index ? styles.activeDot : styles.inactiveDot,
+              ]}
+            />
+          ))}
+        </View>
+
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={() => router.push('/sign-in')}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.buttonText}>Get Started</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/sign-in')}>
-        <Text style={styles.buttonText}>Get Started</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -56,50 +85,76 @@ const OnboardingScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
+    //backgroundColor: '#000', // Dark background for better full-screen experience
   },
   slide: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT,
   },
   image: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT,
+    resizeMode: 'cover', // Changed to cover for full-screen effect
+  },
+  overlayContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingBottom: 50,
+    backgroundColor: 'rgba(0,0,0,0.3)', // Semi-transparent overlay
+    paddingTop: 20,
   },
   pagination: {
-    marginTop: 10, // Add spacing between the carousel and pagination
     flexDirection: 'row',
-    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
   },
   dot: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    marginHorizontal: 5,
+    marginHorizontal: 6,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   activeDot: {
-    backgroundColor: 'purple', // Ensure this is visually distinct
-    width: 12, // Slightly larger for emphasis
+    backgroundColor: '#fff',
+    transform: [{ scale: 1.2 }],
+    width: 12,
     height: 12,
   },
   inactiveDot: {
-    backgroundColor: '#ccc',
+    backgroundColor: 'rgba(255,255,255,0.5)',
   },
   button: {
-    marginTop: 20, // Add spacing between the pagination and button
-    backgroundColor: 'purple',
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 25,
+    backgroundColor: '#fff',
+    marginHorizontal: 40,
+    paddingVertical: 15,
+    borderRadius: 30,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   buttonText: {
-    color: '#fff',
+    color: '#5D4037',
     fontSize: 18,
     fontWeight: 'bold',
+    textAlign: 'center',
+    letterSpacing: 1,
   },
 });
 

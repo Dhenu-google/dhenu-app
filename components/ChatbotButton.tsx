@@ -119,7 +119,7 @@ export default function ChatbotButton() {
       {/* Chatbot button that looks like Gemini */}
       <View style={styles.chatButtonContainer}>
         <LinearGradient
-          colors={['rgba(218, 163, 255, 0.8)', 'rgba(151, 159, 250, 0.8)']}
+          colors={['#9516f0', '#8e79ee']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.gradientBorder}
@@ -130,20 +130,16 @@ export default function ChatbotButton() {
             activeOpacity={0.8}
           >
             <View style={styles.buttonContent}>
-              {/*<Ionicons name="add" size={22} color="#666" style={styles.addIcon} />*/}
-              <Text style={styles.buttonText}>Ask Gemini</Text>
+              <Text style={styles.buttonText}>Ask Moo AI</Text>
               <TouchableOpacity 
                 style={styles.micContainer}
                 onPress={(e) => {
-                  e.stopPropagation(); // Prevent triggering the parent button
+                  e.stopPropagation();
                   handleStartRecording();
                 }}
               >
-                <Ionicons name="mic" size={22} color="white" />
+                <Ionicons name="mic" size={22} color="#fff" />
               </TouchableOpacity>
-              <View style={styles.optionsContainer}>
-                {/*<Ionicons name="options" size={22} color="#666" />*/}
-              </View>
             </View>
           </TouchableOpacity>
         </LinearGradient>
@@ -259,45 +255,38 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: 28,
-    padding: 3.25, // Border thickness
-    shadowColor: 'rgba(218, 163, 255, 0.8)',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 12,
-    elevation: 10,
+    padding: 2, // Thinner border
+    shadowColor: '#9516f0',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   chatButton: {
     flex: 1,
-    borderRadius: 27,
-    backgroundColor: 'white',
+    borderRadius: 26,
+    backgroundColor: '#faebd7',
     overflow: 'hidden',
   },
   buttonContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     height: '100%',
-  },
-  addIcon: {
-    marginRight: 10,
   },
   buttonText: {
     flex: 1,
     fontSize: 16,
-    color: '#333',
+    color: '#666',
   },
   micContainer: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: '#8e79ee',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#9516f0',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 8,
-  },
-  optionsContainer: {
-    padding: 4,
   },
   recordingModalContainer: {
     flex: 1,

@@ -107,7 +107,7 @@ export default function SignIn() {
                 onPress={handleSignInPress}
                 disabled={isLoading}
                 className={`${
-                  isLoading ? "bg-blue-400" : "bg-blue-500"
+                  isLoading ? "bg-[#8D6E63]" : "bg-[#5D4037]"
                 } px-4 py-3 rounded-lg`}
               >
                 {isLoading ? (
@@ -120,11 +120,11 @@ export default function SignIn() {
               </Pressable>
             </View>
 
-            <View className="mt-8 flex-row justify-center">
-              <Text className="text-gray-600">Don't have an account? </Text>
+            <View className="flex-row items-center justify-center mt-6">
+              <Text className="text-gray-600">Don't have an account?</Text>
               <Link href="/sign-up" asChild>
-                <Pressable>
-                  <Text className="text-blue-500 font-semibold">Sign Up</Text>
+                <Pressable className="ml-2">
+                  <Text className="text-[#5D4037] font-semibold">Sign Up</Text>
                 </Pressable>
               </Link>
             </View>

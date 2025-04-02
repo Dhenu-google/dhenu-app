@@ -186,8 +186,8 @@ const fetchUserLocation = async():Promise<{latitude:number; longitude:number} | 
               onPress={handleSignUpPress}
               disabled={isLoading}
               className={`${
-                isLoading ? "bg-blue-400" : "bg-blue-600"
-              } w-full py-3 rounded-lg active:bg-blue-700`}
+                isLoading ? "bg-[#8D6E63]" : "bg-[#5D4037]"
+              } w-full py-3 rounded-lg active:bg-[#4E342E]`}
             >
               {isLoading ? (
                 <ActivityIndicator color="#ffffff" />
@@ -203,7 +203,7 @@ const fetchUserLocation = async():Promise<{latitude:number; longitude:number} | 
               <Text className="text-gray-600">Already have an account?</Text>
               <Link href="/sign-in" asChild>
                 <Pressable className="ml-2">
-                  <Text className="text-blue-600 font-semibold">Sign In</Text>
+                  <Text className="text-[#5D4037] font-semibold">Sign In</Text>
                 </Pressable>
               </Link>
             </View>

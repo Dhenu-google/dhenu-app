@@ -108,6 +108,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 24,
     paddingTop: 12,
+    paddingLeft: 48,
   },
   profileIcon: {
     width: 72,
@@ -179,8 +180,9 @@ const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',
     left: 0,
-    top: 24,
+    top: 12,
     padding: 8,
+    zIndex: 1,
   },
 });
 
