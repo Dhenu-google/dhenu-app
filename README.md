@@ -97,20 +97,6 @@ This project was built using **Expo** for React Native, making it simple to run 
    - [Google Drive Link](https://drive.google.com/drive/u/0/folders/1_qJ92q6UIrPFRnFsFeUGSRQa6IS2mXy2)
    - [GitHub Releases](https://github.com/Dhenu-google/dhenu-app/releases)
 
-
-## Project Structure
-```
-app/
-├── (app)/                   # Protected app routes
-│   ├── (drawer)/           # Drawer navigation
-│   │   └── (tabs)/         # Tab navigation
-│   │       └── index.tsx   # Home screen
-│   └── _layout.tsx         # App layout with auth protection
-├── sign-in.tsx             # Sign in screen
-├── sign-up.tsx             # Sign up screen
-└── _layout.tsx             # Root layout
-```
-
 ## Contributing
 
 1. Fork the repository
