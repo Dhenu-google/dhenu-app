@@ -18,8 +18,10 @@ import { getFirestore } from "firebase/firestore";
  * Firebase configuration object containing necessary credentials and endpoints
  * @type {Object}
  */
+
+const FIREBASE_API_KEY = process.env.EXPO_PUBLIC_FIREBASE_API_KEY;
 const firebaseConfig = {
-  apiKey: "literal:FIREBASE_API_KEY",
+  apiKey: `${FIREBASE_API_KEY}`,
   authDomain: "dhenu-452914.firebaseapp.com",
   projectId: "dhenu-452914",
   storageBucket: "dhenu-452914.firebasestorage.app",
