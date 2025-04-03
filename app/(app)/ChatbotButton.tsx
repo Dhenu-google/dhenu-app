@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet, SafeAreaView, TextInput, ScrollView, KeyboardAvoidingView, Platform, Pressable, ImageBackground } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, SafeAreaView, TextInput, ScrollView, KeyboardAvoidingView, Platform, Pressable, ImageBackground, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { collection, addDoc, serverTimestamp, doc} from 'firebase/firestore';
@@ -495,7 +495,6 @@ const getChatbotResponse = async (query: string): Promise<string> => {
 
 export default function ChatbotButton() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -506,7 +505,7 @@ export default function ChatbotButton() {
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const [conversationBuffer, setConversationBuffer] = useState<string[]>([]);
-  const scrollViewRef = useRef<ScrollView>(null); // Reference for ScrollView
+  const scrollViewRef = useRef<ScrollView>(null);
 
   // Scroll to the bottom when the modal opens or messages change
   useEffect(() => {
@@ -601,38 +600,6 @@ export default function ChatbotButton() {
     }
   };
 
-  // Voice recording handlers
-  const handleStartRecording = () => {
-    setIsRecording(true);
-  };
-
-  const handleStopRecording = () => {
-    // Here you would process the recording
-    setIsRecording(false);
-    
-    // Mock response after voice recording
-    setTimeout(() => {
-      const userMessage: Message = {
-        id: messages.length,
-        text: "Voice message: How can I improve my cow's milk production?",
-        isUser: true
-      };
-      
-      setMessages(prev => [...prev, userMessage]);
-      
-      setTimeout(() => {
-        const botMessage: Message = {
-          id: messages.length + 1,
-          text: "For optimal milk production, ensure your cattle have access to fresh water and high-quality feed. Maintain regular milking schedules and ensure comfortable housing conditions with proper ventilation.",
-          isUser: false
-        };
-        
-        setMessages(prev => [...prev, botMessage]);
-        setIsOpen(true);
-      }, 1000);
-    }, 500);
-  };
-
   return (
     <>
       {/* Chatbot button that looks like Gemini */}
@@ -649,17 +616,12 @@ export default function ChatbotButton() {
             activeOpacity={0.8}
           >
             <View style={styles.buttonContent}>
-              {/*<Ionicons name="add" size={22} color="#666" style={styles.addIcon} />*/}
+              <Image 
+                source={require('@/assets/images/AI.png')}
+                style={styles.aiLogo}
+                resizeMode="contain"
+              />
               <Text style={styles.buttonText}>Ask EMoo AI</Text>
-              <TouchableOpacity 
-                style={styles.micContainer}
-                onPress={(e) => {
-                  e.stopPropagation(); // Prevent triggering the parent button
-                  handleStartRecording();
-                }}
-              >
-                <Ionicons name="mic" size={22} color="white" />
-              </TouchableOpacity>
               <View style={styles.optionsContainer}>
                 {/*<Ionicons name="options" size={22} color="#666" />*/}
               </View>
@@ -667,37 +629,6 @@ export default function ChatbotButton() {
           </TouchableOpacity>
         </LinearGradient>
       </View>
-
-      {/* Voice recording modal */}
-      <Modal
-        visible={isRecording}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setIsRecording(false)}
-      >
-        <LinearGradient
-          colors={['#002', '#005', '#00a']}
-          style={styles.recordingModalContainer}
-        >
-          <View style={styles.recordingControls}>
-            <Pressable 
-              style={styles.holdButton}
-              onPress={handleStopRecording}
-            >
-              <Ionicons name="pause" size={24} color="white" />
-              <Text style={styles.controlText}>Hold</Text>
-            </Pressable>
-            
-            <Pressable 
-              style={styles.endButton}
-              onPress={handleStopRecording}
-            >
-              <Ionicons name="close" size={24} color="white" />
-              <Text style={styles.controlText}>End</Text>
-            </Pressable>
-          </View>
-        </LinearGradient>
-      </Modal>
 
       {/* Full screen chatbot modal */}
       <Modal
@@ -806,60 +737,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     height: '100%',
   },
-  addIcon: {
-    marginRight: 10,
+  aiLogo: {
+    width: 68,
+    height: 68,
+    marginRight: 8,
   },
   buttonText: {
     flex: 1,
     fontSize: 16,
     color: '#5D4037',
   },
-  micContainer: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: '#8e79ee',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
-  },
   optionsContainer: {
     padding: 4,
-  },
-  recordingModalContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    paddingBottom: 40,
-  },
-  recordingControls: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '80%',
-    marginBottom: 20,
-  },
-  holdButton: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    borderRadius: 30,
-    width: 60,
-    height: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 30,
-  },
-  endButton: {
-    backgroundColor: 'rgba(255, 0, 0, 0.7)',
-    borderRadius: 30,
-    width: 60,
-    height: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  controlText: {
-    color: 'white',
-    fontSize: 12,
-    marginTop: 4,
   },
   backgroundImage: {
     flex: 1,
