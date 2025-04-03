@@ -1,22 +1,60 @@
-#                    **DHENU**  
+# DHENU
 
-**DHENU** is an AI-powered mobile app designed to **conserve Indian cow breeds** by assisting farmers, Gaushalas, and the public. It offers:  
-- **Cow management tools**  
-- **AI-driven guidance**  
-- **E-commerce support**  
-- **A community platform**  
+**DHENU** is an AI-powered mobile app developed to conserve and propagate Indian cow breeds by assisting farmers, Gaushala owners, and the general public. Built specifically for the challenges of urbanization and industrialization, DHENU combines traditional cow-care insights with advanced AI guidance and community support to ensure the ecological and socio-economic viability of indigenous cow breeds.
 
-With **maps and alerts**, DHENU connects users to **Gaushalas** and enables reporting of **stray/injured cows**.  
+## Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Installation & Running the App](#installation--running-the-app)
+- [Usage](#usage)
+- [Demo & Resources](#demo--resources)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
 
-Unlike generalized livestock applications, **DHENU is uniquely tailored to Indian breed cows**, blending **traditional insights with AI technology** to enhance their care and protection. Additionally, **built-in translation capabilities** allow non-English-speaking farmers to use the app seamlessly.  
+## Overview
+DHENU addresses the decline in Indian cow populations and genetic quality by providing a comprehensive solution that includes:
+- **Intelligent Cow Management:** Keep track of cow health, breeding history, and overall management.
+- **AI-Driven Guidance:** Use machine learning-based insights to improve breeding and cow care.
+- **Community Support & Public Awareness:** Enable the public to report stray/injured cows and connect with nearby Gaushalas.
+- **E-Commerce Platform:** Support cow-based products and services, creating economic incentives for cow preservation.
+- **Multilingual Support:** Integrated translation ensures non-English-speaking farmers can easily access the app.
 
-By equipping **farmers & Gaushala owners** with:  
- **Intelligent tracking**  
- **Machine learning-based breeding insights**  
- **Community involvement**  
- **An online marketplace**  
+This app is designed for sustainable agriculture and rural livelihoods, ensuring that traditional practices are preserved while integrating modern technology.
 
-DHENU fosters the **ecological and socio-economic viability** of Indian cows, effectively addressing the problem statement.  
+## Features
+- **Farmer & Gaushala Dashboard:** Manage cow records and monitor cow health.
+- **Community Forum:** Connect with other farmers and share best practices.
+- **Cow-Based Online Platform:** Buy and sell cow-related products and services.
+- **Gemini-Powered Chatbot & Breeding Bot:** Get AI-driven advice on cow care and breeding.
+- **Maps Integration:** Locate nearby Gaushalas and report stray or injured cows.
+- **Public Awareness Tools:** Increase visibility and educate the public about the importance of conserving Indian cow breeds.
+- **Translation to Regional Languages:** Make the app accessible to a wider audience, especially in rural areas.
+
+## Tech Stack
+- **Frontend:** React Native (Expo CLI)  
+- **Backend:** Flask (Python)  
+- **Database & Authentication:**  
+  - Firebase Authentication for user login & signup  
+  - Firestore for storing user details, cow information, and forum discussions  
+  - SQL Database for managing breed details and location information  
+- **APIs & AI Integration:**  
+  - Gemini API and Vertex AI for AI-driven features  
+  - Google Text-to-Speech API  
+  - Google Maps API and Google Places  
+- **Cloud & Hosting:**  
+  - Google Cloud Run  
+  - Firebase Firestore
+
+## Installation & Running the App
+This project was built using **Expo** for React Native, making it simple to run on both Android and iOS devices. An APK has also been generated for easy installation on Android devices.
+
+### To run the app locally:
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/your-username/dhenu.git
+   cd dhenu
 
 
 
@@ -33,15 +71,15 @@ A modern authentication application built with [Expo](https://expo.dev), featuri
 
 ## Features
 
-- 🔒 Complete authentication flow
+  - Complete authentication flow
   - User sign-in
   - User registration
   - Secure session management
   - Logout functionality
-- 📱 Modern UI with Tailwind CSS
-- 🎯 TypeScript for type safety
-- 📁 Organized file structure with Expo Router
-- 🔄 Context-based state management
+  - Modern UI with Tailwind CSS
+  - TypeScript for type safety
+  - Organized file structure with Expo Router
+  - Context-based state management
 
 ## Project Structure
 
@@ -179,6 +217,3 @@ To start developing:
 
 - https://github.com/react-navigation/react-navigation/issues/12237
 
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
