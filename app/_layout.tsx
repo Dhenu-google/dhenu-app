@@ -2,9 +2,8 @@ import { Stack, useRouter, useSegments } from "expo-router";
 import { useEffect } from "react";
 import { SessionProvider, useSession } from "@/context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-// Import your global CSS file
 import "../global.css";
-import '@/lib/i18n'; // Import i18n configuration
+import '@/lib/i18n';
 import { ActivityIndicator } from "react-native-paper";
 import { View } from "react-native";
 

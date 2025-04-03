@@ -3,7 +3,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, Alert, ActivityIndicat
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "@/lib/firebase-config"; // Adjust the path as needed
+import { storage } from "@/lib/firebase-config";
 import { getAuth } from "firebase/auth";
 import { getFirestore, collection, addDoc, Timestamp } from "firebase/firestore";
 import { DB_API_URL } from '@/config';
@@ -37,7 +37,7 @@ export default function StrayCows() {
       setLocation({ latitude, longitude });
 
       // Use Google Maps Geocoding API to get a human-readable address
-      const apiKey = process.env.EXPO_PUBLIC_GMAPS_API_KEY; // Replace with your Google Maps API key
+      const apiKey = process.env.EXPO_PUBLIC_GMAPS_API_KEY; 
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
       );

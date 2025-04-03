@@ -111,7 +111,6 @@ export default function Dashboard() {
 
   // Function to check if a cow needs milking or feeding (more than 3 hours)
 
-
   // Check cow needs on initial load and every minute
 
   // Handle marking a cow as milked
