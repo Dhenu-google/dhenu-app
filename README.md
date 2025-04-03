@@ -1,3 +1,12 @@
+#DHENU
+
+DHENU is an AI-powered mobile app designed to conserve Indian cow breeds by helping farmers, Gaushalas, and the public. It provides cow management tools, AI-driven guidance, e-commerce support, and a community platform. With maps and alerts, it also connects users to Gaushalas and enables reporting of stray/injured cows.
+![image](https://github.com/user-attachments/assets/47234388-d071-44cb-a495-4ed1c7092de5)
+
+
+
+
+
 # Expo Firebase Authentication With Drawer and Nested Tab App 🔐
 
 A modern authentication application built with [Expo](https://expo.dev), featuring a complete authentication flow using [Firebase](https://firebase.google.com/docs) as the backend service.
