@@ -2,6 +2,8 @@
 
 **DHENU** is an AI-powered mobile app developed to conserve and propagate Indian cow breeds by assisting farmers, Gaushala owners, and the general public. Built specifically for the challenges of urbanization and industrialization, DHENU combines traditional cow-care insights with advanced AI guidance and community support to ensure the ecological and socio-economic viability of indigenous cow breeds.
 
+**This poject is a submission for the [Google Solution Challenge 2025](https://vision.hack2skill.com/event/solutionschallenge2025?utm_source=hack2skill&utm_medium=homepage)**
+
 ## Table of Contents
 - [Overview](#Overview)
 - [Features](#Features)
@@ -98,12 +100,12 @@ This project was built using **Expo** for React Native, making it simple to run 
    - [GitHub Releases](https://github.com/Dhenu-google/dhenu-app/releases)
 
 ## Contributing
-
+( we are not accepting contributions at the moment. [see](#dhenu))
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+5. Open a Pull Request.
 
 ## Learn More
 
