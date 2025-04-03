@@ -171,4 +171,5 @@ fix_*.patch
 .expo/
 expo-env.d.ts
 .env*.local
+.env
 # @end expo-cli
