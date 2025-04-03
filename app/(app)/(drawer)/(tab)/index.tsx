@@ -142,7 +142,7 @@ export default function HomeScreen() {
       {/* Chatbot Button */}
       <View style={styles.chatButtonContainer}>
         <LinearGradient
-          colors={['#8D6E63', '#795548', '#5D4037']}
+          colors={['#a67b6d', '#5D4037']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.gradientBorder}
@@ -153,13 +153,12 @@ export default function HomeScreen() {
             activeOpacity={0.8}
           >
             <View style={styles.buttonContent}>
-              <Text style={styles.buttonText}>{t('explore.askMooAI', 'Ask Moo AI')}</Text>
-              <TouchableOpacity
-                style={styles.micContainer}
-                onPress={(e) => e.stopPropagation()} // Prevent triggering the parent button
-              >
-                <Ionicons name="mic" size={22} color="#faebd7" />
-              </TouchableOpacity>
+              <Image 
+                source={require('../../../../assets/images/AI.png')}
+                style={styles.aiLogo}
+                resizeMode="contain"
+              />
+              <Text style={styles.buttonText}>{t('explore.askMooAI', 'Ask EMoo AI')}</Text>
             </View>
           </TouchableOpacity>
         </LinearGradient>
@@ -280,7 +279,7 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 28,
     padding: 3.25, // Border thickness
-    shadowColor: 'rgba(93, 64, 55, 0.8)',
+    shadowColor: 'rgba(93, 64, 55, 0.1)',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 12,
@@ -299,19 +298,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     height: '100%',
   },
+  aiLogo: {
+    width: 68,
+    height: 68,
+    marginRight: 8,
+  },
   buttonText: {
     flex: 1,
     fontSize: 16,
     color: '#5D4037',
-  },
-  micContainer: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: '#5D4037',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
   },
   header: {
     flexDirection: 'row',
