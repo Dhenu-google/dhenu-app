@@ -86,13 +86,20 @@ export default function HomeScreen() {
             style={styles.menuCard}
             onPress={() => navigateToSection('forum')}
           >
-            <View style={styles.cardContent}>
-              <View style={styles.iconCircle}>
-                <Ionicons name="chatbubbles-outline" size={30} color="#FFF" />
+            <LinearGradient
+              colors={['#8D6E63', '#795548', '#5D4037']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.menuGradient}
+            >
+              <View style={styles.cardContent}>
+                <View style={styles.iconCircle}>
+                  <Ionicons name="chatbubbles-outline" size={30} color="#FFF" />
+                </View>
+                <Text style={styles.cardTitle}>{t('explore.forum', 'Forum')}</Text>
+                <Text style={styles.cardDescription}>{t('explore.forumDescription', 'Know about others opinions, and share yours!')}</Text>
               </View>
-              <Text style={styles.cardTitle}>{t('explore.forum', 'Forum')}</Text>
-              <Text style={styles.cardDescription}>{t('explore.forumDescription', 'Know about others opinions, and share yours!')}</Text>
-            </View>
+            </LinearGradient>
           </TouchableOpacity>
 
           {/* Report Stray Cow Card */}
@@ -100,13 +107,20 @@ export default function HomeScreen() {
             style={styles.menuCard}
             onPress={() => navigateToSection('report')}
           >
-            <View style={styles.cardContent}>
-              <View style={styles.iconCircle}>
-                <Ionicons name="alert-circle-outline" size={30} color="#FFF" />
+            <LinearGradient
+              colors={['#8D6E63', '#795548', '#5D4037']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.menuGradient}
+            >
+              <View style={styles.cardContent}>
+                <View style={styles.iconCircle}>
+                  <Ionicons name="alert-circle-outline" size={30} color="#FFF" />
+                </View>
+                <Text style={styles.cardTitle}>{t('explore.reportStrayCow', 'Report stray cow')}</Text>
+                <Text style={styles.cardDescription}>{t('explore.helpHelpless', 'Help the helpless')}</Text>
               </View>
-              <Text style={styles.cardTitle}>{t('explore.reportStrayCow', 'Report stray cow')}</Text>
-              <Text style={styles.cardDescription}>{t('explore.helpHelpless', 'Help the helpless')}</Text>
-            </View>
+            </LinearGradient>
           </TouchableOpacity>
 
           {/* Marketplace Card */}
@@ -114,13 +128,20 @@ export default function HomeScreen() {
             style={styles.menuCard}
             onPress={() => navigateToSection('marketplace')}
           >
-            <View style={styles.cardContent}>
-              <View style={styles.iconCircle}>
-                <Ionicons name="basket-outline" size={30} color="#FFF" />
+            <LinearGradient
+              colors={['#8D6E63', '#795548', '#5D4037']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.menuGradient}
+            >
+              <View style={styles.cardContent}>
+                <View style={styles.iconCircle}>
+                  <Ionicons name="basket-outline" size={30} color="#FFF" />
+                </View>
+                <Text style={styles.cardTitle}>{t('marketplace.title', 'Shop')}</Text>
+                <Text style={styles.cardDescription}>{t('marketplace.description', 'Find Dairy products, services near you')}</Text>
               </View>
-              <Text style={styles.cardTitle}>{t('marketplace.title', 'Shop')}</Text>
-              <Text style={styles.cardDescription}>{t('marketplace.description', 'Find Dairy products, services near you')}</Text>
-            </View>
+            </LinearGradient>
           </TouchableOpacity>
 
           {/* Network Card */}
@@ -128,13 +149,20 @@ export default function HomeScreen() {
             style={styles.menuCard}
             onPress={() => navigateToSection('network')}
           >
-            <View style={styles.cardContent}>
-              <View style={styles.iconCircle}>
-                <Ionicons name="map-outline" size={30} color="#FFF" />
+            <LinearGradient
+              colors={['#8D6E63', '#795548', '#5D4037']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.menuGradient}
+            >
+              <View style={styles.cardContent}>
+                <View style={styles.iconCircle}>
+                  <Ionicons name="map-outline" size={30} color="#FFF" />
+                </View>
+                <Text style={styles.cardTitle}>{t('explore.network', 'Network')}</Text>
+                <Text style={styles.cardDescription}>{t('explore.networkDescription', 'Find Cows near you')}</Text>
               </View>
-              <Text style={styles.cardTitle}>{t('explore.network', 'Network')}</Text>
-              <Text style={styles.cardDescription}>{t('explore.networkDescription', 'Find Cows near you')}</Text>
-            </View>
+            </LinearGradient>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -237,7 +265,10 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginBottom: 16,
     overflow: 'hidden',
-    backgroundColor: '#5D4037',
+  },
+  menuGradient: {
+    width: '100%',
+    height: '100%',
   },
   cardContent: {
     padding: 16,
