@@ -148,7 +148,7 @@ export default function NetworkScreen() {
   const fetchLocationsWithRoles = async () => {
     try {
       setIsLoading(true);
-  
+      console.log("fetching nearby locations with roles");
       // Fetch data from the Flask API
       const response = await fetch(`${DB_API_URL}/get_locations_with_roles`);
       const data = await response.json();
