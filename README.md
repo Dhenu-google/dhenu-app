@@ -88,10 +88,14 @@ This project was built using **Expo** for React Native, making it simple to run 
    ```bash
    npx expo start
    ```
+
+
 ## Demo & Resources
 1. [Youtube Link for Demo Video](https://www.youtube.com/watch?v=mXnJqYwebF8)
 2. [Site](dhenu-app.github.io)
-3. [APK for android](https://drive.google.com/drive/u/0/folders/1_qJ92q6UIrPFRnFsFeUGSRQa6IS2mXy2)
+3. Download the APK for Android:
+   - [Google Drive Link](https://drive.google.com/drive/u/0/folders/1_qJ92q6UIrPFRnFsFeUGSRQa6IS2mXy2)
+   - [GitHub Releases](https://github.com/Dhenu-google/dhenu-app/releases)
 
 
 ## Project Structure
