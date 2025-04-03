@@ -69,11 +69,11 @@ This project was built using **Expo** for React Native, making it simple to run 
    git clone https://github.com/Dhenu-google/dhenu-app.git
    cd dhenu-app
    ```
-   
-2. Install Dependencies
-  ```bash
-  npm install
-  ```
+
+2. Install Dependencies:
+   ```bash
+   npm install
+   ```
 
 3. Set up environment variables
    Create a `.env` file with your Firebase credentials:
