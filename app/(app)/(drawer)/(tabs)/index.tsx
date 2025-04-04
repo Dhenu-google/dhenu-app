@@ -221,7 +221,14 @@ export default function Dashboard() {
   // Modified to use translations for timestamps
   const formatTimestamp = (timestamp: Date | null) => {
     if (!timestamp) return t('common.never', 'Never');
-    return format(timestamp, 'h:mm a');
+    
+    // Convert the timestamp to the local time
+    const utcDate = new Date(timestamp);
+    const localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000);
+    console.log(format(localDate,'h:mm a'));
+
+    // Format the local time using date-fns
+    return format(localDate, 'h:mm a');
   };
 
   // Helper function to determine tag background color
@@ -311,6 +318,9 @@ export default function Dashboard() {
       birthDate: newCowForm.age
         ? new Date().getFullYear() - parseFloat(newCowForm.age) + "-01-01" // Calculate birth year from age
         : null,
+      age: newCowForm.age ? parseFloat(newCowForm.age) : null, // Add age field
+      height: newCowForm.height ? parseFloat(newCowForm.height) : null, // Add height field
+      weight: newCowForm.weight ? parseFloat(newCowForm.weight) : null, // Add weight field
       tagNumber: null, // Optional field, can be added to the form later
       notes: null, // Optional field, can be added to the form later
       owner_id: user?.uid, // Firebase Auth user ID (logged-in user's UID)
