@@ -160,7 +160,7 @@ export default function HomeScreen() {
                   <Ionicons name="map-outline" size={30} color="#FFF" />
                 </View>
                 <Text style={styles.cardTitle}>{t('explore.network', 'Network')}</Text>
-                <Text style={styles.cardDescription}>{t('explore.networkDescription', 'Find Cows near you')}</Text>
+                <Text style={styles.cardDescription}>{t('explore.networkDescription', 'Find nearby cow farmers, gaushalas, and NGOs')}</Text>
               </View>
             </LinearGradient>
           </TouchableOpacity>
