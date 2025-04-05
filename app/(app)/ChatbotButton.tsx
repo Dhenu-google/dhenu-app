@@ -451,8 +451,8 @@ const generateResponse = async (
   const currentTopics = conversationState.currentTopics.length > 0 ? conversationState.currentTopics : topics;
 
   // Construct the user prompt
-  const userPrompt = constructPrompt(currentBreed, currentTopics, userInput);
-
+  //const userPrompt = constructPrompt(currentBreed, currentTopics, userInput);
+  const userPrompt = userInput;
   try {
     // Call the API to generate a response
     const response = await fetch(`${DB_API_URL}/chat`, {
