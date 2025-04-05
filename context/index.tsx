@@ -306,7 +306,8 @@ console.log("Auth state changed:", user);
 
   const createBackendUser = async (uid:string, name:string|null, email:string|null,
      role:string|null,
-     longitude:number, latitude:number
+     latitude:number,
+     longitude:number
   ) => {
     try{
       console.log("sendLocationToDB Params:", { uid, name, email, role, longitude, latitude }); // Debug log
