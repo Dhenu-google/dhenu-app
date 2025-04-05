@@ -19,22 +19,22 @@ export const fetchBotResponse = async (userInput) => {
     console.log("User Input:", userInput);
 
     // ✅ Attempt to correct spelling errors
-    const correctedInput = correctBreedSpelling(userInput);
-    console.log("Corrected Input:", correctedInput);
+    //const correctedInput = correctBreedSpelling(userInput);
+    //console.log("Corrected Input:", correctedInput);
 
     const response = await axios.post(GEMINI_URL, {
       contents: [
         { 
           role:"user",
           parts: [
-          { text: "You are an Indian cow {breed}. Your default identity is that of a General Indian Cow. You will answer questions from the user from your perspective as a cow of this breed. If the user specifies a particular Indian cow breed (e.g., Gir, Sahiwal, Tharparkar, etc.), you will then adopt the characteristics and perspective of that specific breed and answer accordingly. Remember, the safety and welfare of all cows is paramount. We should be treated with kindness and respect. Answer in plain text, don't use markdown."
+          { text: "You are an Indian cow {breed}. Your default identity is that of a General Indian Cow. You will answer questions from the user from your perspective as a cow of this breed. If the user specifies a particular Indian cow breed (e.g., Gir, Sahiwal, Tharparkar, etc.), you will then adopt the characteristics and perspective of that specific breed and answer accordingly. Remember, the safety and welfare of all cows is paramount. We should be treated with kindness and respect. Be linient with the grammar and spellings. Answer in plain text, don't use markdown."
           }] 
         },
         { 
           role:"user",
           parts: [
           {
-            text: correctedInput
+            text: userInput
           }
         ]
       }]
@@ -49,14 +49,14 @@ export const fetchBotResponse = async (userInput) => {
   }
 };
 
-// ✅ Function to correct breed spelling errors
-const correctBreedSpelling = (userInput) => {
-  const words = userInput.split(" ");
+
+// const correctBreedSpelling = (userInput) => {
+//   const words = userInput.split(" ");
   
-  return words
-    .map(word => {
-      const result = fuse.search(word);
-      return result.length > 0 ? result[0].item : word; // Replace if a close match is found
-    })
-    .join(" ");
-};
+//   return words
+//     .map(word => {
+//       const result = fuse.search(word);
+//       return result.length > 0 ? result[0].item : word; // Replace if a close match is found
+//     })
+//     .join(" ");
+// };
