@@ -251,7 +251,7 @@ const detectLanguageByUTF = (text: string): string => {
   }
 
   // Default to "Unknown" if no match is found
-  return "Unknown";
+  return "English";
 };
 
 
@@ -403,7 +403,7 @@ Provide comprehensive information on common diseases, symptoms, treatments, and 
 
   const detectedLanguage = detectLanguageByUTF(userQuery);
   if (detectedLanguage !== "Unknown") {
-    return `
+    return ` ${userQuery}
 ### Language Preference:
 The user prefers responses in ${detectedLanguage}. Please provide the answer in ${detectedLanguage}.
 `;
