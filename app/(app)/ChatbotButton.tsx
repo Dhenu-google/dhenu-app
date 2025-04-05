@@ -261,6 +261,7 @@ const constructPrompt = (
   userQuery: string
 ): string => {
   // Detailed subtopic prompts for each main topic
+  /*
   const generalPrompts: { [key: string]: string } = {
     origin: `
 ### Origin & History of ${cowBreed}:
@@ -329,7 +330,6 @@ Explain strategies for regular health screening and record-keeping for ${cowBree
 `,
   };
 
-  // Full prompt fallback for each main topic
   const fullPrompts: { [key: string]: string } = {
     general: `
 ## General Information about ${cowBreed}:
@@ -399,16 +399,17 @@ Provide comprehensive information on common diseases, symptoms, treatments, and 
       }
     }
   }
+  */
 
   const detectedLanguage = detectLanguageByUTF(userQuery);
   if (detectedLanguage !== "Unknown") {
-    selectedPrompts.push(`
+    return `
 ### Language Preference:
 The user prefers responses in ${detectedLanguage}. Please provide the answer in ${detectedLanguage}.
-`);
+`;
   }
 
-  return selectedPrompts.join("\n");
+  return "Unknown language detected.";
 };
 
 const isQueryEthicallyProblematic = (query: string): boolean => {
@@ -451,8 +452,8 @@ const generateResponse = async (
   const currentTopics = conversationState.currentTopics.length > 0 ? conversationState.currentTopics : topics;
 
   // Construct the user prompt
-  //const userPrompt = constructPrompt(currentBreed, currentTopics, userInput);
-  const userPrompt = userInput;
+  const userPrompt = constructPrompt(currentBreed, currentTopics, userInput);
+  //const userPrompt = userInput;
   try {
     // Call the API to generate a response
     const response = await fetch(`${DB_API_URL}/chat`, {
