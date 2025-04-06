@@ -4,6 +4,8 @@
 
 **This poject is a submission for the [Google Solution Challenge 2025](https://vision.hack2skill.com/event/solutionschallenge2025?utm_source=hack2skill&utm_medium=homepage)**
 
+**Backend Code** can be found here - [DhenuDBConnect](https://github.com/Dhenu-google/DhenuDBConnect)
+
 ## Table of Contents
 - [Overview](#Overview)
 - [Features](#Features)
@@ -56,7 +58,9 @@ This app is designed for sustainable agriculture and rural livelihoods, ensuring
   - Google Cloud SQL
 
 ## Installation & Running the App
-This project was built using **Expo** for React Native, making it simple to run on both Android and iOS devices. An APK has also been generated for easy installation on Android devices.
+This project was built using **Expo** for React Native, making it simple to run on both Android and iOS devices. An APK has also been generated for easy installation on Android devices. 
+
+**Note :-** Currently, only the Android build is functional, and an APK has been generated for easy installation. The web version is not supported at this time.
 
 ### Prerequisites
 - Node.js >= 16.x
@@ -93,9 +97,8 @@ This project was built using **Expo** for React Native, making it simple to run 
 
 
 ## Demo & Resources
-1. [Youtube Link for Demo Video](https://www.youtube.com/watch?v=mXnJqYwebF8)
-2. [Site](dhenu-app.github.io)
-3. Download the APK for Android:
+1. [Youtube Link for Demo Video](https://youtu.be/FxbRTp-LyAU)
+2. Download the APK for Android:
    - [Google Drive Link](https://drive.google.com/drive/u/0/folders/1_qJ92q6UIrPFRnFsFeUGSRQa6IS2mXy2)
    - [GitHub Releases](https://github.com/Dhenu-google/dhenu-app/releases)
 
